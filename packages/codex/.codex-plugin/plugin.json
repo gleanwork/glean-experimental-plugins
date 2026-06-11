@@ -1,0 +1,23 @@
+{
+  "name": "glean-codex",
+  "version": "0.2.11",
+  "description": "Glean Codex plugin for discovering skills and running tools.",
+  "author": {
+    "name": "Glean"
+  },
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Glean Codex",
+    "websiteURL": "https://www.glean.com/home",
+    "category": "Productivity",
+    "defaultPrompt": [
+      "Help me ship the current pull request using pr_ship.",
+      "Help me plan my week.",
+      "What are the burning escalations I need to address?"
+    ],
+    "composerIcon": "./assets/GLN_logo-icon-Primary.png",
+    "logo": "./assets/GLN_logo-icon-Primary.png",
+    "brandColor": "#343CED"
+  }
+}

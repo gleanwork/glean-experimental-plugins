@@ -1,0 +1,6 @@
+{
+  "name": "glean",
+  "type": "module",
+  "private": true,
+  "description": "Runtime manifest for the packaged Glean plugin. Lives alongside dist/index.js so Node loads it as an ES module. Dev tooling (build, test, typecheck) lives at the repo root in the top-level package.json."
+}

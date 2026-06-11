@@ -1,0 +1,13 @@
+{
+  "name": "glean-plugins-internal",
+  "owner": {
+    "name": "Glean"
+  },
+  "plugins": [
+    {
+      "name": "glean",
+      "source": "./plugins/glean",
+      "description": "Glean plugin for discovering skills and running tools."
+    }
+  ]
+}

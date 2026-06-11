@@ -1,0 +1,16 @@
+{
+  "name": "glean-cursor-plugin",
+  "displayName": "Glean Cursor",
+  "version": "0.2.15",
+  "description": "Search and act across your company's apps — Jira, Slack, Salesforce, Google Workspace, and more — without leaving Cursor.",
+  "author": {
+    "name": "Glean"
+  },
+  "homepage": "https://www.glean.com",
+  "logo": "assets/GLN_logo-icon-Primary.png",
+  "keywords": ["glean", "enterprise-search", "jira", "slack", "salesforce"],
+  "category": "productivity",
+  "tags": ["search", "enterprise", "mcp", "tools"],
+  "skills": "./skills/",
+  "mcpServers": ".mcp.json"
+}

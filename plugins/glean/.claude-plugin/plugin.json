@@ -1,0 +1,8 @@
+{
+  "name": "glean",
+  "version": "0.2.16",
+  "description": "Glean plugin for discovering skills and running tools.",
+  "author": {
+    "name": "Glean"
+  }
+}

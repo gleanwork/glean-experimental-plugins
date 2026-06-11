@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "glean": {
+      "command": "bash",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/start.sh"],
+      "env": {
+        "ENABLE_HITL": "false"
+      }
+    }
+  }
+}

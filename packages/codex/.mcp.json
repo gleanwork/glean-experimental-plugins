@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "glean-local": {
+      "command": "bash",
+      "args": ["./start.sh"],
+      "cwd": ".",
+      "env": {
+        "ENABLE_HITL": "true"
+      }
+    }
+  }
+}

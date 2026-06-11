@@ -1,0 +1,16 @@
+{
+  "name": "glean-plugins",
+  "owner": {
+    "name": "Glean"
+  },
+  "metadata": {
+    "description": "Glean plugins for Cursor — search and act across enterprise apps without leaving your editor"
+  },
+  "plugins": [
+    {
+      "name": "glean-cursor1",
+      "source": "plugins/glean",
+      "description": "Glean plugin for discovering skills and running tools."
+    }
+  ]
+}

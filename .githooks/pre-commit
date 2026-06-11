@@ -1,0 +1,10 @@
+#!/bin/bash
+# Dispatcher: runs all executable scripts in .githooks/pre-commit.d/ in order.
+set -e
+cd "$(git rev-parse --show-toplevel)"
+
+for hook in .githooks/pre-commit.d/*; do
+  if [ -f "$hook" ] && [ -x "$hook" ]; then
+    "$hook"
+  fi
+done

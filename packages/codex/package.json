@@ -1,0 +1,6 @@
+{
+  "name": "glean-codex",
+  "type": "module",
+  "private": true,
+  "description": "Runtime manifest for the packaged Glean Codex plugin. Lives alongside dist/index.js so Node loads it as an ES module."
+}
