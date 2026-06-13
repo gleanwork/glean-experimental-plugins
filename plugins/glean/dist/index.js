@@ -31152,14 +31152,18 @@ async function handleRunTool(remoteClient, mcpServer, skillsBaseDir, args) {
     }
     throw err;
   }
-  const remoteArgs = {
+  return callRemoteTool(
+    remoteClient,
+    "run_tool",
+    buildRemoteArgs(serverId, toolName, resolvedArgs)
+  );
+}
+function buildRemoteArgs(serverId, toolName, resolvedArgs) {
+  return {
     server_id: serverId,
-    tool_name: toolName
+    tool_name: toolName,
+    arguments: resolvedArgs
   };
-  if (Object.keys(resolvedArgs).length > 0) {
-    remoteArgs.arguments = resolvedArgs;
-  }
-  return callRemoteTool(remoteClient, "run_tool", remoteArgs);
 }
 
 // src/url-config-store.ts
