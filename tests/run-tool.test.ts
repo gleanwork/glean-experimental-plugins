@@ -2,7 +2,11 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
-import { resolveFileArgs, FileArgsError } from "../src/tools/run-tool.js";
+import {
+  resolveFileArgs,
+  buildRemoteArgs,
+  FileArgsError,
+} from "../src/tools/run-tool.js";
 
 describe("resolveFileArgs", () => {
   let tmpDir: string;
@@ -130,5 +134,28 @@ describe("resolveFileArgs", () => {
     await expect(
       resolveFileArgs({ body: file }, { body: "existing" }),
     ).rejects.toThrow(/conflicts/);
+  });
+});
+
+describe("buildRemoteArgs", () => {
+  // Regression: a no-argument downstream call (e.g. slack_read_user_profile)
+  // must forward `arguments: {}`, not omit the key. An absent field serializes
+  // to null downstream, which strict MCP servers reject.
+  it("always includes arguments, even when empty", () => {
+    expect(buildRemoteArgs("srv", "tool", {})).toEqual({
+      server_id: "srv",
+      tool_name: "tool",
+      arguments: {},
+    });
+  });
+
+  it("forwards populated arguments unchanged", () => {
+    expect(
+      buildRemoteArgs("srv", "tool", { response_format: "detailed" }),
+    ).toEqual({
+      server_id: "srv",
+      tool_name: "tool",
+      arguments: { response_format: "detailed" },
+    });
   });
 });

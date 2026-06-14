@@ -192,12 +192,29 @@ export async function handleRunTool(
     throw err;
   }
 
-  const remoteArgs: Record<string, unknown> = {
+  return callRemoteTool(
+    remoteClient,
+    "run_tool",
+    buildRemoteArgs(serverId, toolName, resolvedArgs),
+  );
+}
+
+/**
+ * Assemble the payload for the backend `run_tool` meta-tool. `arguments` is
+ * ALWAYS included, even when empty: the downstream MCP `tools/call` validates
+ * `params.arguments` as an object, and an absent field serializes to `null`,
+ * which strict downstream servers reject ("Expected: object, given: null").
+ * Sending an explicit `{}` for no-argument tools matches what the MCP SDK
+ * does for direct tool calls.
+ */
+export function buildRemoteArgs(
+  serverId: string,
+  toolName: string,
+  resolvedArgs: Record<string, unknown>,
+): Record<string, unknown> {
+  return {
     server_id: serverId,
     tool_name: toolName,
+    arguments: resolvedArgs,
   };
-  if (Object.keys(resolvedArgs).length > 0) {
-    remoteArgs.arguments = resolvedArgs;
-  }
-  return callRemoteTool(remoteClient, "run_tool", remoteArgs);
 }
