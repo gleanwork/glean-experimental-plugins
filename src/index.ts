@@ -17,6 +17,7 @@ import {
 import { GleanOAuthClientProvider } from "./auth-provider.js";
 import { handleFindSkills } from "./tools/find-skills.js";
 import { handleRunTool } from "./tools/run-tool.js";
+import { handleRunCode } from "./tools/run-code.js";
 import { evictStaleSkills } from "./skill-writer.js";
 import {
   loadServerUrl,
@@ -131,6 +132,12 @@ function extractAuthCode(pasted: string): string | null {
 
 const hostedCallbackUrl = "https://dev.glean.com/mcp/auth/callback";
 
+// Experimental "code mode". When ON, the model is given `run_code` INSTEAD of
+// `run_tool`: it writes JavaScript that calls each downstream tool as an async
+// `PTC_<TOOL>()` function, and the plugin executes that code in a persistent
+// sandbox. Default OFF so deployed behavior (run_tool) is untouched.
+const RUN_CODE_ENABLED = process.env.ENABLE_RUN_CODE === "true";
+
 const server = new Server(
   { name: "glean", version: "1.0.0" },
   { capabilities: { tools: { listChanged: true } } },
@@ -241,6 +248,75 @@ const RUN_TOOL_TOOL: Tool = {
   },
 };
 
+const RUN_CODE_TOOL: Tool = {
+  name: "run_code",
+  description:
+    "Execute JavaScript that orchestrates downstream Glean tools as ordinary " +
+    "async functions, FOR BATCH JOBS ONLY — i.e. when you need 2+ tool calls: " +
+    "chaining one tool's output into the next, fanning out, or looping a call " +
+    "over many inputs. For a SINGLE one-off call, use `run_tool` (or the " +
+    "first-class tool directly) instead — a single-call run_code is rejected. " +
+    "Each discovered tool is available as `PTC_<TOOL_NAME>` " +
+    "(e.g. `await PTC_JIRA_SEARCH({ jql })`); the server_id is bound for you. " +
+    "Do multi-step work (loops, conditionals, filtering, passing " +
+    "one tool's output into the next) in a single call instead of many " +
+    "separate tool-call turns. First use find_skills, then read each tool's JSON " +
+    "for its inputSchema (argument names) — the binding name is `PTC_` + the " +
+    "tool's `name`. Glean's first-class tools (e.g. `PTC_search`, " +
+    "`PTC_read_document`) are also available the same way once authenticated.\n\n" +
+    "Each PTC_ call resolves to a ToolResult: `.text` (raw string), `.json()` " +
+    "(parsed, or undefined if the output isn't JSON — so don't write " +
+    "`if (r.json())`; branch on `.format` instead), `.format` " +
+    "('json' | 'text' | 'empty'), `.get('a.b.c', fallback)` (safe nested " +
+    "access — never throws), `.isError`, `.content`.\n\n" +
+    "OUTPUT SHAPES ARE NOT KNOWN AHEAD OF TIME. `observed_schemas` in the result " +
+    "already gives the shape of every tool you called this run. To inspect the " +
+    "structure of any other value, call `inspect(value)` — it returns/prints the " +
+    "SHAPE only (never the data; the data stays in the runtime). Use `print(...)` " +
+    "for output and `schemaOf('TOOL')` for a shape learned in past runs.\n\n" +
+    "WHAT COMES BACK: `return <value>` sends that value back VERBATIM (no " +
+    "truncation). If it exceeds ~5000 chars it is written to a file and you get " +
+    "`{ shape, path }` instead — Read that file (offset/limit/grep) for specifics; " +
+    "do NOT re-run a tool to regenerate data. So return/print ONLY what you need; " +
+    "the full data always stays in your in-memory variables to compute over.\n\n" +
+    "STATEFUL SESSION: this is a REPL. To persist a variable across run_code " +
+    "calls, use a BARE assignment — no var/let/const (e.g. " +
+    "`bugs = await PTC_JIRA_SEARCH(...)`). `var`, `let`, and `const` are ALL " +
+    "temporary (this call only — `var` does NOT persist). The session and its " +
+    "persisted variables last until the plugin process shuts down, or until you " +
+    "call run_code with reset:true. It is NOT durable storage — re-run setup " +
+    "cells if a result reports session.fresh=true. Top-level `await` is supported.\n\n" +
+    "BE EFFICIENT — avoid round-trips: do the whole task in ONE call when you " +
+    "can — fetch, then filter/format the result and `print()` or `return` ONLY " +
+    "the final answer. Output written to a file (overflow) is NOT lost — the full " +
+    "result also stays in the runtime, so NEVER re-run a tool just to 'get the " +
+    "full data'; read the fields you need from the value you already have. Prefer " +
+    "`print()` formatted lines or `return` a small aggregate (a count, a few " +
+    "fields) over returning a whole result or large array.\n\n" +
+    "Some tools require approval before they run; you may be prompted once for " +
+    "all approval-required tools the code references. Tool calls are recorded " +
+    "in a ledger returned with the result; on error, already-executed writes " +
+    "are NOT rolled back — read the ledger.",
+  inputSchema: {
+    type: "object" as const,
+    properties: {
+      code: {
+        type: "string",
+        description:
+          "JavaScript to execute. Tools are async `PTC_<TOOL_NAME>(args)` " +
+          "functions. Use `return` to send a value back.",
+      },
+      reset: {
+        type: "boolean",
+        description:
+          "If true, clear all persisted session variables and start a fresh " +
+          "runtime before executing this code.",
+      },
+    },
+    required: ["code"],
+  },
+};
+
 const SETUP_TOOL: Tool = {
   name: "setup",
   annotations: { readOnlyHint: true },
@@ -273,7 +349,13 @@ const SETUP_TOOL: Tool = {
 };
 
 server.setRequestHandler(ListToolsRequestSchema, async () => {
-  const tools: Tool[] = [FIND_SKILLS_TOOL, RUN_TOOL_TOOL, SETUP_TOOL];
+  // Code mode ADDS run_code alongside run_tool (it no longer replaces it):
+  // run_tool handles single one-off calls, run_code is scoped to batches
+  // (2+ calls / chaining / fan-out). When the flag is off the surface is
+  // identical to what's deployed today.
+  const tools: Tool[] = RUN_CODE_ENABLED
+    ? [FIND_SKILLS_TOOL, RUN_TOOL_TOOL, RUN_CODE_TOOL, SETUP_TOOL]
+    : [FIND_SKILLS_TOOL, RUN_TOOL_TOOL, SETUP_TOOL];
 
   // Pre-auth gate: tokens() is sync. When unauthenticated (or unconfigured)
   // skip the remote round-trip — but keep surfacing whatever we successfully
@@ -466,6 +548,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   // setup has provided a server URL. Auth is handled by dispatchRemoteTool
   // via the standard [AUTHENTICATION_REQUIRED] flow.
   if (REMOTE_TOOLS_ALLOWLIST.has(name)) {
+    // First-class tools run directly. A single call belongs here, not in
+    // run_code (which is scoped to batches); they remain usable as PTC_<name>
+    // inside run_code when the model is batching/composing.
     const serverUrl = resolveServerUrl();
     if (!serverUrl) {
       return {
@@ -544,6 +629,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           remoteClient,
           skillsBaseDir,
           args,
+          { codeMode: RUN_CODE_ENABLED },
         );
         return { content: [{ type: "text", text }] };
       } catch (err) {
@@ -611,6 +697,72 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         console.error(`run_tool: execution failed: ${msg}`);
         return {
           content: [{ type: "text", text: `run_tool failed: ${msg}` }],
+          isError: true,
+        };
+      } finally {
+        await remoteClient.close();
+      }
+    }
+
+    case "run_code": {
+      if (!RUN_CODE_ENABLED) {
+        return {
+          content: [{ type: "text", text: "run_code is not enabled." }],
+          isError: true,
+        };
+      }
+
+      const serverUrl = resolveServerUrl();
+      if (!serverUrl) {
+        return {
+          content: [{ type: "text", text: SETUP_NEEDED_ERROR }],
+          isError: true,
+        };
+      }
+      if (!getOAuthProvider().tokens()) {
+        return {
+          content: [{ type: "text", text: AUTH_REDIRECT_TO_SETUP_TEXT }],
+        };
+      }
+
+      const sessionId = resolveSessionId();
+
+      let remoteClient;
+      try {
+        remoteClient = await createRemoteClient(
+          serverUrl,
+          getRemoteClientOpts(),
+          sessionId,
+        );
+      } catch (err) {
+        if (err instanceof AuthRequiredError) {
+          return {
+            content: [{ type: "text", text: AUTH_REDIRECT_TO_SETUP_TEXT }],
+          };
+        }
+        const msg = err instanceof Error ? err.message : String(err);
+        logLine("connect.backend-error", { label: "run_code", msg });
+        return {
+          content: [
+            { type: "text", text: `Failed to connect to Glean backend: ${msg}` },
+          ],
+          isError: true,
+        };
+      }
+      try {
+        const skillsBaseDir = resolveSkillsBaseDir();
+        return await handleRunCode(
+          remoteClient,
+          server,
+          skillsBaseDir,
+          args,
+          cachedRemoteTools,
+        );
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error(`run_code: execution failed: ${msg}`);
+        return {
+          content: [{ type: "text", text: `run_code failed: ${msg}` }],
           isError: true,
         };
       } finally {

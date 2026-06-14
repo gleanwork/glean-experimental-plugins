@@ -4,6 +4,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { callRemoteTool } from "../remote-client.js";
+import { findToolMeta } from "../skill-tools.js";
 
 const HITL_ENABLED = process.env.ENABLE_HITL === "true";
 const DEFAULT_FILE_ARG_MAX_BYTES = 1 * 1024 * 1024;
@@ -92,110 +93,85 @@ export async function resolveFileArgs(
   return merged;
 }
 
-interface ToolMetadata {
-  requires_approval?: boolean;
-  name?: string;
-  description?: string;
-  server_id?: string;
-}
+export type ApprovalOutcome =
+  | { kind: "approved" }
+  | { kind: "declined"; action: string };
 
-async function findToolJson(
-  skillsBaseDir: string,
-  toolName: string,
-): Promise<ToolMetadata | null> {
-  try {
-    const skillDirs = await fs.readdir(skillsBaseDir, { withFileTypes: true });
-    for (const dir of skillDirs) {
-      if (!dir.isDirectory()) continue;
-      const toolPath = path.join(skillsBaseDir, dir.name, "tools", `${toolName}.json`);
-      try {
-        const content = await fs.readFile(toolPath, "utf-8");
-        return JSON.parse(content) as ToolMetadata;
-      } catch {
-        continue;
-      }
-    }
-  } catch {
-    // Skills dir doesn't exist or can't be read
-  }
-  return null;
-}
-
-export async function handleRunTool(
-  remoteClient: Client,
+/**
+ * Per-tool HITL gate, shared by run_tool and run_code's just-in-time path.
+ *
+ * Auto-approves unless ALL of: ENABLE_HITL is set, the client supports
+ * elicitation, and the tool JSON marks `requires_approval`. On an elicitation
+ * transport error the behavior depends on `failClosed`: run_tool keeps its
+ * historical fail-OPEN behavior (executes anyway); run_code passes
+ * failClosed=true so a broken approval channel never silently runs a write.
+ */
+export async function requestToolApproval(
   mcpServer: Server,
   skillsBaseDir: string,
-  args: Record<string, unknown>,
-): Promise<CallToolResult> {
-  const serverId = args.server_id;
-  const toolName = args.tool_name;
-
-  if (typeof serverId !== "string" || typeof toolName !== "string") {
-    return {
-      content: [
-        { type: "text", text: "server_id and tool_name are required strings" },
-      ],
-      isError: true,
-    };
+  toolName: string,
+  serverId: string,
+  opts: { message?: string; failClosed?: boolean } = {},
+): Promise<ApprovalOutcome> {
+  if (!HITL_ENABLED || !mcpServer.getClientCapabilities()?.elicitation) {
+    return { kind: "approved" };
   }
+  const { meta } = await findToolMeta(skillsBaseDir, toolName);
+  if (!meta?.requiresApproval) return { kind: "approved" };
 
-  if (HITL_ENABLED && mcpServer.getClientCapabilities()?.elicitation) {
-    const toolMeta = await findToolJson(skillsBaseDir, toolName);
+  const message =
+    opts.message ??
+    [
+      `**Action: ${toolName}**`,
+      meta.description || "",
+      `Server: ${serverId}`,
+      "",
+      "Accept to execute, or decline to cancel.",
+    ]
+      .filter(Boolean)
+      .join("\n");
 
-    if (toolMeta?.requires_approval) {
-      const message = [
-        `**Action: ${toolName}**`,
-        toolMeta.description ? `${toolMeta.description}` : "",
-        `Server: ${serverId}`,
-        "",
-        "Accept to execute, or decline to cancel.",
-      ]
-        .filter(Boolean)
-        .join("\n");
-
-      try {
-        const result = await mcpServer.elicitInput({
-          message,
-          requestedSchema: { type: "object", properties: {} } as any,
-        });
-
-        if (result.action !== "accept") {
-          return {
-            content: [
-              {
-                type: "text",
-                text: `Action ${toolName} was ${result.action === "decline" ? "declined" : "cancelled"} by the user.`,
-              },
-            ],
-          };
-        }
-      } catch {
-        // Fall through to execute without approval on elicitation failure
-      }
-    }
-  }
-
-  const baseArgs =
-    args.arguments != null && typeof args.arguments === "object"
-      ? (args.arguments as Record<string, unknown>)
-      : {};
-  let resolvedArgs: Record<string, unknown>;
   try {
-    resolvedArgs = await resolveFileArgs(args.file_args, baseArgs);
-  } catch (err) {
-    if (err instanceof FileArgsError) {
-      return {
-        content: [{ type: "text", text: err.message }],
-        isError: true,
-      };
+    const result = await mcpServer.elicitInput({
+      message,
+      requestedSchema: { type: "object", properties: {} } as never,
+    });
+    if (result.action !== "accept") {
+      return { kind: "declined", action: result.action };
     }
-    throw err;
+    return { kind: "approved" };
+  } catch {
+    return opts.failClosed
+      ? { kind: "declined", action: "elicitation-error" }
+      : { kind: "approved" };
   }
+}
+
+/**
+ * Pure dispatch core — no approval. Resolves file_args, shapes the remote
+ * payload, and calls the gateway's `run_tool`. Shared by run_tool and every
+ * run_code PTC_ binding so auth, file_args, and the wire shape live in one
+ * place. Throws FileArgsError on bad file_args (caller surfaces it).
+ */
+export async function invokeTool(
+  remoteClient: Client,
+  params: {
+    serverId: string;
+    toolName: string;
+    arguments?: unknown;
+    fileArgs?: unknown;
+  },
+): Promise<CallToolResult> {
+  const baseArgs =
+    params.arguments != null && typeof params.arguments === "object"
+      ? (params.arguments as Record<string, unknown>)
+      : {};
+  const resolvedArgs = await resolveFileArgs(params.fileArgs, baseArgs);
 
   return callRemoteTool(
     remoteClient,
     "run_tool",
-    buildRemoteArgs(serverId, toolName, resolvedArgs),
+    buildRemoteArgs(params.serverId, params.toolName, resolvedArgs),
   );
 }
 
@@ -217,4 +193,57 @@ export function buildRemoteArgs(
     tool_name: toolName,
     arguments: resolvedArgs,
   };
+}
+
+export async function handleRunTool(
+  remoteClient: Client,
+  mcpServer: Server,
+  skillsBaseDir: string,
+  args: Record<string, unknown>,
+): Promise<CallToolResult> {
+  const serverId = args.server_id;
+  const toolName = args.tool_name;
+
+  if (typeof serverId !== "string" || typeof toolName !== "string") {
+    return {
+      content: [
+        { type: "text", text: "server_id and tool_name are required strings" },
+      ],
+      isError: true,
+    };
+  }
+
+  const approval = await requestToolApproval(
+    mcpServer,
+    skillsBaseDir,
+    toolName,
+    serverId,
+  );
+  if (approval.kind === "declined") {
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Action ${toolName} was ${approval.action === "decline" ? "declined" : "cancelled"} by the user.`,
+        },
+      ],
+    };
+  }
+
+  try {
+    return await invokeTool(remoteClient, {
+      serverId,
+      toolName,
+      arguments: args.arguments,
+      fileArgs: args.file_args,
+    });
+  } catch (err) {
+    if (err instanceof FileArgsError) {
+      return {
+        content: [{ type: "text", text: err.message }],
+        isError: true,
+      };
+    }
+    throw err;
+  }
 }

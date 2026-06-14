@@ -3232,8 +3232,8 @@ var require_utils = __commonJS({
       }
       return ind;
     }
-    function removeDotSegments(path8) {
-      let input = path8;
+    function removeDotSegments(path10) {
+      let input = path10;
       const output = [];
       let nextSlash = -1;
       let len = 0;
@@ -3485,8 +3485,8 @@ var require_schemes = __commonJS({
         wsComponent.secure = void 0;
       }
       if (wsComponent.resourceName) {
-        const [path8, query] = wsComponent.resourceName.split("?");
-        wsComponent.path = path8 && path8 !== "/" ? path8 : void 0;
+        const [path10, query] = wsComponent.resourceName.split("?");
+        wsComponent.path = path10 && path10 !== "/" ? path10 : void 0;
         wsComponent.query = query;
         wsComponent.resourceName = void 0;
       }
@@ -3641,7 +3641,7 @@ var require_fast_uri = __commonJS({
         normalizeString(uri, options);
       } else if (typeof uri === "object") {
         uri = /** @type {T} */
-        parse3(serialize(uri, options), options);
+        parse3(serialize2(uri, options), options);
       }
       return uri;
     }
@@ -3649,13 +3649,13 @@ var require_fast_uri = __commonJS({
       const schemelessOptions = options ? Object.assign({ scheme: "null" }, options) : { scheme: "null" };
       const resolved = resolveComponent(parse3(baseURI, schemelessOptions), parse3(relativeURI, schemelessOptions), schemelessOptions, true);
       schemelessOptions.skipEscape = true;
-      return serialize(resolved, schemelessOptions);
+      return serialize2(resolved, schemelessOptions);
     }
     function resolveComponent(base, relative, options, skipNormalization) {
       const target = {};
       if (!skipNormalization) {
-        base = parse3(serialize(base, options), options);
-        relative = parse3(serialize(relative, options), options);
+        base = parse3(serialize2(base, options), options);
+        relative = parse3(serialize2(relative, options), options);
       }
       options = options || {};
       if (!options.tolerant && relative.scheme) {
@@ -3709,7 +3709,7 @@ var require_fast_uri = __commonJS({
       const normalizedB = normalizeComparableURI(uriB, options);
       return normalizedA !== void 0 && normalizedB !== void 0 && normalizedA.toLowerCase() === normalizedB.toLowerCase();
     }
-    function serialize(cmpts, opts) {
+    function serialize2(cmpts, opts) {
       const component = {
         host: cmpts.host,
         scheme: cmpts.scheme,
@@ -3887,7 +3887,7 @@ var require_fast_uri = __commonJS({
     function normalizeStringWithStatus(uri, opts) {
       const { parsed, malformedAuthorityOrPort } = parseWithStatus(uri, opts);
       return {
-        normalized: malformedAuthorityOrPort ? uri : serialize(parsed, opts),
+        normalized: malformedAuthorityOrPort ? uri : serialize2(parsed, opts),
         malformedAuthorityOrPort
       };
     }
@@ -3897,7 +3897,7 @@ var require_fast_uri = __commonJS({
         return malformedAuthorityOrPort ? void 0 : normalized;
       }
       if (typeof uri === "object") {
-        return serialize(uri, opts);
+        return serialize2(uri, opts);
       }
     }
     var fastUri = {
@@ -3906,7 +3906,7 @@ var require_fast_uri = __commonJS({
       resolve,
       resolveComponent,
       equal,
-      serialize,
+      serialize: serialize2,
       parse: parse3
     };
     module.exports = fastUri;
@@ -6879,12 +6879,12 @@ var require_dist = __commonJS({
         throw new Error(`Unknown format "${name}"`);
       return f;
     };
-    function addFormats(ajv, list, fs8, exportName) {
+    function addFormats(ajv, list, fs10, exportName) {
       var _a2;
       var _b;
       (_a2 = (_b = ajv.opts.code).formats) !== null && _a2 !== void 0 ? _a2 : _b.formats = (0, codegen_1._)`require("ajv-formats/dist/formats").${exportName}`;
       for (const f of list)
-        ajv.addFormat(f, fs8[f]);
+        ajv.addFormat(f, fs10[f]);
     }
     module.exports = exports = formatsPlugin;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -6969,17 +6969,17 @@ var require_visit = __commonJS({
     visit.BREAK = BREAK;
     visit.SKIP = SKIP;
     visit.REMOVE = REMOVE;
-    function visit_(key, node, visitor, path8) {
-      const ctrl = callVisitor(key, node, visitor, path8);
+    function visit_(key, node, visitor, path10) {
+      const ctrl = callVisitor(key, node, visitor, path10);
       if (identity.isNode(ctrl) || identity.isPair(ctrl)) {
-        replaceNode(key, path8, ctrl);
-        return visit_(key, ctrl, visitor, path8);
+        replaceNode(key, path10, ctrl);
+        return visit_(key, ctrl, visitor, path10);
       }
       if (typeof ctrl !== "symbol") {
         if (identity.isCollection(node)) {
-          path8 = Object.freeze(path8.concat(node));
+          path10 = Object.freeze(path10.concat(node));
           for (let i = 0; i < node.items.length; ++i) {
-            const ci = visit_(i, node.items[i], visitor, path8);
+            const ci = visit_(i, node.items[i], visitor, path10);
             if (typeof ci === "number")
               i = ci - 1;
             else if (ci === BREAK)
@@ -6990,13 +6990,13 @@ var require_visit = __commonJS({
             }
           }
         } else if (identity.isPair(node)) {
-          path8 = Object.freeze(path8.concat(node));
-          const ck = visit_("key", node.key, visitor, path8);
+          path10 = Object.freeze(path10.concat(node));
+          const ck = visit_("key", node.key, visitor, path10);
           if (ck === BREAK)
             return BREAK;
           else if (ck === REMOVE)
             node.key = null;
-          const cv = visit_("value", node.value, visitor, path8);
+          const cv = visit_("value", node.value, visitor, path10);
           if (cv === BREAK)
             return BREAK;
           else if (cv === REMOVE)
@@ -7017,17 +7017,17 @@ var require_visit = __commonJS({
     visitAsync.BREAK = BREAK;
     visitAsync.SKIP = SKIP;
     visitAsync.REMOVE = REMOVE;
-    async function visitAsync_(key, node, visitor, path8) {
-      const ctrl = await callVisitor(key, node, visitor, path8);
+    async function visitAsync_(key, node, visitor, path10) {
+      const ctrl = await callVisitor(key, node, visitor, path10);
       if (identity.isNode(ctrl) || identity.isPair(ctrl)) {
-        replaceNode(key, path8, ctrl);
-        return visitAsync_(key, ctrl, visitor, path8);
+        replaceNode(key, path10, ctrl);
+        return visitAsync_(key, ctrl, visitor, path10);
       }
       if (typeof ctrl !== "symbol") {
         if (identity.isCollection(node)) {
-          path8 = Object.freeze(path8.concat(node));
+          path10 = Object.freeze(path10.concat(node));
           for (let i = 0; i < node.items.length; ++i) {
-            const ci = await visitAsync_(i, node.items[i], visitor, path8);
+            const ci = await visitAsync_(i, node.items[i], visitor, path10);
             if (typeof ci === "number")
               i = ci - 1;
             else if (ci === BREAK)
@@ -7038,13 +7038,13 @@ var require_visit = __commonJS({
             }
           }
         } else if (identity.isPair(node)) {
-          path8 = Object.freeze(path8.concat(node));
-          const ck = await visitAsync_("key", node.key, visitor, path8);
+          path10 = Object.freeze(path10.concat(node));
+          const ck = await visitAsync_("key", node.key, visitor, path10);
           if (ck === BREAK)
             return BREAK;
           else if (ck === REMOVE)
             node.key = null;
-          const cv = await visitAsync_("value", node.value, visitor, path8);
+          const cv = await visitAsync_("value", node.value, visitor, path10);
           if (cv === BREAK)
             return BREAK;
           else if (cv === REMOVE)
@@ -7071,23 +7071,23 @@ var require_visit = __commonJS({
       }
       return visitor;
     }
-    function callVisitor(key, node, visitor, path8) {
+    function callVisitor(key, node, visitor, path10) {
       if (typeof visitor === "function")
-        return visitor(key, node, path8);
+        return visitor(key, node, path10);
       if (identity.isMap(node))
-        return visitor.Map?.(key, node, path8);
+        return visitor.Map?.(key, node, path10);
       if (identity.isSeq(node))
-        return visitor.Seq?.(key, node, path8);
+        return visitor.Seq?.(key, node, path10);
       if (identity.isPair(node))
-        return visitor.Pair?.(key, node, path8);
+        return visitor.Pair?.(key, node, path10);
       if (identity.isScalar(node))
-        return visitor.Scalar?.(key, node, path8);
+        return visitor.Scalar?.(key, node, path10);
       if (identity.isAlias(node))
-        return visitor.Alias?.(key, node, path8);
+        return visitor.Alias?.(key, node, path10);
       return void 0;
     }
-    function replaceNode(key, path8, node) {
-      const parent = path8[path8.length - 1];
+    function replaceNode(key, path10, node) {
+      const parent = path10[path10.length - 1];
       if (identity.isCollection(parent)) {
         parent.items[key] = node;
       } else if (identity.isPair(parent)) {
@@ -7403,24 +7403,24 @@ var require_toJS = __commonJS({
   "node_modules/yaml/dist/nodes/toJS.js"(exports) {
     "use strict";
     var identity = require_identity();
-    function toJS(value, arg, ctx) {
+    function toJS(value, arg, ctx2) {
       if (Array.isArray(value))
-        return value.map((v, i) => toJS(v, String(i), ctx));
+        return value.map((v, i) => toJS(v, String(i), ctx2));
       if (value && typeof value.toJSON === "function") {
-        if (!ctx || !identity.hasAnchor(value))
-          return value.toJSON(arg, ctx);
+        if (!ctx2 || !identity.hasAnchor(value))
+          return value.toJSON(arg, ctx2);
         const data = { aliasCount: 0, count: 1, res: void 0 };
-        ctx.anchors.set(value, data);
-        ctx.onCreate = (res2) => {
+        ctx2.anchors.set(value, data);
+        ctx2.onCreate = (res2) => {
           data.res = res2;
-          delete ctx.onCreate;
+          delete ctx2.onCreate;
         };
-        const res = value.toJSON(arg, ctx);
-        if (ctx.onCreate)
-          ctx.onCreate(res);
+        const res = value.toJSON(arg, ctx2);
+        if (ctx2.onCreate)
+          ctx2.onCreate(res);
         return res;
       }
-      if (typeof value === "bigint" && !ctx?.keep)
+      if (typeof value === "bigint" && !ctx2?.keep)
         return Number(value);
       return value;
     }
@@ -7450,7 +7450,7 @@ var require_Node = __commonJS({
       toJS(doc, { mapAsMap, maxAliasCount, onAnchor, reviver } = {}) {
         if (!identity.isDocument(doc))
           throw new TypeError("A document argument is required");
-        const ctx = {
+        const ctx2 = {
           anchors: /* @__PURE__ */ new Map(),
           doc,
           keep: true,
@@ -7458,9 +7458,9 @@ var require_Node = __commonJS({
           mapKeyWarned: false,
           maxAliasCount: typeof maxAliasCount === "number" ? maxAliasCount : 100
         };
-        const res = toJS.toJS(this, "", ctx);
+        const res = toJS.toJS(this, "", ctx2);
         if (typeof onAnchor === "function")
-          for (const { count, res: res2 } of ctx.anchors.values())
+          for (const { count, res: res2 } of ctx2.anchors.values())
             onAnchor(res2, count);
         return typeof reviver === "function" ? applyReviver.applyReviver(reviver, { "": res }, "", res) : res;
       }
@@ -7492,10 +7492,10 @@ var require_Alias = __commonJS({
        * Resolve the value of this alias within `doc`, finding the last
        * instance of the `source` anchor before this node.
        */
-      resolve(doc, ctx) {
+      resolve(doc, ctx2) {
         let nodes;
-        if (ctx?.aliasResolveCache) {
-          nodes = ctx.aliasResolveCache;
+        if (ctx2?.aliasResolveCache) {
+          nodes = ctx2.aliasResolveCache;
         } else {
           nodes = [];
           visit.visit(doc, {
@@ -7504,8 +7504,8 @@ var require_Alias = __commonJS({
                 nodes.push(node);
             }
           });
-          if (ctx)
-            ctx.aliasResolveCache = nodes;
+          if (ctx2)
+            ctx2.aliasResolveCache = nodes;
         }
         let found = void 0;
         for (const node of nodes) {
@@ -7516,18 +7516,18 @@ var require_Alias = __commonJS({
         }
         return found;
       }
-      toJSON(_arg, ctx) {
-        if (!ctx)
+      toJSON(_arg, ctx2) {
+        if (!ctx2)
           return { source: this.source };
-        const { anchors: anchors2, doc, maxAliasCount } = ctx;
-        const source = this.resolve(doc, ctx);
+        const { anchors: anchors2, doc, maxAliasCount } = ctx2;
+        const source = this.resolve(doc, ctx2);
         if (!source) {
           const msg = `Unresolved alias (the anchor must be set before the alias): ${this.source}`;
           throw new ReferenceError(msg);
         }
         let data = anchors2.get(source);
         if (!data) {
-          toJS.toJS(source, null, ctx);
+          toJS.toJS(source, null, ctx2);
           data = anchors2.get(source);
         }
         if (data?.res === void 0) {
@@ -7545,15 +7545,15 @@ var require_Alias = __commonJS({
         }
         return data.res;
       }
-      toString(ctx, _onComment, _onChompKeep) {
+      toString(ctx2, _onComment, _onChompKeep) {
         const src = `*${this.source}`;
-        if (ctx) {
+        if (ctx2) {
           anchors.anchorIsValid(this.source);
-          if (ctx.options.verifyAliasOrder && !ctx.anchors.has(this.source)) {
+          if (ctx2.options.verifyAliasOrder && !ctx2.anchors.has(this.source)) {
             const msg = `Unresolved alias (the anchor must be set before the alias): ${this.source}`;
             throw new Error(msg);
           }
-          if (ctx.implicitKey)
+          if (ctx2.implicitKey)
             return `${src} `;
         }
         return src;
@@ -7596,8 +7596,8 @@ var require_Scalar = __commonJS({
         super(identity.SCALAR);
         this.value = value;
       }
-      toJSON(arg, ctx) {
-        return ctx?.keep ? this.value : toJS.toJS(this.value, arg, ctx);
+      toJSON(arg, ctx2) {
+        return ctx2?.keep ? this.value : toJS.toJS(this.value, arg, ctx2);
       }
       toString() {
         return String(this.value);
@@ -7631,20 +7631,20 @@ var require_createNode = __commonJS({
       }
       return tags.find((t) => t.identify?.(value) && !t.format);
     }
-    function createNode(value, tagName, ctx) {
+    function createNode(value, tagName, ctx2) {
       if (identity.isDocument(value))
         value = value.contents;
       if (identity.isNode(value))
         return value;
       if (identity.isPair(value)) {
-        const map2 = ctx.schema[identity.MAP].createNode?.(ctx.schema, null, ctx);
+        const map2 = ctx2.schema[identity.MAP].createNode?.(ctx2.schema, null, ctx2);
         map2.items.push(value);
         return map2;
       }
       if (value instanceof String || value instanceof Number || value instanceof Boolean || typeof BigInt !== "undefined" && value instanceof BigInt) {
         value = value.valueOf();
       }
-      const { aliasDuplicateObjects, onAnchor, onTagObj, schema, sourceObjects } = ctx;
+      const { aliasDuplicateObjects, onAnchor, onTagObj, schema, sourceObjects } = ctx2;
       let ref = void 0;
       if (aliasDuplicateObjects && value && typeof value === "object") {
         ref = sourceObjects.get(value);
@@ -7673,9 +7673,9 @@ var require_createNode = __commonJS({
       }
       if (onTagObj) {
         onTagObj(tagObj);
-        delete ctx.onTagObj;
+        delete ctx2.onTagObj;
       }
-      const node = tagObj?.createNode ? tagObj.createNode(ctx.schema, value, ctx) : typeof tagObj?.nodeClass?.from === "function" ? tagObj.nodeClass.from(ctx.schema, value, ctx) : new Scalar.Scalar(value);
+      const node = tagObj?.createNode ? tagObj.createNode(ctx2.schema, value, ctx2) : typeof tagObj?.nodeClass?.from === "function" ? tagObj.nodeClass.from(ctx2.schema, value, ctx2) : new Scalar.Scalar(value);
       if (tagName)
         node.tag = tagName;
       else if (!tagObj.default)
@@ -7695,10 +7695,10 @@ var require_Collection = __commonJS({
     var createNode = require_createNode();
     var identity = require_identity();
     var Node = require_Node();
-    function collectionFromPath(schema, path8, value) {
+    function collectionFromPath(schema, path10, value) {
       let v = value;
-      for (let i = path8.length - 1; i >= 0; --i) {
-        const k = path8[i];
+      for (let i = path10.length - 1; i >= 0; --i) {
+        const k = path10[i];
         if (typeof k === "number" && Number.isInteger(k) && k >= 0) {
           const a = [];
           a[k] = v;
@@ -7717,7 +7717,7 @@ var require_Collection = __commonJS({
         sourceObjects: /* @__PURE__ */ new Map()
       });
     }
-    var isEmptyPath = (path8) => path8 == null || typeof path8 === "object" && !!path8[Symbol.iterator]().next().done;
+    var isEmptyPath = (path10) => path10 == null || typeof path10 === "object" && !!path10[Symbol.iterator]().next().done;
     var Collection = class extends Node.NodeBase {
       constructor(type, schema) {
         super(type);
@@ -7747,11 +7747,11 @@ var require_Collection = __commonJS({
        * be a Pair instance or a `{ key, value }` object, which may not have a key
        * that already exists in the map.
        */
-      addIn(path8, value) {
-        if (isEmptyPath(path8))
+      addIn(path10, value) {
+        if (isEmptyPath(path10))
           this.add(value);
         else {
-          const [key, ...rest] = path8;
+          const [key, ...rest] = path10;
           const node = this.get(key, true);
           if (identity.isCollection(node))
             node.addIn(rest, value);
@@ -7765,8 +7765,8 @@ var require_Collection = __commonJS({
        * Removes a value from the collection.
        * @returns `true` if the item was found and removed.
        */
-      deleteIn(path8) {
-        const [key, ...rest] = path8;
+      deleteIn(path10) {
+        const [key, ...rest] = path10;
         if (rest.length === 0)
           return this.delete(key);
         const node = this.get(key, true);
@@ -7780,8 +7780,8 @@ var require_Collection = __commonJS({
        * scalar values from their surrounding node; to disable set `keepScalar` to
        * `true` (collections are always returned intact).
        */
-      getIn(path8, keepScalar) {
-        const [key, ...rest] = path8;
+      getIn(path10, keepScalar) {
+        const [key, ...rest] = path10;
         const node = this.get(key, true);
         if (rest.length === 0)
           return !keepScalar && identity.isScalar(node) ? node.value : node;
@@ -7799,8 +7799,8 @@ var require_Collection = __commonJS({
       /**
        * Checks if the collection includes a value with the key `key`.
        */
-      hasIn(path8) {
-        const [key, ...rest] = path8;
+      hasIn(path10) {
+        const [key, ...rest] = path10;
         if (rest.length === 0)
           return this.has(key);
         const node = this.get(key, true);
@@ -7810,8 +7810,8 @@ var require_Collection = __commonJS({
        * Sets a value in this collection. For `!!set`, `value` needs to be a
        * boolean to add/remove the item from the set.
        */
-      setIn(path8, value) {
-        const [key, ...rest] = path8;
+      setIn(path10, value) {
+        const [key, ...rest] = path10;
         if (rest.length === 0) {
           this.set(key, value);
         } else {
@@ -7990,10 +7990,10 @@ var require_stringifyString = __commonJS({
     "use strict";
     var Scalar = require_Scalar();
     var foldFlowLines = require_foldFlowLines();
-    var getFoldOptions = (ctx, isBlock) => ({
-      indentAtStart: isBlock ? ctx.indent.length : ctx.indentAtStart,
-      lineWidth: ctx.options.lineWidth,
-      minContentWidth: ctx.options.minContentWidth
+    var getFoldOptions = (ctx2, isBlock) => ({
+      indentAtStart: isBlock ? ctx2.indent.length : ctx2.indentAtStart,
+      lineWidth: ctx2.options.lineWidth,
+      minContentWidth: ctx2.options.minContentWidth
     });
     var containsDocumentMarker = (str) => /^(%|---|\.\.\.)/m.test(str);
     function lineLengthOverLimit(str, lineWidth, indentLength) {
@@ -8014,13 +8014,13 @@ var require_stringifyString = __commonJS({
       }
       return true;
     }
-    function doubleQuotedString(value, ctx) {
+    function doubleQuotedString(value, ctx2) {
       const json2 = JSON.stringify(value);
-      if (ctx.options.doubleQuotedAsJSON)
+      if (ctx2.options.doubleQuotedAsJSON)
         return json2;
-      const { implicitKey } = ctx;
-      const minMultiLineLength = ctx.options.doubleQuotedMinMultiLineLength;
-      const indent = ctx.indent || (containsDocumentMarker(value) ? "  " : "");
+      const { implicitKey } = ctx2;
+      const minMultiLineLength = ctx2.options.doubleQuotedMinMultiLineLength;
+      const indent = ctx2.indent || (containsDocumentMarker(value) ? "  " : "");
       let str = "";
       let start = 0;
       for (let i = 0, ch = json2[i]; ch; ch = json2[++i]) {
@@ -8092,18 +8092,18 @@ var require_stringifyString = __commonJS({
           }
       }
       str = start ? str + json2.slice(start) : json2;
-      return implicitKey ? str : foldFlowLines.foldFlowLines(str, indent, foldFlowLines.FOLD_QUOTED, getFoldOptions(ctx, false));
+      return implicitKey ? str : foldFlowLines.foldFlowLines(str, indent, foldFlowLines.FOLD_QUOTED, getFoldOptions(ctx2, false));
     }
-    function singleQuotedString(value, ctx) {
-      if (ctx.options.singleQuote === false || ctx.implicitKey && value.includes("\n") || /[ \t]\n|\n[ \t]/.test(value))
-        return doubleQuotedString(value, ctx);
-      const indent = ctx.indent || (containsDocumentMarker(value) ? "  " : "");
+    function singleQuotedString(value, ctx2) {
+      if (ctx2.options.singleQuote === false || ctx2.implicitKey && value.includes("\n") || /[ \t]\n|\n[ \t]/.test(value))
+        return doubleQuotedString(value, ctx2);
+      const indent = ctx2.indent || (containsDocumentMarker(value) ? "  " : "");
       const res = "'" + value.replace(/'/g, "''").replace(/\n+/g, `$&
 ${indent}`) + "'";
-      return ctx.implicitKey ? res : foldFlowLines.foldFlowLines(res, indent, foldFlowLines.FOLD_FLOW, getFoldOptions(ctx, false));
+      return ctx2.implicitKey ? res : foldFlowLines.foldFlowLines(res, indent, foldFlowLines.FOLD_FLOW, getFoldOptions(ctx2, false));
     }
-    function quotedString(value, ctx) {
-      const { singleQuote } = ctx.options;
+    function quotedString(value, ctx2) {
+      const { singleQuote } = ctx2.options;
       let qs;
       if (singleQuote === false)
         qs = doubleQuotedString;
@@ -8117,7 +8117,7 @@ ${indent}`) + "'";
         else
           qs = singleQuote ? singleQuotedString : doubleQuotedString;
       }
-      return qs(value, ctx);
+      return qs(value, ctx2);
     }
     var blockEndNewlines;
     try {
@@ -8125,12 +8125,12 @@ ${indent}`) + "'";
     } catch {
       blockEndNewlines = /\n+(?!\n|$)/g;
     }
-    function blockString({ comment, type, value }, ctx, onComment, onChompKeep) {
-      const { blockQuote, commentString, lineWidth } = ctx.options;
+    function blockString({ comment, type, value }, ctx2, onComment, onChompKeep) {
+      const { blockQuote, commentString, lineWidth } = ctx2.options;
       if (!blockQuote || /\n[\t ]+$/.test(value)) {
-        return quotedString(value, ctx);
+        return quotedString(value, ctx2);
       }
-      const indent = ctx.indent || (ctx.forceBlockIndent || containsDocumentMarker(value) ? "  " : "");
+      const indent = ctx2.indent || (ctx2.forceBlockIndent || containsDocumentMarker(value) ? "  " : "");
       const literal2 = blockQuote === "literal" ? true : blockQuote === "folded" || type === Scalar.Scalar.BLOCK_FOLDED ? false : type === Scalar.Scalar.BLOCK_LITERAL ? true : !lineLengthOverLimit(value, lineWidth, indent.length);
       if (!value)
         return literal2 ? "|\n" : ">\n";
@@ -8185,7 +8185,7 @@ ${indent}`) + "'";
       if (!literal2) {
         const foldedValue = value.replace(/\n+/g, "\n$&").replace(/(?:^|\n)([\t ].*)(?:([\n\t ]*)\n(?![\n\t ]))?/g, "$1$2").replace(/\n+/g, `$&${indent}`);
         let literalFallback = false;
-        const foldOptions = getFoldOptions(ctx, true);
+        const foldOptions = getFoldOptions(ctx2, true);
         if (blockQuote !== "folded" && type !== Scalar.Scalar.BLOCK_FOLDED) {
           foldOptions.onOverflow = () => {
             literalFallback = true;
@@ -8200,38 +8200,38 @@ ${indent}${body}`;
       return `|${header}
 ${indent}${start}${value}${end}`;
     }
-    function plainString(item, ctx, onComment, onChompKeep) {
+    function plainString(item, ctx2, onComment, onChompKeep) {
       const { type, value } = item;
-      const { actualString, implicitKey, indent, indentStep, inFlow } = ctx;
+      const { actualString, implicitKey, indent, indentStep, inFlow } = ctx2;
       if (implicitKey && value.includes("\n") || inFlow && /[[\]{},]/.test(value)) {
-        return quotedString(value, ctx);
+        return quotedString(value, ctx2);
       }
       if (/^[\n\t ,[\]{}#&*!|>'"%@`]|^[?-]$|^[?-][ \t]|[\n:][ \t]|[ \t]\n|[\n\t ]#|[\n\t :]$/.test(value)) {
-        return implicitKey || inFlow || !value.includes("\n") ? quotedString(value, ctx) : blockString(item, ctx, onComment, onChompKeep);
+        return implicitKey || inFlow || !value.includes("\n") ? quotedString(value, ctx2) : blockString(item, ctx2, onComment, onChompKeep);
       }
       if (!implicitKey && !inFlow && type !== Scalar.Scalar.PLAIN && value.includes("\n")) {
-        return blockString(item, ctx, onComment, onChompKeep);
+        return blockString(item, ctx2, onComment, onChompKeep);
       }
       if (containsDocumentMarker(value)) {
         if (indent === "") {
-          ctx.forceBlockIndent = true;
-          return blockString(item, ctx, onComment, onChompKeep);
+          ctx2.forceBlockIndent = true;
+          return blockString(item, ctx2, onComment, onChompKeep);
         } else if (implicitKey && indent === indentStep) {
-          return quotedString(value, ctx);
+          return quotedString(value, ctx2);
         }
       }
       const str = value.replace(/\n+/g, `$&
 ${indent}`);
       if (actualString) {
         const test = (tag) => tag.default && tag.tag !== "tag:yaml.org,2002:str" && tag.test?.test(str);
-        const { compat, tags } = ctx.doc.schema;
+        const { compat, tags } = ctx2.doc.schema;
         if (tags.some(test) || compat?.some(test))
-          return quotedString(value, ctx);
+          return quotedString(value, ctx2);
       }
-      return implicitKey ? str : foldFlowLines.foldFlowLines(str, indent, foldFlowLines.FOLD_FLOW, getFoldOptions(ctx, false));
+      return implicitKey ? str : foldFlowLines.foldFlowLines(str, indent, foldFlowLines.FOLD_FLOW, getFoldOptions(ctx2, false));
     }
-    function stringifyString(item, ctx, onComment, onChompKeep) {
-      const { implicitKey, inFlow } = ctx;
+    function stringifyString(item, ctx2, onComment, onChompKeep) {
+      const { implicitKey, inFlow } = ctx2;
       const ss = typeof item.value === "string" ? item : Object.assign({}, item, { value: String(item.value) });
       let { type } = item;
       if (type !== Scalar.Scalar.QUOTE_DOUBLE) {
@@ -8242,20 +8242,20 @@ ${indent}`);
         switch (_type) {
           case Scalar.Scalar.BLOCK_FOLDED:
           case Scalar.Scalar.BLOCK_LITERAL:
-            return implicitKey || inFlow ? quotedString(ss.value, ctx) : blockString(ss, ctx, onComment, onChompKeep);
+            return implicitKey || inFlow ? quotedString(ss.value, ctx2) : blockString(ss, ctx2, onComment, onChompKeep);
           case Scalar.Scalar.QUOTE_DOUBLE:
-            return doubleQuotedString(ss.value, ctx);
+            return doubleQuotedString(ss.value, ctx2);
           case Scalar.Scalar.QUOTE_SINGLE:
-            return singleQuotedString(ss.value, ctx);
+            return singleQuotedString(ss.value, ctx2);
           case Scalar.Scalar.PLAIN:
-            return plainString(ss, ctx, onComment, onChompKeep);
+            return plainString(ss, ctx2, onComment, onChompKeep);
           default:
             return null;
         }
       };
       let res = _stringify(type);
       if (res === null) {
-        const { defaultKeyType, defaultStringType } = ctx.options;
+        const { defaultKeyType, defaultStringType } = ctx2.options;
         const t = implicitKey && defaultKeyType || defaultStringType;
         res = _stringify(t);
         if (res === null)
@@ -8358,33 +8358,33 @@ var require_stringify = __commonJS({
         props.push(doc.directives.tagString(tag));
       return props.join(" ");
     }
-    function stringify(item, ctx, onComment, onChompKeep) {
+    function stringify(item, ctx2, onComment, onChompKeep) {
       if (identity.isPair(item))
-        return item.toString(ctx, onComment, onChompKeep);
+        return item.toString(ctx2, onComment, onChompKeep);
       if (identity.isAlias(item)) {
-        if (ctx.doc.directives)
-          return item.toString(ctx);
-        if (ctx.resolvedAliases?.has(item)) {
+        if (ctx2.doc.directives)
+          return item.toString(ctx2);
+        if (ctx2.resolvedAliases?.has(item)) {
           throw new TypeError(`Cannot stringify circular structure without alias nodes`);
         } else {
-          if (ctx.resolvedAliases)
-            ctx.resolvedAliases.add(item);
+          if (ctx2.resolvedAliases)
+            ctx2.resolvedAliases.add(item);
           else
-            ctx.resolvedAliases = /* @__PURE__ */ new Set([item]);
-          item = item.resolve(ctx.doc);
+            ctx2.resolvedAliases = /* @__PURE__ */ new Set([item]);
+          item = item.resolve(ctx2.doc);
         }
       }
       let tagObj = void 0;
-      const node = identity.isNode(item) ? item : ctx.doc.createNode(item, { onTagObj: (o) => tagObj = o });
-      tagObj ?? (tagObj = getTagObject(ctx.doc.schema.tags, node));
-      const props = stringifyProps(node, tagObj, ctx);
+      const node = identity.isNode(item) ? item : ctx2.doc.createNode(item, { onTagObj: (o) => tagObj = o });
+      tagObj ?? (tagObj = getTagObject(ctx2.doc.schema.tags, node));
+      const props = stringifyProps(node, tagObj, ctx2);
       if (props.length > 0)
-        ctx.indentAtStart = (ctx.indentAtStart ?? 0) + props.length + 1;
-      const str = typeof tagObj.stringify === "function" ? tagObj.stringify(node, ctx, onComment, onChompKeep) : identity.isScalar(node) ? stringifyString.stringifyString(node, ctx, onComment, onChompKeep) : node.toString(ctx, onComment, onChompKeep);
+        ctx2.indentAtStart = (ctx2.indentAtStart ?? 0) + props.length + 1;
+      const str = typeof tagObj.stringify === "function" ? tagObj.stringify(node, ctx2, onComment, onChompKeep) : identity.isScalar(node) ? stringifyString.stringifyString(node, ctx2, onComment, onChompKeep) : node.toString(ctx2, onComment, onChompKeep);
       if (!props)
         return str;
       return identity.isScalar(node) || str[0] === "{" || str[0] === "[" ? `${props} ${str}` : `${props}
-${ctx.indent}${str}`;
+${ctx2.indent}${str}`;
     }
     exports.createStringifyContext = createStringifyContext;
     exports.stringify = stringify;
@@ -8399,8 +8399,8 @@ var require_stringifyPair = __commonJS({
     var Scalar = require_Scalar();
     var stringify = require_stringify();
     var stringifyComment = require_stringifyComment();
-    function stringifyPair({ key, value }, ctx, onComment, onChompKeep) {
-      const { allNullValues, doc, indent, indentStep, options: { commentString, indentSeq, simpleKeys } } = ctx;
+    function stringifyPair({ key, value }, ctx2, onComment, onChompKeep) {
+      const { allNullValues, doc, indent, indentStep, options: { commentString, indentSeq, simpleKeys } } = ctx2;
       let keyComment = identity.isNode(key) && key.comment || null;
       if (simpleKeys) {
         if (keyComment) {
@@ -8411,21 +8411,21 @@ var require_stringifyPair = __commonJS({
           throw new Error(msg);
         }
       }
-      let explicitKey = !simpleKeys && (!key || keyComment && value == null && !ctx.inFlow || identity.isCollection(key) || (identity.isScalar(key) ? key.type === Scalar.Scalar.BLOCK_FOLDED || key.type === Scalar.Scalar.BLOCK_LITERAL : typeof key === "object"));
-      ctx = Object.assign({}, ctx, {
+      let explicitKey = !simpleKeys && (!key || keyComment && value == null && !ctx2.inFlow || identity.isCollection(key) || (identity.isScalar(key) ? key.type === Scalar.Scalar.BLOCK_FOLDED || key.type === Scalar.Scalar.BLOCK_LITERAL : typeof key === "object"));
+      ctx2 = Object.assign({}, ctx2, {
         allNullValues: false,
         implicitKey: !explicitKey && (simpleKeys || !allNullValues),
         indent: indent + indentStep
       });
       let keyCommentDone = false;
       let chompKeep = false;
-      let str = stringify.stringify(key, ctx, () => keyCommentDone = true, () => chompKeep = true);
-      if (!explicitKey && !ctx.inFlow && str.length > 1024) {
+      let str = stringify.stringify(key, ctx2, () => keyCommentDone = true, () => chompKeep = true);
+      if (!explicitKey && !ctx2.inFlow && str.length > 1024) {
         if (simpleKeys)
           throw new Error("With simple keys, single line scalar must not span more than 1024 characters");
         explicitKey = true;
       }
-      if (ctx.inFlow) {
+      if (ctx2.inFlow) {
         if (allNullValues || value == null) {
           if (keyCommentDone && onComment)
             onComment();
@@ -8434,7 +8434,7 @@ var require_stringifyPair = __commonJS({
       } else if (allNullValues && !simpleKeys || value == null && explicitKey) {
         str = `? ${str}`;
         if (keyComment && !keyCommentDone) {
-          str += stringifyComment.lineComment(str, ctx.indent, commentString(keyComment));
+          str += stringifyComment.lineComment(str, ctx2.indent, commentString(keyComment));
         } else if (chompKeep && onChompKeep)
           onChompKeep();
         return str;
@@ -8443,13 +8443,13 @@ var require_stringifyPair = __commonJS({
         keyComment = null;
       if (explicitKey) {
         if (keyComment)
-          str += stringifyComment.lineComment(str, ctx.indent, commentString(keyComment));
+          str += stringifyComment.lineComment(str, ctx2.indent, commentString(keyComment));
         str = `? ${str}
 ${indent}:`;
       } else {
         str = `${str}:`;
         if (keyComment)
-          str += stringifyComment.lineComment(str, ctx.indent, commentString(keyComment));
+          str += stringifyComment.lineComment(str, ctx2.indent, commentString(keyComment));
       }
       let vsb, vcb, valueComment;
       if (identity.isNode(value)) {
@@ -8463,35 +8463,35 @@ ${indent}:`;
         if (value && typeof value === "object")
           value = doc.createNode(value);
       }
-      ctx.implicitKey = false;
+      ctx2.implicitKey = false;
       if (!explicitKey && !keyComment && identity.isScalar(value))
-        ctx.indentAtStart = str.length + 1;
+        ctx2.indentAtStart = str.length + 1;
       chompKeep = false;
-      if (!indentSeq && indentStep.length >= 2 && !ctx.inFlow && !explicitKey && identity.isSeq(value) && !value.flow && !value.tag && !value.anchor) {
-        ctx.indent = ctx.indent.substring(2);
+      if (!indentSeq && indentStep.length >= 2 && !ctx2.inFlow && !explicitKey && identity.isSeq(value) && !value.flow && !value.tag && !value.anchor) {
+        ctx2.indent = ctx2.indent.substring(2);
       }
       let valueCommentDone = false;
-      const valueStr = stringify.stringify(value, ctx, () => valueCommentDone = true, () => chompKeep = true);
+      const valueStr = stringify.stringify(value, ctx2, () => valueCommentDone = true, () => chompKeep = true);
       let ws = " ";
       if (keyComment || vsb || vcb) {
         ws = vsb ? "\n" : "";
         if (vcb) {
           const cs = commentString(vcb);
           ws += `
-${stringifyComment.indentComment(cs, ctx.indent)}`;
+${stringifyComment.indentComment(cs, ctx2.indent)}`;
         }
-        if (valueStr === "" && !ctx.inFlow) {
+        if (valueStr === "" && !ctx2.inFlow) {
           if (ws === "\n" && valueComment)
             ws = "\n\n";
         } else {
           ws += `
-${ctx.indent}`;
+${ctx2.indent}`;
         }
       } else if (!explicitKey && identity.isCollection(value)) {
         const vs0 = valueStr[0];
         const nl0 = valueStr.indexOf("\n");
         const hasNewline = nl0 !== -1;
-        const flow = ctx.inFlow ?? value.flow ?? value.items.length === 0;
+        const flow = ctx2.inFlow ?? value.flow ?? value.items.length === 0;
         if (hasNewline || !flow) {
           let hasPropsLine = false;
           if (hasNewline && (vs0 === "&" || vs0 === "!")) {
@@ -8504,17 +8504,17 @@ ${ctx.indent}`;
           }
           if (!hasPropsLine)
             ws = `
-${ctx.indent}`;
+${ctx2.indent}`;
         }
       } else if (valueStr === "" || valueStr[0] === "\n") {
         ws = "";
       }
       str += ws + valueStr;
-      if (ctx.inFlow) {
+      if (ctx2.inFlow) {
         if (valueCommentDone && onComment)
           onComment();
       } else if (valueComment && !valueCommentDone) {
-        str += stringifyComment.lineComment(str, ctx.indent, commentString(valueComment));
+        str += stringifyComment.lineComment(str, ctx2.indent, commentString(valueComment));
       } else if (chompKeep && onChompKeep) {
         onChompKeep();
       }
@@ -8563,23 +8563,23 @@ var require_merge = __commonJS({
       }),
       stringify: () => MERGE_KEY
     };
-    var isMergeKey = (ctx, key) => (merge2.identify(key) || identity.isScalar(key) && (!key.type || key.type === Scalar.Scalar.PLAIN) && merge2.identify(key.value)) && ctx?.doc.schema.tags.some((tag) => tag.tag === merge2.tag && tag.default);
-    function addMergeToJSMap(ctx, map2, value) {
-      value = ctx && identity.isAlias(value) ? value.resolve(ctx.doc) : value;
+    var isMergeKey = (ctx2, key) => (merge2.identify(key) || identity.isScalar(key) && (!key.type || key.type === Scalar.Scalar.PLAIN) && merge2.identify(key.value)) && ctx2?.doc.schema.tags.some((tag) => tag.tag === merge2.tag && tag.default);
+    function addMergeToJSMap(ctx2, map2, value) {
+      value = ctx2 && identity.isAlias(value) ? value.resolve(ctx2.doc) : value;
       if (identity.isSeq(value))
         for (const it of value.items)
-          mergeValue(ctx, map2, it);
+          mergeValue(ctx2, map2, it);
       else if (Array.isArray(value))
         for (const it of value)
-          mergeValue(ctx, map2, it);
+          mergeValue(ctx2, map2, it);
       else
-        mergeValue(ctx, map2, value);
+        mergeValue(ctx2, map2, value);
     }
-    function mergeValue(ctx, map2, value) {
-      const source = ctx && identity.isAlias(value) ? value.resolve(ctx.doc) : value;
+    function mergeValue(ctx2, map2, value) {
+      const source = ctx2 && identity.isAlias(value) ? value.resolve(ctx2.doc) : value;
       if (!identity.isMap(source))
         throw new Error("Merge sources must be maps or map aliases");
-      const srcMap = source.toJSON(null, ctx, Map);
+      const srcMap = source.toJSON(null, ctx2, Map);
       for (const [key, value2] of srcMap) {
         if (map2 instanceof Map) {
           if (!map2.has(key))
@@ -8612,20 +8612,20 @@ var require_addPairToJSMap = __commonJS({
     var stringify = require_stringify();
     var identity = require_identity();
     var toJS = require_toJS();
-    function addPairToJSMap(ctx, map2, { key, value }) {
+    function addPairToJSMap(ctx2, map2, { key, value }) {
       if (identity.isNode(key) && key.addToJSMap)
-        key.addToJSMap(ctx, map2, value);
-      else if (merge2.isMergeKey(ctx, key))
-        merge2.addMergeToJSMap(ctx, map2, value);
+        key.addToJSMap(ctx2, map2, value);
+      else if (merge2.isMergeKey(ctx2, key))
+        merge2.addMergeToJSMap(ctx2, map2, value);
       else {
-        const jsKey = toJS.toJS(key, "", ctx);
+        const jsKey = toJS.toJS(key, "", ctx2);
         if (map2 instanceof Map) {
-          map2.set(jsKey, toJS.toJS(value, jsKey, ctx));
+          map2.set(jsKey, toJS.toJS(value, jsKey, ctx2));
         } else if (map2 instanceof Set) {
           map2.add(jsKey);
         } else {
-          const stringKey = stringifyKey(key, jsKey, ctx);
-          const jsValue = toJS.toJS(value, stringKey, ctx);
+          const stringKey = stringifyKey(key, jsKey, ctx2);
+          const jsValue = toJS.toJS(value, stringKey, ctx2);
           if (stringKey in map2)
             Object.defineProperty(map2, stringKey, {
               value: jsValue,
@@ -8639,25 +8639,25 @@ var require_addPairToJSMap = __commonJS({
       }
       return map2;
     }
-    function stringifyKey(key, jsKey, ctx) {
+    function stringifyKey(key, jsKey, ctx2) {
       if (jsKey === null)
         return "";
       if (typeof jsKey !== "object")
         return String(jsKey);
-      if (identity.isNode(key) && ctx?.doc) {
-        const strCtx = stringify.createStringifyContext(ctx.doc, {});
+      if (identity.isNode(key) && ctx2?.doc) {
+        const strCtx = stringify.createStringifyContext(ctx2.doc, {});
         strCtx.anchors = /* @__PURE__ */ new Set();
-        for (const node of ctx.anchors.keys())
+        for (const node of ctx2.anchors.keys())
           strCtx.anchors.add(node.anchor);
         strCtx.inFlow = true;
         strCtx.inStringifyKey = true;
         const strKey = key.toString(strCtx);
-        if (!ctx.mapKeyWarned) {
+        if (!ctx2.mapKeyWarned) {
           let jsonStr = JSON.stringify(strKey);
           if (jsonStr.length > 40)
             jsonStr = jsonStr.substring(0, 36) + '..."';
-          log.warn(ctx.doc.options.logLevel, `Keys with collection values will be stringified due to JS Object restrictions: ${jsonStr}. Set mapAsMap: true to use object keys.`);
-          ctx.mapKeyWarned = true;
+          log.warn(ctx2.doc.options.logLevel, `Keys with collection values will be stringified due to JS Object restrictions: ${jsonStr}. Set mapAsMap: true to use object keys.`);
+          ctx2.mapKeyWarned = true;
         }
         return strKey;
       }
@@ -8675,9 +8675,9 @@ var require_Pair = __commonJS({
     var stringifyPair = require_stringifyPair();
     var addPairToJSMap = require_addPairToJSMap();
     var identity = require_identity();
-    function createPair(key, value, ctx) {
-      const k = createNode.createNode(key, void 0, ctx);
-      const v = createNode.createNode(value, void 0, ctx);
+    function createPair(key, value, ctx2) {
+      const k = createNode.createNode(key, void 0, ctx2);
+      const v = createNode.createNode(value, void 0, ctx2);
       return new Pair(k, v);
     }
     var Pair = class _Pair {
@@ -8694,12 +8694,12 @@ var require_Pair = __commonJS({
           value = value.clone(schema);
         return new _Pair(key, value);
       }
-      toJSON(_, ctx) {
-        const pair = ctx?.mapAsMap ? /* @__PURE__ */ new Map() : {};
-        return addPairToJSMap.addPairToJSMap(ctx, pair, this);
+      toJSON(_, ctx2) {
+        const pair = ctx2?.mapAsMap ? /* @__PURE__ */ new Map() : {};
+        return addPairToJSMap.addPairToJSMap(ctx2, pair, this);
       }
-      toString(ctx, onComment, onChompKeep) {
-        return ctx?.doc ? stringifyPair.stringifyPair(this, ctx, onComment, onChompKeep) : JSON.stringify(this);
+      toString(ctx2, onComment, onChompKeep) {
+        return ctx2?.doc ? stringifyPair.stringifyPair(this, ctx2, onComment, onChompKeep) : JSON.stringify(this);
       }
     };
     exports.Pair = Pair;
@@ -8714,14 +8714,14 @@ var require_stringifyCollection = __commonJS({
     var identity = require_identity();
     var stringify = require_stringify();
     var stringifyComment = require_stringifyComment();
-    function stringifyCollection(collection, ctx, options) {
-      const flow = ctx.inFlow ?? collection.flow;
+    function stringifyCollection(collection, ctx2, options) {
+      const flow = ctx2.inFlow ?? collection.flow;
       const stringify2 = flow ? stringifyFlowCollection : stringifyBlockCollection;
-      return stringify2(collection, ctx, options);
+      return stringify2(collection, ctx2, options);
     }
-    function stringifyBlockCollection({ comment, items }, ctx, { blockItemPrefix, flowChars, itemIndent, onChompKeep, onComment }) {
-      const { indent, options: { commentString } } = ctx;
-      const itemCtx = Object.assign({}, ctx, { indent: itemIndent, type: null });
+    function stringifyBlockCollection({ comment, items }, ctx2, { blockItemPrefix, flowChars, itemIndent, onChompKeep, onComment }) {
+      const { indent, options: { commentString } } = ctx2;
+      const itemCtx = Object.assign({}, ctx2, { indent: itemIndent, type: null });
       let chompKeep = false;
       const lines = [];
       for (let i = 0; i < items.length; ++i) {
@@ -8730,7 +8730,7 @@ var require_stringifyCollection = __commonJS({
         if (identity.isNode(item)) {
           if (!chompKeep && item.spaceBefore)
             lines.push("");
-          addCommentBefore(ctx, lines, item.commentBefore, chompKeep);
+          addCommentBefore(ctx2, lines, item.commentBefore, chompKeep);
           if (item.comment)
             comment2 = item.comment;
         } else if (identity.isPair(item)) {
@@ -8738,7 +8738,7 @@ var require_stringifyCollection = __commonJS({
           if (ik) {
             if (!chompKeep && ik.spaceBefore)
               lines.push("");
-            addCommentBefore(ctx, lines, ik.commentBefore, chompKeep);
+            addCommentBefore(ctx2, lines, ik.commentBefore, chompKeep);
           }
         }
         chompKeep = false;
@@ -8768,10 +8768,10 @@ ${indent}${line}` : "\n";
         onChompKeep();
       return str;
     }
-    function stringifyFlowCollection({ items }, ctx, { flowChars, itemIndent }) {
-      const { indent, indentStep, flowCollectionPadding: fcPadding, options: { commentString } } = ctx;
+    function stringifyFlowCollection({ items }, ctx2, { flowChars, itemIndent }) {
+      const { indent, indentStep, flowCollectionPadding: fcPadding, options: { commentString } } = ctx2;
       itemIndent += indentStep;
-      const itemCtx = Object.assign({}, ctx, {
+      const itemCtx = Object.assign({}, ctx2, {
         indent: itemIndent,
         inFlow: true,
         type: null
@@ -8785,7 +8785,7 @@ ${indent}${line}` : "\n";
         if (identity.isNode(item)) {
           if (item.spaceBefore)
             lines.push("");
-          addCommentBefore(ctx, lines, item.commentBefore, false);
+          addCommentBefore(ctx2, lines, item.commentBefore, false);
           if (item.comment)
             comment = item.comment;
         } else if (identity.isPair(item)) {
@@ -8793,7 +8793,7 @@ ${indent}${line}` : "\n";
           if (ik) {
             if (ik.spaceBefore)
               lines.push("");
-            addCommentBefore(ctx, lines, ik.commentBefore, false);
+            addCommentBefore(ctx2, lines, ik.commentBefore, false);
             if (ik.comment)
               reqNewline = true;
           }
@@ -8813,9 +8813,9 @@ ${indent}${line}` : "\n";
         reqNewline || (reqNewline = lines.length > linesAtValue || str.includes("\n"));
         if (i < items.length - 1) {
           str += ",";
-        } else if (ctx.options.trailingComma) {
-          if (ctx.options.lineWidth > 0) {
-            reqNewline || (reqNewline = lines.reduce((sum, line) => sum + line.length + 2, 2) + (str.length + 2) > ctx.options.lineWidth);
+        } else if (ctx2.options.trailingComma) {
+          if (ctx2.options.lineWidth > 0) {
+            reqNewline || (reqNewline = lines.reduce((sum, line) => sum + line.length + 2, 2) + (str.length + 2) > ctx2.options.lineWidth);
           }
           if (reqNewline) {
             str += ",";
@@ -8832,7 +8832,7 @@ ${indent}${line}` : "\n";
       } else {
         if (!reqNewline) {
           const len = lines.reduce((sum, line) => sum + line.length + 2, 2);
-          reqNewline = ctx.options.lineWidth > 0 && len > ctx.options.lineWidth;
+          reqNewline = ctx2.options.lineWidth > 0 && len > ctx2.options.lineWidth;
         }
         if (reqNewline) {
           let str = start;
@@ -8892,8 +8892,8 @@ var require_YAMLMap = __commonJS({
        * A generic collection parsing method that can be extended
        * to other node classes that inherit from YAMLMap
        */
-      static from(schema, obj, ctx) {
-        const { keepUndefined, replacer } = ctx;
+      static from(schema, obj, ctx2) {
+        const { keepUndefined, replacer } = ctx2;
         const map2 = new this(schema);
         const add = (key, value) => {
           if (typeof replacer === "function")
@@ -8901,7 +8901,7 @@ var require_YAMLMap = __commonJS({
           else if (Array.isArray(replacer) && !replacer.includes(key))
             return;
           if (value !== void 0 || keepUndefined)
-            map2.items.push(Pair.createPair(key, value, ctx));
+            map2.items.push(Pair.createPair(key, value, ctx2));
         };
         if (obj instanceof Map) {
           for (const [key, value] of obj)
@@ -8971,27 +8971,27 @@ var require_YAMLMap = __commonJS({
        * @param {Class} Type - If set, forces the returned collection type
        * @returns Instance of Type, Map, or Object
        */
-      toJSON(_, ctx, Type) {
-        const map2 = Type ? new Type() : ctx?.mapAsMap ? /* @__PURE__ */ new Map() : {};
-        if (ctx?.onCreate)
-          ctx.onCreate(map2);
+      toJSON(_, ctx2, Type) {
+        const map2 = Type ? new Type() : ctx2?.mapAsMap ? /* @__PURE__ */ new Map() : {};
+        if (ctx2?.onCreate)
+          ctx2.onCreate(map2);
         for (const item of this.items)
-          addPairToJSMap.addPairToJSMap(ctx, map2, item);
+          addPairToJSMap.addPairToJSMap(ctx2, map2, item);
         return map2;
       }
-      toString(ctx, onComment, onChompKeep) {
-        if (!ctx)
+      toString(ctx2, onComment, onChompKeep) {
+        if (!ctx2)
           return JSON.stringify(this);
         for (const item of this.items) {
           if (!identity.isPair(item))
             throw new Error(`Map items must all be pairs; found ${JSON.stringify(item)} instead`);
         }
-        if (!ctx.allNullValues && this.hasAllNullValues(false))
-          ctx = Object.assign({}, ctx, { allNullValues: true });
-        return stringifyCollection.stringifyCollection(this, ctx, {
+        if (!ctx2.allNullValues && this.hasAllNullValues(false))
+          ctx2 = Object.assign({}, ctx2, { allNullValues: true });
+        return stringifyCollection.stringifyCollection(this, ctx2, {
           blockItemPrefix: "",
           flowChars: { start: "{", end: "}" },
-          itemIndent: ctx.indent || "",
+          itemIndent: ctx2.indent || "",
           onChompKeep,
           onComment
         });
@@ -9018,7 +9018,7 @@ var require_map = __commonJS({
           onError("Expected a mapping for this tag");
         return map3;
       },
-      createNode: (schema, obj, ctx) => YAMLMap.YAMLMap.from(schema, obj, ctx)
+      createNode: (schema, obj, ctx2) => YAMLMap.YAMLMap.from(schema, obj, ctx2)
     };
     exports.map = map2;
   }
@@ -9094,28 +9094,28 @@ var require_YAMLSeq = __commonJS({
         else
           this.items[idx] = value;
       }
-      toJSON(_, ctx) {
+      toJSON(_, ctx2) {
         const seq = [];
-        if (ctx?.onCreate)
-          ctx.onCreate(seq);
+        if (ctx2?.onCreate)
+          ctx2.onCreate(seq);
         let i = 0;
         for (const item of this.items)
-          seq.push(toJS.toJS(item, String(i++), ctx));
+          seq.push(toJS.toJS(item, String(i++), ctx2));
         return seq;
       }
-      toString(ctx, onComment, onChompKeep) {
-        if (!ctx)
+      toString(ctx2, onComment, onChompKeep) {
+        if (!ctx2)
           return JSON.stringify(this);
-        return stringifyCollection.stringifyCollection(this, ctx, {
+        return stringifyCollection.stringifyCollection(this, ctx2, {
           blockItemPrefix: "- ",
           flowChars: { start: "[", end: "]" },
-          itemIndent: (ctx.indent || "") + "  ",
+          itemIndent: (ctx2.indent || "") + "  ",
           onChompKeep,
           onComment
         });
       }
-      static from(schema, obj, ctx) {
-        const { replacer } = ctx;
+      static from(schema, obj, ctx2) {
+        const { replacer } = ctx2;
         const seq = new this(schema);
         if (obj && Symbol.iterator in Object(obj)) {
           let i = 0;
@@ -9124,7 +9124,7 @@ var require_YAMLSeq = __commonJS({
               const key = obj instanceof Set ? it : String(i++);
               it = replacer.call(obj, key, it);
             }
-            seq.items.push(createNode.createNode(it, void 0, ctx));
+            seq.items.push(createNode.createNode(it, void 0, ctx2));
           }
         }
         return seq;
@@ -9156,7 +9156,7 @@ var require_seq = __commonJS({
           onError("Expected a sequence for this tag");
         return seq2;
       },
-      createNode: (schema, obj, ctx) => YAMLSeq.YAMLSeq.from(schema, obj, ctx)
+      createNode: (schema, obj, ctx2) => YAMLSeq.YAMLSeq.from(schema, obj, ctx2)
     };
     exports.seq = seq;
   }
@@ -9172,9 +9172,9 @@ var require_string = __commonJS({
       default: true,
       tag: "tag:yaml.org,2002:str",
       resolve: (str) => str,
-      stringify(item, ctx, onComment, onChompKeep) {
-        ctx = Object.assign({ actualString: true }, ctx);
-        return stringifyString.stringifyString(item, ctx, onComment, onChompKeep);
+      stringify(item, ctx2, onComment, onChompKeep) {
+        ctx2 = Object.assign({ actualString: true }, ctx2);
+        return stringifyString.stringifyString(item, ctx2, onComment, onChompKeep);
       }
     };
     exports.string = string4;
@@ -9193,7 +9193,7 @@ var require_null = __commonJS({
       tag: "tag:yaml.org,2002:null",
       test: /^(?:~|[Nn]ull|NULL)?$/,
       resolve: () => new Scalar.Scalar(null),
-      stringify: ({ source }, ctx) => typeof source === "string" && nullTag.test.test(source) ? source : ctx.options.nullStr
+      stringify: ({ source }, ctx2) => typeof source === "string" && nullTag.test.test(source) ? source : ctx2.options.nullStr
     };
     exports.nullTag = nullTag;
   }
@@ -9210,13 +9210,13 @@ var require_bool = __commonJS({
       tag: "tag:yaml.org,2002:bool",
       test: /^(?:[Tt]rue|TRUE|[Ff]alse|FALSE)$/,
       resolve: (str) => new Scalar.Scalar(str[0] === "t" || str[0] === "T"),
-      stringify({ source, value }, ctx) {
+      stringify({ source, value }, ctx2) {
         if (source && boolTag.test.test(source)) {
           const sv = source[0] === "t" || source[0] === "T";
           if (value === sv)
             return source;
         }
-        return value ? ctx.options.trueStr : ctx.options.falseStr;
+        return value ? ctx2.options.trueStr : ctx2.options.falseStr;
       }
     };
     exports.boolTag = boolTag;
@@ -9470,7 +9470,7 @@ var require_binary = __commonJS({
           return src;
         }
       },
-      stringify({ comment, type, value }, ctx, onComment, onChompKeep) {
+      stringify({ comment, type, value }, ctx2, onComment, onChompKeep) {
         if (!value)
           return "";
         const buf = value;
@@ -9487,7 +9487,7 @@ var require_binary = __commonJS({
         }
         type ?? (type = Scalar.Scalar.BLOCK_LITERAL);
         if (type !== Scalar.Scalar.QUOTE_DOUBLE) {
-          const lineWidth = Math.max(ctx.options.lineWidth - ctx.indent.length, ctx.options.minContentWidth);
+          const lineWidth = Math.max(ctx2.options.lineWidth - ctx2.indent.length, ctx2.options.minContentWidth);
           const n = Math.ceil(str.length / lineWidth);
           const lines = new Array(n);
           for (let i = 0, o = 0; i < n; ++i, o += lineWidth) {
@@ -9495,7 +9495,7 @@ var require_binary = __commonJS({
           }
           str = lines.join(type === Scalar.Scalar.BLOCK_LITERAL ? "\n" : " ");
         }
-        return stringifyString.stringifyString({ comment, type, value: str }, ctx, onComment, onChompKeep);
+        return stringifyString.stringifyString({ comment, type, value: str }, ctx2, onComment, onChompKeep);
       }
     };
     exports.binary = binary;
@@ -9536,8 +9536,8 @@ ${cn.comment}` : item.comment;
         onError("Expected a sequence for this tag");
       return seq;
     }
-    function createPairs(schema, iterable, ctx) {
-      const { replacer } = ctx;
+    function createPairs(schema, iterable, ctx2) {
+      const { replacer } = ctx2;
       const pairs2 = new YAMLSeq.YAMLSeq(schema);
       pairs2.tag = "tag:yaml.org,2002:pairs";
       let i = 0;
@@ -9563,7 +9563,7 @@ ${cn.comment}` : item.comment;
           } else {
             key = it;
           }
-          pairs2.items.push(Pair.createPair(key, value, ctx));
+          pairs2.items.push(Pair.createPair(key, value, ctx2));
         }
       return pairs2;
     }
@@ -9603,19 +9603,19 @@ var require_omap = __commonJS({
        * If `ctx` is given, the return type is actually `Map<unknown, unknown>`,
        * but TypeScript won't allow widening the signature of a child method.
        */
-      toJSON(_, ctx) {
-        if (!ctx)
+      toJSON(_, ctx2) {
+        if (!ctx2)
           return super.toJSON(_);
         const map2 = /* @__PURE__ */ new Map();
-        if (ctx?.onCreate)
-          ctx.onCreate(map2);
+        if (ctx2?.onCreate)
+          ctx2.onCreate(map2);
         for (const pair of this.items) {
           let key, value;
           if (identity.isPair(pair)) {
-            key = toJS.toJS(pair.key, "", ctx);
-            value = toJS.toJS(pair.value, key, ctx);
+            key = toJS.toJS(pair.key, "", ctx2);
+            value = toJS.toJS(pair.value, key, ctx2);
           } else {
-            key = toJS.toJS(pair, "", ctx);
+            key = toJS.toJS(pair, "", ctx2);
           }
           if (map2.has(key))
             throw new Error("Ordered maps must not include duplicate keys");
@@ -9623,8 +9623,8 @@ var require_omap = __commonJS({
         }
         return map2;
       }
-      static from(schema, iterable, ctx) {
-        const pairs$1 = pairs.createPairs(schema, iterable, ctx);
+      static from(schema, iterable, ctx2) {
+        const pairs$1 = pairs.createPairs(schema, iterable, ctx2);
         const omap2 = new this();
         omap2.items = pairs$1.items;
         return omap2;
@@ -9651,7 +9651,7 @@ var require_omap = __commonJS({
         }
         return Object.assign(new YAMLOMap(), pairs$1);
       },
-      createNode: (schema, iterable, ctx) => YAMLOMap.from(schema, iterable, ctx)
+      createNode: (schema, iterable, ctx2) => YAMLOMap.from(schema, iterable, ctx2)
     };
     exports.YAMLOMap = YAMLOMap;
     exports.omap = omap;
@@ -9663,11 +9663,11 @@ var require_bool2 = __commonJS({
   "node_modules/yaml/dist/schema/yaml-1.1/bool.js"(exports) {
     "use strict";
     var Scalar = require_Scalar();
-    function boolStringify({ value, source }, ctx) {
+    function boolStringify({ value, source }, ctx2) {
       const boolObj = value ? trueTag : falseTag;
       if (source && boolObj.test.test(source))
         return source;
-      return value ? ctx.options.trueStr : ctx.options.falseStr;
+      return value ? ctx2.options.trueStr : ctx2.options.falseStr;
     }
     var trueTag = {
       identify: (value) => value === true,
@@ -9860,25 +9860,25 @@ var require_set = __commonJS({
           this.items.push(new Pair.Pair(key));
         }
       }
-      toJSON(_, ctx) {
-        return super.toJSON(_, ctx, Set);
+      toJSON(_, ctx2) {
+        return super.toJSON(_, ctx2, Set);
       }
-      toString(ctx, onComment, onChompKeep) {
-        if (!ctx)
+      toString(ctx2, onComment, onChompKeep) {
+        if (!ctx2)
           return JSON.stringify(this);
         if (this.hasAllNullValues(true))
-          return super.toString(Object.assign({}, ctx, { allNullValues: true }), onComment, onChompKeep);
+          return super.toString(Object.assign({}, ctx2, { allNullValues: true }), onComment, onChompKeep);
         else
           throw new Error("Set items must all have null values");
       }
-      static from(schema, iterable, ctx) {
-        const { replacer } = ctx;
+      static from(schema, iterable, ctx2) {
+        const { replacer } = ctx2;
         const set3 = new this(schema);
         if (iterable && Symbol.iterator in Object(iterable))
           for (let value of iterable) {
             if (typeof replacer === "function")
               value = replacer.call(iterable, value, value);
-            set3.items.push(Pair.createPair(value, null, ctx));
+            set3.items.push(Pair.createPair(value, null, ctx2));
           }
         return set3;
       }
@@ -9890,7 +9890,7 @@ var require_set = __commonJS({
       nodeClass: YAMLSet,
       default: false,
       tag: "tag:yaml.org,2002:set",
-      createNode: (schema, iterable, ctx) => YAMLSet.from(schema, iterable, ctx),
+      createNode: (schema, iterable, ctx2) => YAMLSet.from(schema, iterable, ctx2),
       resolve(map2, onError) {
         if (identity.isMap(map2)) {
           if (map2.hasAllNullValues(true))
@@ -10185,8 +10185,8 @@ var require_stringifyDocument = __commonJS({
       }
       if (hasDirectives)
         lines.push("---");
-      const ctx = stringify.createStringifyContext(doc, options);
-      const { commentString } = ctx.options;
+      const ctx2 = stringify.createStringifyContext(doc, options);
+      const { commentString } = ctx2.options;
       if (doc.commentBefore) {
         if (lines.length !== 1)
           lines.unshift("");
@@ -10203,11 +10203,11 @@ var require_stringifyDocument = __commonJS({
             const cs = commentString(doc.contents.commentBefore);
             lines.push(stringifyComment.indentComment(cs, ""));
           }
-          ctx.forceBlockIndent = !!doc.comment;
+          ctx2.forceBlockIndent = !!doc.comment;
           contentComment = doc.contents.comment;
         }
         const onChompKeep = contentComment ? void 0 : () => chompKeep = true;
-        let body = stringify.stringify(doc.contents, ctx, () => contentComment = null, onChompKeep);
+        let body = stringify.stringify(doc.contents, ctx2, () => contentComment = null, onChompKeep);
         if (contentComment)
           body += stringifyComment.lineComment(body, "", commentString(contentComment));
         if ((body[0] === "|" || body[0] === ">") && lines[lines.length - 1] === "---") {
@@ -10215,7 +10215,7 @@ var require_stringifyDocument = __commonJS({
         } else
           lines.push(body);
       } else {
-        lines.push(stringify.stringify(doc.contents, ctx));
+        lines.push(stringify.stringify(doc.contents, ctx2));
       }
       if (doc.directives?.docEnd) {
         if (doc.comment) {
@@ -10323,9 +10323,9 @@ var require_Document = __commonJS({
           this.contents.add(value);
       }
       /** Adds a value to the document. */
-      addIn(path8, value) {
+      addIn(path10, value) {
         if (assertCollection(this.contents))
-          this.contents.addIn(path8, value);
+          this.contents.addIn(path10, value);
       }
       /**
        * Create a new `Alias` node, ensuring that the target `node` has the required anchor.
@@ -10365,7 +10365,7 @@ var require_Document = __commonJS({
           // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           anchorPrefix || "a"
         );
-        const ctx = {
+        const ctx2 = {
           aliasDuplicateObjects: aliasDuplicateObjects ?? true,
           keepUndefined: keepUndefined ?? false,
           onAnchor,
@@ -10374,7 +10374,7 @@ var require_Document = __commonJS({
           schema: this.schema,
           sourceObjects
         };
-        const node = createNode.createNode(value, tag, ctx);
+        const node = createNode.createNode(value, tag, ctx2);
         if (flow && identity.isCollection(node))
           node.flow = true;
         setAnchors();
@@ -10400,14 +10400,14 @@ var require_Document = __commonJS({
        * Removes a value from the document.
        * @returns `true` if the item was found and removed.
        */
-      deleteIn(path8) {
-        if (Collection.isEmptyPath(path8)) {
+      deleteIn(path10) {
+        if (Collection.isEmptyPath(path10)) {
           if (this.contents == null)
             return false;
           this.contents = null;
           return true;
         }
-        return assertCollection(this.contents) ? this.contents.deleteIn(path8) : false;
+        return assertCollection(this.contents) ? this.contents.deleteIn(path10) : false;
       }
       /**
        * Returns item at `key`, or `undefined` if not found. By default unwraps
@@ -10422,10 +10422,10 @@ var require_Document = __commonJS({
        * scalar values from their surrounding node; to disable set `keepScalar` to
        * `true` (collections are always returned intact).
        */
-      getIn(path8, keepScalar) {
-        if (Collection.isEmptyPath(path8))
+      getIn(path10, keepScalar) {
+        if (Collection.isEmptyPath(path10))
           return !keepScalar && identity.isScalar(this.contents) ? this.contents.value : this.contents;
-        return identity.isCollection(this.contents) ? this.contents.getIn(path8, keepScalar) : void 0;
+        return identity.isCollection(this.contents) ? this.contents.getIn(path10, keepScalar) : void 0;
       }
       /**
        * Checks if the document includes a value with the key `key`.
@@ -10436,10 +10436,10 @@ var require_Document = __commonJS({
       /**
        * Checks if the document includes a value at `path`.
        */
-      hasIn(path8) {
-        if (Collection.isEmptyPath(path8))
+      hasIn(path10) {
+        if (Collection.isEmptyPath(path10))
           return this.contents !== void 0;
-        return identity.isCollection(this.contents) ? this.contents.hasIn(path8) : false;
+        return identity.isCollection(this.contents) ? this.contents.hasIn(path10) : false;
       }
       /**
        * Sets a value in this document. For `!!set`, `value` needs to be a
@@ -10456,13 +10456,13 @@ var require_Document = __commonJS({
        * Sets a value in this document. For `!!set`, `value` needs to be a
        * boolean to add/remove the item from the set.
        */
-      setIn(path8, value) {
-        if (Collection.isEmptyPath(path8)) {
+      setIn(path10, value) {
+        if (Collection.isEmptyPath(path10)) {
           this.contents = value;
         } else if (this.contents == null) {
-          this.contents = Collection.collectionFromPath(this.schema, Array.from(path8), value);
+          this.contents = Collection.collectionFromPath(this.schema, Array.from(path10), value);
         } else if (assertCollection(this.contents)) {
-          this.contents.setIn(path8, value);
+          this.contents.setIn(path10, value);
         }
       }
       /**
@@ -10511,7 +10511,7 @@ var require_Document = __commonJS({
       }
       // json & jsonArg are only used from toJSON()
       toJS({ json: json2, jsonArg, mapAsMap, maxAliasCount, onAnchor, reviver } = {}) {
-        const ctx = {
+        const ctx2 = {
           anchors: /* @__PURE__ */ new Map(),
           doc: this,
           keep: !json2,
@@ -10519,9 +10519,9 @@ var require_Document = __commonJS({
           mapKeyWarned: false,
           maxAliasCount: typeof maxAliasCount === "number" ? maxAliasCount : 100
         };
-        const res = toJS.toJS(this.contents, jsonArg ?? "", ctx);
+        const res = toJS.toJS(this.contents, jsonArg ?? "", ctx2);
         if (typeof onAnchor === "function")
-          for (const { count, res: res2 } of ctx.anchors.values())
+          for (const { count, res: res2 } of ctx2.anchors.values())
             onAnchor(res2, count);
         return typeof reviver === "function" ? applyReviver.applyReviver(reviver, { "": res }, "", res) : res;
       }
@@ -10818,8 +10818,8 @@ var require_util_map_includes = __commonJS({
   "node_modules/yaml/dist/compose/util-map-includes.js"(exports) {
     "use strict";
     var identity = require_identity();
-    function mapIncludes(ctx, items, search) {
-      const { uniqueKeys } = ctx.options;
+    function mapIncludes(ctx2, items, search) {
+      const { uniqueKeys } = ctx2.options;
       if (uniqueKeys === false)
         return false;
       const isEqual = typeof uniqueKeys === "function" ? uniqueKeys : (a, b) => a === b || identity.isScalar(a) && identity.isScalar(b) && a.value === b.value;
@@ -10840,11 +10840,11 @@ var require_resolve_block_map = __commonJS({
     var utilFlowIndentCheck = require_util_flow_indent_check();
     var utilMapIncludes = require_util_map_includes();
     var startColMsg = "All mapping items must start at the same column";
-    function resolveBlockMap({ composeNode, composeEmptyNode }, ctx, bm, onError, tag) {
+    function resolveBlockMap({ composeNode, composeEmptyNode }, ctx2, bm, onError, tag) {
       const NodeClass = tag?.nodeClass ?? YAMLMap.YAMLMap;
-      const map2 = new NodeClass(ctx.schema);
-      if (ctx.atRoot)
-        ctx.atRoot = false;
+      const map2 = new NodeClass(ctx2.schema);
+      if (ctx2.atRoot)
+        ctx2.atRoot = false;
       let offset = bm.offset;
       let commentEnd = null;
       for (const collItem of bm.items) {
@@ -10881,13 +10881,13 @@ var require_resolve_block_map = __commonJS({
         } else if (keyProps.found?.indent !== bm.indent) {
           onError(offset, "BAD_INDENT", startColMsg);
         }
-        ctx.atKey = true;
+        ctx2.atKey = true;
         const keyStart = keyProps.end;
-        const keyNode = key ? composeNode(ctx, key, keyProps, onError) : composeEmptyNode(ctx, keyStart, start, null, keyProps, onError);
-        if (ctx.schema.compat)
+        const keyNode = key ? composeNode(ctx2, key, keyProps, onError) : composeEmptyNode(ctx2, keyStart, start, null, keyProps, onError);
+        if (ctx2.schema.compat)
           utilFlowIndentCheck.flowIndentCheck(bm.indent, key, onError);
-        ctx.atKey = false;
-        if (utilMapIncludes.mapIncludes(ctx, map2.items, keyNode))
+        ctx2.atKey = false;
+        if (utilMapIncludes.mapIncludes(ctx2, map2.items, keyNode))
           onError(keyStart, "DUPLICATE_KEY", "Map keys must be unique");
         const valueProps = resolveProps.resolveProps(sep ?? [], {
           indicator: "map-value-ind",
@@ -10902,15 +10902,15 @@ var require_resolve_block_map = __commonJS({
           if (implicitKey) {
             if (value?.type === "block-map" && !valueProps.hasNewline)
               onError(offset, "BLOCK_AS_IMPLICIT_KEY", "Nested mappings are not allowed in compact mappings");
-            if (ctx.options.strict && keyProps.start < valueProps.found.offset - 1024)
+            if (ctx2.options.strict && keyProps.start < valueProps.found.offset - 1024)
               onError(keyNode.range, "KEY_OVER_1024_CHARS", "The : indicator must be at most 1024 chars after the start of an implicit block mapping key");
           }
-          const valueNode = value ? composeNode(ctx, value, valueProps, onError) : composeEmptyNode(ctx, offset, sep, null, valueProps, onError);
-          if (ctx.schema.compat)
+          const valueNode = value ? composeNode(ctx2, value, valueProps, onError) : composeEmptyNode(ctx2, offset, sep, null, valueProps, onError);
+          if (ctx2.schema.compat)
             utilFlowIndentCheck.flowIndentCheck(bm.indent, value, onError);
           offset = valueNode.range[2];
           const pair = new Pair.Pair(keyNode, valueNode);
-          if (ctx.options.keepSourceTokens)
+          if (ctx2.options.keepSourceTokens)
             pair.srcToken = collItem;
           map2.items.push(pair);
         } else {
@@ -10923,7 +10923,7 @@ var require_resolve_block_map = __commonJS({
               keyNode.comment = valueProps.comment;
           }
           const pair = new Pair.Pair(keyNode);
-          if (ctx.options.keepSourceTokens)
+          if (ctx2.options.keepSourceTokens)
             pair.srcToken = collItem;
           map2.items.push(pair);
         }
@@ -10944,13 +10944,13 @@ var require_resolve_block_seq = __commonJS({
     var YAMLSeq = require_YAMLSeq();
     var resolveProps = require_resolve_props();
     var utilFlowIndentCheck = require_util_flow_indent_check();
-    function resolveBlockSeq({ composeNode, composeEmptyNode }, ctx, bs, onError, tag) {
+    function resolveBlockSeq({ composeNode, composeEmptyNode }, ctx2, bs, onError, tag) {
       const NodeClass = tag?.nodeClass ?? YAMLSeq.YAMLSeq;
-      const seq = new NodeClass(ctx.schema);
-      if (ctx.atRoot)
-        ctx.atRoot = false;
-      if (ctx.atKey)
-        ctx.atKey = false;
+      const seq = new NodeClass(ctx2.schema);
+      if (ctx2.atRoot)
+        ctx2.atRoot = false;
+      if (ctx2.atKey)
+        ctx2.atKey = false;
       let offset = bs.offset;
       let commentEnd = null;
       for (const { start, value } of bs.items) {
@@ -10975,8 +10975,8 @@ var require_resolve_block_seq = __commonJS({
             continue;
           }
         }
-        const node = value ? composeNode(ctx, value, props, onError) : composeEmptyNode(ctx, props.end, start, null, props, onError);
-        if (ctx.schema.compat)
+        const node = value ? composeNode(ctx2, value, props, onError) : composeEmptyNode(ctx2, props.end, start, null, props, onError);
+        if (ctx2.schema.compat)
           utilFlowIndentCheck.flowIndentCheck(bs.indent, value, onError);
         offset = node.range[2];
         seq.items.push(node);
@@ -11045,17 +11045,17 @@ var require_resolve_flow_collection = __commonJS({
     var utilMapIncludes = require_util_map_includes();
     var blockMsg = "Block collections are not allowed within flow collections";
     var isBlock = (token) => token && (token.type === "block-map" || token.type === "block-seq");
-    function resolveFlowCollection({ composeNode, composeEmptyNode }, ctx, fc, onError, tag) {
+    function resolveFlowCollection({ composeNode, composeEmptyNode }, ctx2, fc, onError, tag) {
       const isMap = fc.start.source === "{";
       const fcName = isMap ? "flow map" : "flow sequence";
       const NodeClass = tag?.nodeClass ?? (isMap ? YAMLMap.YAMLMap : YAMLSeq.YAMLSeq);
-      const coll = new NodeClass(ctx.schema);
+      const coll = new NodeClass(ctx2.schema);
       coll.flow = true;
-      const atRoot = ctx.atRoot;
+      const atRoot = ctx2.atRoot;
       if (atRoot)
-        ctx.atRoot = false;
-      if (ctx.atKey)
-        ctx.atKey = false;
+        ctx2.atRoot = false;
+      if (ctx2.atKey)
+        ctx2.atKey = false;
       let offset = fc.offset + fc.start.source.length;
       for (let i = 0; i < fc.items.length; ++i) {
         const collItem = fc.items[i];
@@ -11084,7 +11084,7 @@ var require_resolve_flow_collection = __commonJS({
             offset = props.end;
             continue;
           }
-          if (!isMap && ctx.options.strict && utilContainsNewline.containsNewline(key))
+          if (!isMap && ctx2.options.strict && utilContainsNewline.containsNewline(key))
             onError(
               key,
               // checked by containsNewline()
@@ -11125,18 +11125,18 @@ var require_resolve_flow_collection = __commonJS({
           }
         }
         if (!isMap && !sep && !props.found) {
-          const valueNode = value ? composeNode(ctx, value, props, onError) : composeEmptyNode(ctx, props.end, sep, null, props, onError);
+          const valueNode = value ? composeNode(ctx2, value, props, onError) : composeEmptyNode(ctx2, props.end, sep, null, props, onError);
           coll.items.push(valueNode);
           offset = valueNode.range[2];
           if (isBlock(value))
             onError(valueNode.range, "BLOCK_IN_FLOW", blockMsg);
         } else {
-          ctx.atKey = true;
+          ctx2.atKey = true;
           const keyStart = props.end;
-          const keyNode = key ? composeNode(ctx, key, props, onError) : composeEmptyNode(ctx, keyStart, start, null, props, onError);
+          const keyNode = key ? composeNode(ctx2, key, props, onError) : composeEmptyNode(ctx2, keyStart, start, null, props, onError);
           if (isBlock(key))
             onError(keyNode.range, "BLOCK_IN_FLOW", blockMsg);
-          ctx.atKey = false;
+          ctx2.atKey = false;
           const valueProps = resolveProps.resolveProps(sep ?? [], {
             flow: fcName,
             indicator: "map-value-ind",
@@ -11147,7 +11147,7 @@ var require_resolve_flow_collection = __commonJS({
             startOnNewline: false
           });
           if (valueProps.found) {
-            if (!isMap && !props.found && ctx.options.strict) {
+            if (!isMap && !props.found && ctx2.options.strict) {
               if (sep)
                 for (const st of sep) {
                   if (st === valueProps.found)
@@ -11166,7 +11166,7 @@ var require_resolve_flow_collection = __commonJS({
             else
               onError(valueProps.start, "MISSING_CHAR", `Missing , or : between ${fcName} items`);
           }
-          const valueNode = value ? composeNode(ctx, value, valueProps, onError) : valueProps.found ? composeEmptyNode(ctx, valueProps.end, sep, null, valueProps, onError) : null;
+          const valueNode = value ? composeNode(ctx2, value, valueProps, onError) : valueProps.found ? composeEmptyNode(ctx2, valueProps.end, sep, null, valueProps, onError) : null;
           if (valueNode) {
             if (isBlock(value))
               onError(valueNode.range, "BLOCK_IN_FLOW", blockMsg);
@@ -11177,15 +11177,15 @@ var require_resolve_flow_collection = __commonJS({
               keyNode.comment = valueProps.comment;
           }
           const pair = new Pair.Pair(keyNode, valueNode);
-          if (ctx.options.keepSourceTokens)
+          if (ctx2.options.keepSourceTokens)
             pair.srcToken = collItem;
           if (isMap) {
             const map2 = coll;
-            if (utilMapIncludes.mapIncludes(ctx, map2.items, keyNode))
+            if (utilMapIncludes.mapIncludes(ctx2, map2.items, keyNode))
               onError(keyStart, "DUPLICATE_KEY", "Map keys must be unique");
             map2.items.push(pair);
           } else {
-            const map2 = new YAMLMap.YAMLMap(ctx.schema);
+            const map2 = new YAMLMap.YAMLMap(ctx2.schema);
             map2.flow = true;
             map2.items.push(pair);
             const endRange = (valueNode ?? keyNode).range;
@@ -11208,7 +11208,7 @@ var require_resolve_flow_collection = __commonJS({
           ee.unshift(ce);
       }
       if (ee.length > 0) {
-        const end = resolveEnd.resolveEnd(ee, cePos, ctx.options.strict, onError);
+        const end = resolveEnd.resolveEnd(ee, cePos, ctx2.options.strict, onError);
         if (end.comment) {
           if (coll.comment)
             coll.comment += "\n" + end.comment;
@@ -11236,8 +11236,8 @@ var require_compose_collection = __commonJS({
     var resolveBlockMap = require_resolve_block_map();
     var resolveBlockSeq = require_resolve_block_seq();
     var resolveFlowCollection = require_resolve_flow_collection();
-    function resolveCollection(CN, ctx, token, onError, tagName, tag) {
-      const coll = token.type === "block-map" ? resolveBlockMap.resolveBlockMap(CN, ctx, token, onError, tag) : token.type === "block-seq" ? resolveBlockSeq.resolveBlockSeq(CN, ctx, token, onError, tag) : resolveFlowCollection.resolveFlowCollection(CN, ctx, token, onError, tag);
+    function resolveCollection(CN, ctx2, token, onError, tagName, tag) {
+      const coll = token.type === "block-map" ? resolveBlockMap.resolveBlockMap(CN, ctx2, token, onError, tag) : token.type === "block-seq" ? resolveBlockSeq.resolveBlockSeq(CN, ctx2, token, onError, tag) : resolveFlowCollection.resolveFlowCollection(CN, ctx2, token, onError, tag);
       const Coll = coll.constructor;
       if (tagName === "!" || tagName === Coll.tagName) {
         coll.tag = Coll.tagName;
@@ -11247,9 +11247,9 @@ var require_compose_collection = __commonJS({
         coll.tag = tagName;
       return coll;
     }
-    function composeCollection(CN, ctx, token, props, onError) {
+    function composeCollection(CN, ctx2, token, props, onError) {
       const tagToken = props.tag;
-      const tagName = !tagToken ? null : ctx.directives.tagName(tagToken.source, (msg) => onError(tagToken, "TAG_RESOLVE_FAILED", msg));
+      const tagName = !tagToken ? null : ctx2.directives.tagName(tagToken.source, (msg) => onError(tagToken, "TAG_RESOLVE_FAILED", msg));
       if (token.type === "block-seq") {
         const { anchor, newlineAfterProp: nl } = props;
         const lastProp = anchor && tagToken ? anchor.offset > tagToken.offset ? anchor : tagToken : anchor ?? tagToken;
@@ -11260,13 +11260,13 @@ var require_compose_collection = __commonJS({
       }
       const expType = token.type === "block-map" ? "map" : token.type === "block-seq" ? "seq" : token.start.source === "{" ? "map" : "seq";
       if (!tagToken || !tagName || tagName === "!" || tagName === YAMLMap.YAMLMap.tagName && expType === "map" || tagName === YAMLSeq.YAMLSeq.tagName && expType === "seq") {
-        return resolveCollection(CN, ctx, token, onError, tagName);
+        return resolveCollection(CN, ctx2, token, onError, tagName);
       }
-      let tag = ctx.schema.tags.find((t) => t.tag === tagName && t.collection === expType);
+      let tag = ctx2.schema.tags.find((t) => t.tag === tagName && t.collection === expType);
       if (!tag) {
-        const kt = ctx.schema.knownTags[tagName];
+        const kt = ctx2.schema.knownTags[tagName];
         if (kt?.collection === expType) {
-          ctx.schema.tags.push(Object.assign({}, kt, { default: false }));
+          ctx2.schema.tags.push(Object.assign({}, kt, { default: false }));
           tag = kt;
         } else {
           if (kt) {
@@ -11274,11 +11274,11 @@ var require_compose_collection = __commonJS({
           } else {
             onError(tagToken, "TAG_RESOLVE_FAILED", `Unresolved tag: ${tagName}`, true);
           }
-          return resolveCollection(CN, ctx, token, onError, tagName);
+          return resolveCollection(CN, ctx2, token, onError, tagName);
         }
       }
-      const coll = resolveCollection(CN, ctx, token, onError, tagName, tag);
-      const res = tag.resolve?.(coll, (msg) => onError(tagToken, "TAG_RESOLVE_FAILED", msg), ctx.options) ?? coll;
+      const coll = resolveCollection(CN, ctx2, token, onError, tagName, tag);
+      const res = tag.resolve?.(coll, (msg) => onError(tagToken, "TAG_RESOLVE_FAILED", msg), ctx2.options) ?? coll;
       const node = identity.isNode(res) ? res : new Scalar.Scalar(res);
       node.range = coll.range;
       node.tag = tagName;
@@ -11295,9 +11295,9 @@ var require_resolve_block_scalar = __commonJS({
   "node_modules/yaml/dist/compose/resolve-block-scalar.js"(exports) {
     "use strict";
     var Scalar = require_Scalar();
-    function resolveBlockScalar(ctx, scalar, onError) {
+    function resolveBlockScalar(ctx2, scalar, onError) {
       const start = scalar.offset;
-      const header = parseBlockScalarHeader(scalar, ctx.options.strict, onError);
+      const header = parseBlockScalarHeader(scalar, ctx2.options.strict, onError);
       if (!header)
         return { value: "", type: null, comment: "", range: [start, start, start] };
       const type = header.mode === ">" ? Scalar.Scalar.BLOCK_FOLDED : Scalar.Scalar.BLOCK_LITERAL;
@@ -11333,7 +11333,7 @@ var require_resolve_block_scalar = __commonJS({
           if (header.indent === 0)
             trimIndent = indent.length;
           contentStart = i;
-          if (trimIndent === 0 && !ctx.atRoot) {
+          if (trimIndent === 0 && !ctx2.atRoot) {
             const message = "Block scalar values in collections must be indented";
             onError(offset, "BAD_INDENT", message);
           }
@@ -11700,21 +11700,21 @@ var require_compose_scalar = __commonJS({
     var Scalar = require_Scalar();
     var resolveBlockScalar = require_resolve_block_scalar();
     var resolveFlowScalar = require_resolve_flow_scalar();
-    function composeScalar(ctx, token, tagToken, onError) {
-      const { value, type, comment, range } = token.type === "block-scalar" ? resolveBlockScalar.resolveBlockScalar(ctx, token, onError) : resolveFlowScalar.resolveFlowScalar(token, ctx.options.strict, onError);
-      const tagName = tagToken ? ctx.directives.tagName(tagToken.source, (msg) => onError(tagToken, "TAG_RESOLVE_FAILED", msg)) : null;
+    function composeScalar(ctx2, token, tagToken, onError) {
+      const { value, type, comment, range } = token.type === "block-scalar" ? resolveBlockScalar.resolveBlockScalar(ctx2, token, onError) : resolveFlowScalar.resolveFlowScalar(token, ctx2.options.strict, onError);
+      const tagName = tagToken ? ctx2.directives.tagName(tagToken.source, (msg) => onError(tagToken, "TAG_RESOLVE_FAILED", msg)) : null;
       let tag;
-      if (ctx.options.stringKeys && ctx.atKey) {
-        tag = ctx.schema[identity.SCALAR];
+      if (ctx2.options.stringKeys && ctx2.atKey) {
+        tag = ctx2.schema[identity.SCALAR];
       } else if (tagName)
-        tag = findScalarTagByName(ctx.schema, value, tagName, tagToken, onError);
+        tag = findScalarTagByName(ctx2.schema, value, tagName, tagToken, onError);
       else if (token.type === "scalar")
-        tag = findScalarTagByTest(ctx, value, token, onError);
+        tag = findScalarTagByTest(ctx2, value, token, onError);
       else
-        tag = ctx.schema[identity.SCALAR];
+        tag = ctx2.schema[identity.SCALAR];
       let scalar;
       try {
-        const res = tag.resolve(value, (msg) => onError(tagToken ?? token, "TAG_RESOLVE_FAILED", msg), ctx.options);
+        const res = tag.resolve(value, (msg) => onError(tagToken ?? token, "TAG_RESOLVE_FAILED", msg), ctx2.options);
         scalar = identity.isScalar(res) ? res : new Scalar.Scalar(res);
       } catch (error2) {
         const msg = error2 instanceof Error ? error2.message : String(error2);
@@ -11814,14 +11814,14 @@ var require_compose_node = __commonJS({
     var resolveEnd = require_resolve_end();
     var utilEmptyScalarPosition = require_util_empty_scalar_position();
     var CN = { composeNode, composeEmptyNode };
-    function composeNode(ctx, token, props, onError) {
-      const atKey = ctx.atKey;
+    function composeNode(ctx2, token, props, onError) {
+      const atKey = ctx2.atKey;
       const { spaceBefore, comment, anchor, tag } = props;
       let node;
       let isSrcToken = true;
       switch (token.type) {
         case "alias":
-          node = composeAlias(ctx, token, onError);
+          node = composeAlias(ctx2, token, onError);
           if (anchor || tag)
             onError(token, "ALIAS_PROPS", "An alias node must not specify any properties");
           break;
@@ -11829,7 +11829,7 @@ var require_compose_node = __commonJS({
         case "single-quoted-scalar":
         case "double-quoted-scalar":
         case "block-scalar":
-          node = composeScalar.composeScalar(ctx, token, tag, onError);
+          node = composeScalar.composeScalar(ctx2, token, tag, onError);
           if (anchor)
             node.anchor = anchor.source.substring(1);
           break;
@@ -11837,7 +11837,7 @@ var require_compose_node = __commonJS({
         case "block-seq":
         case "flow-collection":
           try {
-            node = composeCollection.composeCollection(CN, ctx, token, props, onError);
+            node = composeCollection.composeCollection(CN, ctx2, token, props, onError);
             if (anchor)
               node.anchor = anchor.source.substring(1);
           } catch (error2) {
@@ -11851,10 +11851,10 @@ var require_compose_node = __commonJS({
           isSrcToken = false;
         }
       }
-      node ?? (node = composeEmptyNode(ctx, token.offset, void 0, null, props, onError));
+      node ?? (node = composeEmptyNode(ctx2, token.offset, void 0, null, props, onError));
       if (anchor && node.anchor === "")
         onError(anchor, "BAD_ALIAS", "Anchor cannot be an empty string");
-      if (atKey && ctx.options.stringKeys && (!identity.isScalar(node) || typeof node.value !== "string" || node.tag && node.tag !== "tag:yaml.org,2002:str")) {
+      if (atKey && ctx2.options.stringKeys && (!identity.isScalar(node) || typeof node.value !== "string" || node.tag && node.tag !== "tag:yaml.org,2002:str")) {
         const msg = "With stringKeys, all keys must be strings";
         onError(tag ?? token, "NON_STRING_KEY", msg);
       }
@@ -11866,18 +11866,18 @@ var require_compose_node = __commonJS({
         else
           node.commentBefore = comment;
       }
-      if (ctx.options.keepSourceTokens && isSrcToken)
+      if (ctx2.options.keepSourceTokens && isSrcToken)
         node.srcToken = token;
       return node;
     }
-    function composeEmptyNode(ctx, offset, before, pos, { spaceBefore, comment, anchor, tag, end }, onError) {
+    function composeEmptyNode(ctx2, offset, before, pos, { spaceBefore, comment, anchor, tag, end }, onError) {
       const token = {
         type: "scalar",
         offset: utilEmptyScalarPosition.emptyScalarPosition(offset, before, pos),
         indent: -1,
         source: ""
       };
-      const node = composeScalar.composeScalar(ctx, token, tag, onError);
+      const node = composeScalar.composeScalar(ctx2, token, tag, onError);
       if (anchor) {
         node.anchor = anchor.source.substring(1);
         if (node.anchor === "")
@@ -11920,7 +11920,7 @@ var require_compose_doc = __commonJS({
     function composeDoc(options, directives, { offset, start, value, end }, onError) {
       const opts = Object.assign({ _directives: directives }, options);
       const doc = new Document.Document(void 0, opts);
-      const ctx = {
+      const ctx2 = {
         atKey: false,
         atRoot: true,
         directives: doc.directives,
@@ -11940,7 +11940,7 @@ var require_compose_doc = __commonJS({
         if (value && (value.type === "block-map" || value.type === "block-seq") && !props.hasNewline)
           onError(props.end, "MISSING_CHAR", "Block collection cannot start on same line with directives-end marker");
       }
-      doc.contents = value ? composeNode.composeNode(ctx, value, props, onError) : composeNode.composeEmptyNode(ctx, props.end, start, null, props, onError);
+      doc.contents = value ? composeNode.composeNode(ctx2, value, props, onError) : composeNode.composeEmptyNode(ctx2, props.end, start, null, props, onError);
       const contentEnd = doc.contents.range[2];
       const re = resolveEnd.resolveEnd(end, contentEnd, false, onError);
       if (re.comment)
@@ -12419,9 +12419,9 @@ var require_cst_visit = __commonJS({
     visit.BREAK = BREAK;
     visit.SKIP = SKIP;
     visit.REMOVE = REMOVE;
-    visit.itemAtPath = (cst, path8) => {
+    visit.itemAtPath = (cst, path10) => {
       let item = cst;
-      for (const [field, index] of path8) {
+      for (const [field, index] of path10) {
         const tok = item?.[field];
         if (tok && "items" in tok) {
           item = tok.items[index];
@@ -12430,23 +12430,23 @@ var require_cst_visit = __commonJS({
       }
       return item;
     };
-    visit.parentCollection = (cst, path8) => {
-      const parent = visit.itemAtPath(cst, path8.slice(0, -1));
-      const field = path8[path8.length - 1][0];
+    visit.parentCollection = (cst, path10) => {
+      const parent = visit.itemAtPath(cst, path10.slice(0, -1));
+      const field = path10[path10.length - 1][0];
       const coll = parent?.[field];
       if (coll && "items" in coll)
         return coll;
       throw new Error("Parent collection not found");
     };
-    function _visit(path8, item, visitor) {
-      let ctrl = visitor(item, path8);
+    function _visit(path10, item, visitor) {
+      let ctrl = visitor(item, path10);
       if (typeof ctrl === "symbol")
         return ctrl;
       for (const field of ["key", "value"]) {
         const token = item[field];
         if (token && "items" in token) {
           for (let i = 0; i < token.items.length; ++i) {
-            const ci = _visit(Object.freeze(path8.concat([[field, i]])), token.items[i], visitor);
+            const ci = _visit(Object.freeze(path10.concat([[field, i]])), token.items[i], visitor);
             if (typeof ci === "number")
               i = ci - 1;
             else if (ci === BREAK)
@@ -12457,10 +12457,10 @@ var require_cst_visit = __commonJS({
             }
           }
           if (typeof ctrl === "function" && field === "key")
-            ctrl = ctrl(item, path8);
+            ctrl = ctrl(item, path10);
         }
       }
-      return typeof ctrl === "function" ? ctrl(item, path8) : ctrl;
+      return typeof ctrl === "function" ? ctrl(item, path10) : ctrl;
     }
     exports.visit = visit;
   }
@@ -13745,14 +13745,14 @@ var require_parser = __commonJS({
             case "scalar":
             case "single-quoted-scalar":
             case "double-quoted-scalar": {
-              const fs8 = this.flowScalar(this.type);
+              const fs10 = this.flowScalar(this.type);
               if (atNextItem || it.value) {
-                map2.items.push({ start, key: fs8, sep: [] });
+                map2.items.push({ start, key: fs10, sep: [] });
                 this.onKeyLine = true;
               } else if (it.sep) {
-                this.stack.push(fs8);
+                this.stack.push(fs10);
               } else {
-                Object.assign(it, { key: fs8, sep: [] });
+                Object.assign(it, { key: fs10, sep: [] });
                 this.onKeyLine = true;
               }
               return;
@@ -13880,13 +13880,13 @@ var require_parser = __commonJS({
             case "scalar":
             case "single-quoted-scalar":
             case "double-quoted-scalar": {
-              const fs8 = this.flowScalar(this.type);
+              const fs10 = this.flowScalar(this.type);
               if (!it || it.value)
-                fc.items.push({ start: [], key: fs8, sep: [] });
+                fc.items.push({ start: [], key: fs10, sep: [] });
               else if (it.sep)
-                this.stack.push(fs8);
+                this.stack.push(fs10);
               else
-                Object.assign(it, { key: fs8, sep: [] });
+                Object.assign(it, { key: fs10, sep: [] });
               return;
             }
             case "flow-map-end":
@@ -14553,8 +14553,8 @@ function getErrorMap() {
 
 // node_modules/zod/v3/helpers/parseUtil.js
 var makeIssue = (params) => {
-  const { data, path: path8, errorMaps, issueData } = params;
-  const fullPath = [...path8, ...issueData.path || []];
+  const { data, path: path10, errorMaps, issueData } = params;
+  const fullPath = [...path10, ...issueData.path || []];
   const fullIssue = {
     ...issueData,
     path: fullPath
@@ -14577,16 +14577,16 @@ var makeIssue = (params) => {
     message: errorMessage
   };
 };
-function addIssueToContext(ctx, issueData) {
+function addIssueToContext(ctx2, issueData) {
   const overrideMap = getErrorMap();
   const issue2 = makeIssue({
     issueData,
-    data: ctx.data,
-    path: ctx.path,
+    data: ctx2.data,
+    path: ctx2.path,
     errorMaps: [
-      ctx.common.contextualErrorMap,
+      ctx2.common.contextualErrorMap,
       // contextual error map is first priority
-      ctx.schemaErrorMap,
+      ctx2.schemaErrorMap,
       // then schema-bound map if available
       overrideMap,
       // then global override map
@@ -14594,7 +14594,7 @@ function addIssueToContext(ctx, issueData) {
       // then global default map
     ].filter((x) => !!x)
   });
-  ctx.common.issues.push(issue2);
+  ctx2.common.issues.push(issue2);
 }
 var ParseStatus = class _ParseStatus {
   constructor() {
@@ -14669,11 +14669,11 @@ var errorUtil;
 
 // node_modules/zod/v3/types.js
 var ParseInputLazyPath = class {
-  constructor(parent, value, path8, key) {
+  constructor(parent, value, path10, key) {
     this._cachedPath = [];
     this.parent = parent;
     this.data = value;
-    this._path = path8;
+    this._path = path10;
     this._key = key;
   }
   get path() {
@@ -14687,11 +14687,11 @@ var ParseInputLazyPath = class {
     return this._cachedPath;
   }
 };
-var handleResult = (ctx, result) => {
+var handleResult = (ctx2, result) => {
   if (isValid(result)) {
     return { success: true, data: result.value };
   } else {
-    if (!ctx.common.issues.length) {
+    if (!ctx2.common.issues.length) {
       throw new Error("Validation failed but no issues detected.");
     }
     return {
@@ -14699,7 +14699,7 @@ var handleResult = (ctx, result) => {
       get error() {
         if (this._error)
           return this._error;
-        const error2 = new ZodError(ctx.common.issues);
+        const error2 = new ZodError(ctx2.common.issues);
         this._error = error2;
         return this._error;
       }
@@ -14715,17 +14715,17 @@ function processCreateParams(params) {
   }
   if (errorMap2)
     return { errorMap: errorMap2, description };
-  const customMap = (iss, ctx) => {
+  const customMap = (iss, ctx2) => {
     const { message } = params;
     if (iss.code === "invalid_enum_value") {
-      return { message: message ?? ctx.defaultError };
+      return { message: message ?? ctx2.defaultError };
     }
-    if (typeof ctx.data === "undefined") {
-      return { message: message ?? required_error ?? ctx.defaultError };
+    if (typeof ctx2.data === "undefined") {
+      return { message: message ?? required_error ?? ctx2.defaultError };
     }
     if (iss.code !== "invalid_type")
-      return { message: ctx.defaultError };
-    return { message: message ?? invalid_type_error ?? ctx.defaultError };
+      return { message: ctx2.defaultError };
+    return { message: message ?? invalid_type_error ?? ctx2.defaultError };
   };
   return { errorMap: customMap, description };
 }
@@ -14736,8 +14736,8 @@ var ZodType = class {
   _getType(input) {
     return getParsedType(input.data);
   }
-  _getOrReturnCtx(input, ctx) {
-    return ctx || {
+  _getOrReturnCtx(input, ctx2) {
+    return ctx2 || {
       common: input.parent.common,
       data: input.data,
       parsedType: getParsedType(input.data),
@@ -14777,7 +14777,7 @@ var ZodType = class {
     throw result.error;
   }
   safeParse(data, params) {
-    const ctx = {
+    const ctx2 = {
       common: {
         issues: [],
         async: params?.async ?? false,
@@ -14789,11 +14789,11 @@ var ZodType = class {
       data,
       parsedType: getParsedType(data)
     };
-    const result = this._parseSync({ data, path: ctx.path, parent: ctx });
-    return handleResult(ctx, result);
+    const result = this._parseSync({ data, path: ctx2.path, parent: ctx2 });
+    return handleResult(ctx2, result);
   }
   "~validate"(data) {
-    const ctx = {
+    const ctx2 = {
       common: {
         issues: [],
         async: !!this["~standard"].async
@@ -14806,26 +14806,26 @@ var ZodType = class {
     };
     if (!this["~standard"].async) {
       try {
-        const result = this._parseSync({ data, path: [], parent: ctx });
+        const result = this._parseSync({ data, path: [], parent: ctx2 });
         return isValid(result) ? {
           value: result.value
         } : {
-          issues: ctx.common.issues
+          issues: ctx2.common.issues
         };
       } catch (err) {
         if (err?.message?.toLowerCase()?.includes("encountered")) {
           this["~standard"].async = true;
         }
-        ctx.common = {
+        ctx2.common = {
           issues: [],
           async: true
         };
       }
     }
-    return this._parseAsync({ data, path: [], parent: ctx }).then((result) => isValid(result) ? {
+    return this._parseAsync({ data, path: [], parent: ctx2 }).then((result) => isValid(result) ? {
       value: result.value
     } : {
-      issues: ctx.common.issues
+      issues: ctx2.common.issues
     });
   }
   async parseAsync(data, params) {
@@ -14835,7 +14835,7 @@ var ZodType = class {
     throw result.error;
   }
   async safeParseAsync(data, params) {
-    const ctx = {
+    const ctx2 = {
       common: {
         issues: [],
         contextualErrorMap: params?.errorMap,
@@ -14847,9 +14847,9 @@ var ZodType = class {
       data,
       parsedType: getParsedType(data)
     };
-    const maybeAsyncResult = this._parse({ data, path: ctx.path, parent: ctx });
+    const maybeAsyncResult = this._parse({ data, path: ctx2.path, parent: ctx2 });
     const result = await (isAsync(maybeAsyncResult) ? maybeAsyncResult : Promise.resolve(maybeAsyncResult));
-    return handleResult(ctx, result);
+    return handleResult(ctx2, result);
   }
   refine(check2, message) {
     const getIssueProperties = (val) => {
@@ -14861,9 +14861,9 @@ var ZodType = class {
         return message;
       }
     };
-    return this._refinement((val, ctx) => {
+    return this._refinement((val, ctx2) => {
       const result = check2(val);
-      const setError = () => ctx.addIssue({
+      const setError = () => ctx2.addIssue({
         code: ZodIssueCode.custom,
         ...getIssueProperties(val)
       });
@@ -14886,9 +14886,9 @@ var ZodType = class {
     });
   }
   refinement(check2, refinementData) {
-    return this._refinement((val, ctx) => {
+    return this._refinement((val, ctx2) => {
       if (!check2(val)) {
-        ctx.addIssue(typeof refinementData === "function" ? refinementData(val, ctx) : refinementData);
+        ctx2.addIssue(typeof refinementData === "function" ? refinementData(val, ctx2) : refinementData);
         return false;
       } else {
         return true;
@@ -15099,21 +15099,21 @@ var ZodString = class _ZodString2 extends ZodType {
     }
     const parsedType2 = this._getType(input);
     if (parsedType2 !== ZodParsedType.string) {
-      const ctx2 = this._getOrReturnCtx(input);
-      addIssueToContext(ctx2, {
+      const ctx3 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx3, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.string,
-        received: ctx2.parsedType
+        received: ctx3.parsedType
       });
       return INVALID;
     }
     const status = new ParseStatus();
-    let ctx = void 0;
+    let ctx2 = void 0;
     for (const check2 of this._def.checks) {
       if (check2.kind === "min") {
         if (input.data.length < check2.value) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.too_small,
             minimum: check2.value,
             type: "string",
@@ -15125,8 +15125,8 @@ var ZodString = class _ZodString2 extends ZodType {
         }
       } else if (check2.kind === "max") {
         if (input.data.length > check2.value) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.too_big,
             maximum: check2.value,
             type: "string",
@@ -15140,9 +15140,9 @@ var ZodString = class _ZodString2 extends ZodType {
         const tooBig = input.data.length > check2.value;
         const tooSmall = input.data.length < check2.value;
         if (tooBig || tooSmall) {
-          ctx = this._getOrReturnCtx(input, ctx);
+          ctx2 = this._getOrReturnCtx(input, ctx2);
           if (tooBig) {
-            addIssueToContext(ctx, {
+            addIssueToContext(ctx2, {
               code: ZodIssueCode.too_big,
               maximum: check2.value,
               type: "string",
@@ -15151,7 +15151,7 @@ var ZodString = class _ZodString2 extends ZodType {
               message: check2.message
             });
           } else if (tooSmall) {
-            addIssueToContext(ctx, {
+            addIssueToContext(ctx2, {
               code: ZodIssueCode.too_small,
               minimum: check2.value,
               type: "string",
@@ -15164,8 +15164,8 @@ var ZodString = class _ZodString2 extends ZodType {
         }
       } else if (check2.kind === "email") {
         if (!emailRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "email",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15177,8 +15177,8 @@ var ZodString = class _ZodString2 extends ZodType {
           emojiRegex = new RegExp(_emojiRegex, "u");
         }
         if (!emojiRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "emoji",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15187,8 +15187,8 @@ var ZodString = class _ZodString2 extends ZodType {
         }
       } else if (check2.kind === "uuid") {
         if (!uuidRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "uuid",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15197,8 +15197,8 @@ var ZodString = class _ZodString2 extends ZodType {
         }
       } else if (check2.kind === "nanoid") {
         if (!nanoidRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "nanoid",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15207,8 +15207,8 @@ var ZodString = class _ZodString2 extends ZodType {
         }
       } else if (check2.kind === "cuid") {
         if (!cuidRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "cuid",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15217,8 +15217,8 @@ var ZodString = class _ZodString2 extends ZodType {
         }
       } else if (check2.kind === "cuid2") {
         if (!cuid2Regex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "cuid2",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15227,8 +15227,8 @@ var ZodString = class _ZodString2 extends ZodType {
         }
       } else if (check2.kind === "ulid") {
         if (!ulidRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "ulid",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15239,8 +15239,8 @@ var ZodString = class _ZodString2 extends ZodType {
         try {
           new URL(input.data);
         } catch {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "url",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15251,8 +15251,8 @@ var ZodString = class _ZodString2 extends ZodType {
         check2.regex.lastIndex = 0;
         const testResult = check2.regex.test(input.data);
         if (!testResult) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "regex",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15263,8 +15263,8 @@ var ZodString = class _ZodString2 extends ZodType {
         input.data = input.data.trim();
       } else if (check2.kind === "includes") {
         if (!input.data.includes(check2.value, check2.position)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.invalid_string,
             validation: { includes: check2.value, position: check2.position },
             message: check2.message
@@ -15277,8 +15277,8 @@ var ZodString = class _ZodString2 extends ZodType {
         input.data = input.data.toUpperCase();
       } else if (check2.kind === "startsWith") {
         if (!input.data.startsWith(check2.value)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.invalid_string,
             validation: { startsWith: check2.value },
             message: check2.message
@@ -15287,8 +15287,8 @@ var ZodString = class _ZodString2 extends ZodType {
         }
       } else if (check2.kind === "endsWith") {
         if (!input.data.endsWith(check2.value)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.invalid_string,
             validation: { endsWith: check2.value },
             message: check2.message
@@ -15298,8 +15298,8 @@ var ZodString = class _ZodString2 extends ZodType {
       } else if (check2.kind === "datetime") {
         const regex = datetimeRegex(check2);
         if (!regex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.invalid_string,
             validation: "datetime",
             message: check2.message
@@ -15309,8 +15309,8 @@ var ZodString = class _ZodString2 extends ZodType {
       } else if (check2.kind === "date") {
         const regex = dateRegex;
         if (!regex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.invalid_string,
             validation: "date",
             message: check2.message
@@ -15320,8 +15320,8 @@ var ZodString = class _ZodString2 extends ZodType {
       } else if (check2.kind === "time") {
         const regex = timeRegex(check2);
         if (!regex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.invalid_string,
             validation: "time",
             message: check2.message
@@ -15330,8 +15330,8 @@ var ZodString = class _ZodString2 extends ZodType {
         }
       } else if (check2.kind === "duration") {
         if (!durationRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "duration",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15340,8 +15340,8 @@ var ZodString = class _ZodString2 extends ZodType {
         }
       } else if (check2.kind === "ip") {
         if (!isValidIP(input.data, check2.version)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "ip",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15350,8 +15350,8 @@ var ZodString = class _ZodString2 extends ZodType {
         }
       } else if (check2.kind === "jwt") {
         if (!isValidJWT(input.data, check2.alg)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "jwt",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15360,8 +15360,8 @@ var ZodString = class _ZodString2 extends ZodType {
         }
       } else if (check2.kind === "cidr") {
         if (!isValidCidr(input.data, check2.version)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "cidr",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15370,8 +15370,8 @@ var ZodString = class _ZodString2 extends ZodType {
         }
       } else if (check2.kind === "base64") {
         if (!base64Regex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "base64",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15380,8 +15380,8 @@ var ZodString = class _ZodString2 extends ZodType {
         }
       } else if (check2.kind === "base64url") {
         if (!base64urlRegex.test(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             validation: "base64url",
             code: ZodIssueCode.invalid_string,
             message: check2.message
@@ -15659,21 +15659,21 @@ var ZodNumber = class _ZodNumber extends ZodType {
     }
     const parsedType2 = this._getType(input);
     if (parsedType2 !== ZodParsedType.number) {
-      const ctx2 = this._getOrReturnCtx(input);
-      addIssueToContext(ctx2, {
+      const ctx3 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx3, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.number,
-        received: ctx2.parsedType
+        received: ctx3.parsedType
       });
       return INVALID;
     }
-    let ctx = void 0;
+    let ctx2 = void 0;
     const status = new ParseStatus();
     for (const check2 of this._def.checks) {
       if (check2.kind === "int") {
         if (!util.isInteger(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.invalid_type,
             expected: "integer",
             received: "float",
@@ -15684,8 +15684,8 @@ var ZodNumber = class _ZodNumber extends ZodType {
       } else if (check2.kind === "min") {
         const tooSmall = check2.inclusive ? input.data < check2.value : input.data <= check2.value;
         if (tooSmall) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.too_small,
             minimum: check2.value,
             type: "number",
@@ -15698,8 +15698,8 @@ var ZodNumber = class _ZodNumber extends ZodType {
       } else if (check2.kind === "max") {
         const tooBig = check2.inclusive ? input.data > check2.value : input.data >= check2.value;
         if (tooBig) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.too_big,
             maximum: check2.value,
             type: "number",
@@ -15711,8 +15711,8 @@ var ZodNumber = class _ZodNumber extends ZodType {
         }
       } else if (check2.kind === "multipleOf") {
         if (floatSafeRemainder(input.data, check2.value) !== 0) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.not_multiple_of,
             multipleOf: check2.value,
             message: check2.message
@@ -15721,8 +15721,8 @@ var ZodNumber = class _ZodNumber extends ZodType {
         }
       } else if (check2.kind === "finite") {
         if (!Number.isFinite(input.data)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.not_finite,
             message: check2.message
           });
@@ -15896,14 +15896,14 @@ var ZodBigInt = class _ZodBigInt extends ZodType {
     if (parsedType2 !== ZodParsedType.bigint) {
       return this._getInvalidInput(input);
     }
-    let ctx = void 0;
+    let ctx2 = void 0;
     const status = new ParseStatus();
     for (const check2 of this._def.checks) {
       if (check2.kind === "min") {
         const tooSmall = check2.inclusive ? input.data < check2.value : input.data <= check2.value;
         if (tooSmall) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.too_small,
             type: "bigint",
             minimum: check2.value,
@@ -15915,8 +15915,8 @@ var ZodBigInt = class _ZodBigInt extends ZodType {
       } else if (check2.kind === "max") {
         const tooBig = check2.inclusive ? input.data > check2.value : input.data >= check2.value;
         if (tooBig) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.too_big,
             type: "bigint",
             maximum: check2.value,
@@ -15927,8 +15927,8 @@ var ZodBigInt = class _ZodBigInt extends ZodType {
         }
       } else if (check2.kind === "multipleOf") {
         if (input.data % check2.value !== BigInt(0)) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.not_multiple_of,
             multipleOf: check2.value,
             message: check2.message
@@ -15942,11 +15942,11 @@ var ZodBigInt = class _ZodBigInt extends ZodType {
     return { status: status.value, value: input.data };
   }
   _getInvalidInput(input) {
-    const ctx = this._getOrReturnCtx(input);
-    addIssueToContext(ctx, {
+    const ctx2 = this._getOrReturnCtx(input);
+    addIssueToContext(ctx2, {
       code: ZodIssueCode.invalid_type,
       expected: ZodParsedType.bigint,
-      received: ctx.parsedType
+      received: ctx2.parsedType
     });
     return INVALID;
   }
@@ -16057,11 +16057,11 @@ var ZodBoolean = class extends ZodType {
     }
     const parsedType2 = this._getType(input);
     if (parsedType2 !== ZodParsedType.boolean) {
-      const ctx = this._getOrReturnCtx(input);
-      addIssueToContext(ctx, {
+      const ctx2 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.boolean,
-        received: ctx.parsedType
+        received: ctx2.parsedType
       });
       return INVALID;
     }
@@ -16082,28 +16082,28 @@ var ZodDate = class _ZodDate extends ZodType {
     }
     const parsedType2 = this._getType(input);
     if (parsedType2 !== ZodParsedType.date) {
-      const ctx2 = this._getOrReturnCtx(input);
-      addIssueToContext(ctx2, {
+      const ctx3 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx3, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.date,
-        received: ctx2.parsedType
+        received: ctx3.parsedType
       });
       return INVALID;
     }
     if (Number.isNaN(input.data.getTime())) {
-      const ctx2 = this._getOrReturnCtx(input);
-      addIssueToContext(ctx2, {
+      const ctx3 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx3, {
         code: ZodIssueCode.invalid_date
       });
       return INVALID;
     }
     const status = new ParseStatus();
-    let ctx = void 0;
+    let ctx2 = void 0;
     for (const check2 of this._def.checks) {
       if (check2.kind === "min") {
         if (input.data.getTime() < check2.value) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.too_small,
             message: check2.message,
             inclusive: true,
@@ -16115,8 +16115,8 @@ var ZodDate = class _ZodDate extends ZodType {
         }
       } else if (check2.kind === "max") {
         if (input.data.getTime() > check2.value) {
-          ctx = this._getOrReturnCtx(input, ctx);
-          addIssueToContext(ctx, {
+          ctx2 = this._getOrReturnCtx(input, ctx2);
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.too_big,
             message: check2.message,
             inclusive: true,
@@ -16188,11 +16188,11 @@ var ZodSymbol = class extends ZodType {
   _parse(input) {
     const parsedType2 = this._getType(input);
     if (parsedType2 !== ZodParsedType.symbol) {
-      const ctx = this._getOrReturnCtx(input);
-      addIssueToContext(ctx, {
+      const ctx2 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.symbol,
-        received: ctx.parsedType
+        received: ctx2.parsedType
       });
       return INVALID;
     }
@@ -16209,11 +16209,11 @@ var ZodUndefined = class extends ZodType {
   _parse(input) {
     const parsedType2 = this._getType(input);
     if (parsedType2 !== ZodParsedType.undefined) {
-      const ctx = this._getOrReturnCtx(input);
-      addIssueToContext(ctx, {
+      const ctx2 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.undefined,
-        received: ctx.parsedType
+        received: ctx2.parsedType
       });
       return INVALID;
     }
@@ -16230,11 +16230,11 @@ var ZodNull = class extends ZodType {
   _parse(input) {
     const parsedType2 = this._getType(input);
     if (parsedType2 !== ZodParsedType.null) {
-      const ctx = this._getOrReturnCtx(input);
-      addIssueToContext(ctx, {
+      const ctx2 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.null,
-        received: ctx.parsedType
+        received: ctx2.parsedType
       });
       return INVALID;
     }
@@ -16279,11 +16279,11 @@ ZodUnknown.create = (params) => {
 };
 var ZodNever = class extends ZodType {
   _parse(input) {
-    const ctx = this._getOrReturnCtx(input);
-    addIssueToContext(ctx, {
+    const ctx2 = this._getOrReturnCtx(input);
+    addIssueToContext(ctx2, {
       code: ZodIssueCode.invalid_type,
       expected: ZodParsedType.never,
-      received: ctx.parsedType
+      received: ctx2.parsedType
     });
     return INVALID;
   }
@@ -16298,11 +16298,11 @@ var ZodVoid = class extends ZodType {
   _parse(input) {
     const parsedType2 = this._getType(input);
     if (parsedType2 !== ZodParsedType.undefined) {
-      const ctx = this._getOrReturnCtx(input);
-      addIssueToContext(ctx, {
+      const ctx2 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.void,
-        received: ctx.parsedType
+        received: ctx2.parsedType
       });
       return INVALID;
     }
@@ -16317,21 +16317,21 @@ ZodVoid.create = (params) => {
 };
 var ZodArray = class _ZodArray extends ZodType {
   _parse(input) {
-    const { ctx, status } = this._processInputParams(input);
+    const { ctx: ctx2, status } = this._processInputParams(input);
     const def = this._def;
-    if (ctx.parsedType !== ZodParsedType.array) {
-      addIssueToContext(ctx, {
+    if (ctx2.parsedType !== ZodParsedType.array) {
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.array,
-        received: ctx.parsedType
+        received: ctx2.parsedType
       });
       return INVALID;
     }
     if (def.exactLength !== null) {
-      const tooBig = ctx.data.length > def.exactLength.value;
-      const tooSmall = ctx.data.length < def.exactLength.value;
+      const tooBig = ctx2.data.length > def.exactLength.value;
+      const tooSmall = ctx2.data.length < def.exactLength.value;
       if (tooBig || tooSmall) {
-        addIssueToContext(ctx, {
+        addIssueToContext(ctx2, {
           code: tooBig ? ZodIssueCode.too_big : ZodIssueCode.too_small,
           minimum: tooSmall ? def.exactLength.value : void 0,
           maximum: tooBig ? def.exactLength.value : void 0,
@@ -16344,8 +16344,8 @@ var ZodArray = class _ZodArray extends ZodType {
       }
     }
     if (def.minLength !== null) {
-      if (ctx.data.length < def.minLength.value) {
-        addIssueToContext(ctx, {
+      if (ctx2.data.length < def.minLength.value) {
+        addIssueToContext(ctx2, {
           code: ZodIssueCode.too_small,
           minimum: def.minLength.value,
           type: "array",
@@ -16357,8 +16357,8 @@ var ZodArray = class _ZodArray extends ZodType {
       }
     }
     if (def.maxLength !== null) {
-      if (ctx.data.length > def.maxLength.value) {
-        addIssueToContext(ctx, {
+      if (ctx2.data.length > def.maxLength.value) {
+        addIssueToContext(ctx2, {
           code: ZodIssueCode.too_big,
           maximum: def.maxLength.value,
           type: "array",
@@ -16369,15 +16369,15 @@ var ZodArray = class _ZodArray extends ZodType {
         status.dirty();
       }
     }
-    if (ctx.common.async) {
-      return Promise.all([...ctx.data].map((item, i) => {
-        return def.type._parseAsync(new ParseInputLazyPath(ctx, item, ctx.path, i));
+    if (ctx2.common.async) {
+      return Promise.all([...ctx2.data].map((item, i) => {
+        return def.type._parseAsync(new ParseInputLazyPath(ctx2, item, ctx2.path, i));
       })).then((result2) => {
         return ParseStatus.mergeArray(status, result2);
       });
     }
-    const result = [...ctx.data].map((item, i) => {
-      return def.type._parseSync(new ParseInputLazyPath(ctx, item, ctx.path, i));
+    const result = [...ctx2.data].map((item, i) => {
+      return def.type._parseSync(new ParseInputLazyPath(ctx2, item, ctx2.path, i));
     });
     return ParseStatus.mergeArray(status, result);
   }
@@ -16460,19 +16460,19 @@ var ZodObject = class _ZodObject extends ZodType {
   _parse(input) {
     const parsedType2 = this._getType(input);
     if (parsedType2 !== ZodParsedType.object) {
-      const ctx2 = this._getOrReturnCtx(input);
-      addIssueToContext(ctx2, {
+      const ctx3 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx3, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.object,
-        received: ctx2.parsedType
+        received: ctx3.parsedType
       });
       return INVALID;
     }
-    const { status, ctx } = this._processInputParams(input);
+    const { status, ctx: ctx2 } = this._processInputParams(input);
     const { shape, keys: shapeKeys } = this._getCached();
     const extraKeys = [];
     if (!(this._def.catchall instanceof ZodNever && this._def.unknownKeys === "strip")) {
-      for (const key in ctx.data) {
+      for (const key in ctx2.data) {
         if (!shapeKeys.includes(key)) {
           extraKeys.push(key);
         }
@@ -16481,11 +16481,11 @@ var ZodObject = class _ZodObject extends ZodType {
     const pairs = [];
     for (const key of shapeKeys) {
       const keyValidator = shape[key];
-      const value = ctx.data[key];
+      const value = ctx2.data[key];
       pairs.push({
         key: { status: "valid", value: key },
-        value: keyValidator._parse(new ParseInputLazyPath(ctx, value, ctx.path, key)),
-        alwaysSet: key in ctx.data
+        value: keyValidator._parse(new ParseInputLazyPath(ctx2, value, ctx2.path, key)),
+        alwaysSet: key in ctx2.data
       });
     }
     if (this._def.catchall instanceof ZodNever) {
@@ -16494,12 +16494,12 @@ var ZodObject = class _ZodObject extends ZodType {
         for (const key of extraKeys) {
           pairs.push({
             key: { status: "valid", value: key },
-            value: { status: "valid", value: ctx.data[key] }
+            value: { status: "valid", value: ctx2.data[key] }
           });
         }
       } else if (unknownKeys === "strict") {
         if (extraKeys.length > 0) {
-          addIssueToContext(ctx, {
+          addIssueToContext(ctx2, {
             code: ZodIssueCode.unrecognized_keys,
             keys: extraKeys
           });
@@ -16512,18 +16512,18 @@ var ZodObject = class _ZodObject extends ZodType {
     } else {
       const catchall = this._def.catchall;
       for (const key of extraKeys) {
-        const value = ctx.data[key];
+        const value = ctx2.data[key];
         pairs.push({
           key: { status: "valid", value: key },
           value: catchall._parse(
-            new ParseInputLazyPath(ctx, value, ctx.path, key)
+            new ParseInputLazyPath(ctx2, value, ctx2.path, key)
             //, ctx.child(key), value, getParsedType(value)
           ),
-          alwaysSet: key in ctx.data
+          alwaysSet: key in ctx2.data
         });
       }
     }
-    if (ctx.common.async) {
+    if (ctx2.common.async) {
       return Promise.resolve().then(async () => {
         const syncPairs = [];
         for (const pair of pairs) {
@@ -16552,8 +16552,8 @@ var ZodObject = class _ZodObject extends ZodType {
       ...this._def,
       unknownKeys: "strict",
       ...message !== void 0 ? {
-        errorMap: (issue2, ctx) => {
-          const defaultError = this._def.errorMap?.(issue2, ctx).message ?? ctx.defaultError;
+        errorMap: (issue2, ctx2) => {
+          const defaultError = this._def.errorMap?.(issue2, ctx2).message ?? ctx2.defaultError;
           if (issue2.code === "unrecognized_keys")
             return {
               message: errorUtil.errToObj(message).message ?? defaultError
@@ -16782,7 +16782,7 @@ ZodObject.lazycreate = (shape, params) => {
 };
 var ZodUnion = class extends ZodType {
   _parse(input) {
-    const { ctx } = this._processInputParams(input);
+    const { ctx: ctx2 } = this._processInputParams(input);
     const options = this._def.options;
     function handleResults(results) {
       for (const result of results) {
@@ -16792,31 +16792,31 @@ var ZodUnion = class extends ZodType {
       }
       for (const result of results) {
         if (result.result.status === "dirty") {
-          ctx.common.issues.push(...result.ctx.common.issues);
+          ctx2.common.issues.push(...result.ctx.common.issues);
           return result.result;
         }
       }
       const unionErrors = results.map((result) => new ZodError(result.ctx.common.issues));
-      addIssueToContext(ctx, {
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_union,
         unionErrors
       });
       return INVALID;
     }
-    if (ctx.common.async) {
+    if (ctx2.common.async) {
       return Promise.all(options.map(async (option) => {
         const childCtx = {
-          ...ctx,
+          ...ctx2,
           common: {
-            ...ctx.common,
+            ...ctx2.common,
             issues: []
           },
           parent: null
         };
         return {
           result: await option._parseAsync({
-            data: ctx.data,
-            path: ctx.path,
+            data: ctx2.data,
+            path: ctx2.path,
             parent: childCtx
           }),
           ctx: childCtx
@@ -16827,16 +16827,16 @@ var ZodUnion = class extends ZodType {
       const issues = [];
       for (const option of options) {
         const childCtx = {
-          ...ctx,
+          ...ctx2,
           common: {
-            ...ctx.common,
+            ...ctx2.common,
             issues: []
           },
           parent: null
         };
         const result = option._parseSync({
-          data: ctx.data,
-          path: ctx.path,
+          data: ctx2.data,
+          path: ctx2.path,
           parent: childCtx
         });
         if (result.status === "valid") {
@@ -16849,11 +16849,11 @@ var ZodUnion = class extends ZodType {
         }
       }
       if (dirty) {
-        ctx.common.issues.push(...dirty.ctx.common.issues);
+        ctx2.common.issues.push(...dirty.ctx.common.issues);
         return dirty.result;
       }
       const unionErrors = issues.map((issues2) => new ZodError(issues2));
-      addIssueToContext(ctx, {
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_union,
         unionErrors
       });
@@ -16904,37 +16904,37 @@ var getDiscriminator = (type) => {
 };
 var ZodDiscriminatedUnion = class _ZodDiscriminatedUnion extends ZodType {
   _parse(input) {
-    const { ctx } = this._processInputParams(input);
-    if (ctx.parsedType !== ZodParsedType.object) {
-      addIssueToContext(ctx, {
+    const { ctx: ctx2 } = this._processInputParams(input);
+    if (ctx2.parsedType !== ZodParsedType.object) {
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.object,
-        received: ctx.parsedType
+        received: ctx2.parsedType
       });
       return INVALID;
     }
     const discriminator = this.discriminator;
-    const discriminatorValue = ctx.data[discriminator];
+    const discriminatorValue = ctx2.data[discriminator];
     const option = this.optionsMap.get(discriminatorValue);
     if (!option) {
-      addIssueToContext(ctx, {
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_union_discriminator,
         options: Array.from(this.optionsMap.keys()),
         path: [discriminator]
       });
       return INVALID;
     }
-    if (ctx.common.async) {
+    if (ctx2.common.async) {
       return option._parseAsync({
-        data: ctx.data,
-        path: ctx.path,
-        parent: ctx
+        data: ctx2.data,
+        path: ctx2.path,
+        parent: ctx2
       });
     } else {
       return option._parseSync({
-        data: ctx.data,
-        path: ctx.path,
-        parent: ctx
+        data: ctx2.data,
+        path: ctx2.path,
+        parent: ctx2
       });
     }
   }
@@ -17018,14 +17018,14 @@ function mergeValues(a, b) {
 }
 var ZodIntersection = class extends ZodType {
   _parse(input) {
-    const { status, ctx } = this._processInputParams(input);
+    const { status, ctx: ctx2 } = this._processInputParams(input);
     const handleParsed = (parsedLeft, parsedRight) => {
       if (isAborted(parsedLeft) || isAborted(parsedRight)) {
         return INVALID;
       }
       const merged = mergeValues(parsedLeft.value, parsedRight.value);
       if (!merged.valid) {
-        addIssueToContext(ctx, {
+        addIssueToContext(ctx2, {
           code: ZodIssueCode.invalid_intersection_types
         });
         return INVALID;
@@ -17035,28 +17035,28 @@ var ZodIntersection = class extends ZodType {
       }
       return { status: status.value, value: merged.data };
     };
-    if (ctx.common.async) {
+    if (ctx2.common.async) {
       return Promise.all([
         this._def.left._parseAsync({
-          data: ctx.data,
-          path: ctx.path,
-          parent: ctx
+          data: ctx2.data,
+          path: ctx2.path,
+          parent: ctx2
         }),
         this._def.right._parseAsync({
-          data: ctx.data,
-          path: ctx.path,
-          parent: ctx
+          data: ctx2.data,
+          path: ctx2.path,
+          parent: ctx2
         })
       ]).then(([left, right]) => handleParsed(left, right));
     } else {
       return handleParsed(this._def.left._parseSync({
-        data: ctx.data,
-        path: ctx.path,
-        parent: ctx
+        data: ctx2.data,
+        path: ctx2.path,
+        parent: ctx2
       }), this._def.right._parseSync({
-        data: ctx.data,
-        path: ctx.path,
-        parent: ctx
+        data: ctx2.data,
+        path: ctx2.path,
+        parent: ctx2
       }));
     }
   }
@@ -17071,17 +17071,17 @@ ZodIntersection.create = (left, right, params) => {
 };
 var ZodTuple = class _ZodTuple extends ZodType {
   _parse(input) {
-    const { status, ctx } = this._processInputParams(input);
-    if (ctx.parsedType !== ZodParsedType.array) {
-      addIssueToContext(ctx, {
+    const { status, ctx: ctx2 } = this._processInputParams(input);
+    if (ctx2.parsedType !== ZodParsedType.array) {
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.array,
-        received: ctx.parsedType
+        received: ctx2.parsedType
       });
       return INVALID;
     }
-    if (ctx.data.length < this._def.items.length) {
-      addIssueToContext(ctx, {
+    if (ctx2.data.length < this._def.items.length) {
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.too_small,
         minimum: this._def.items.length,
         inclusive: true,
@@ -17091,8 +17091,8 @@ var ZodTuple = class _ZodTuple extends ZodType {
       return INVALID;
     }
     const rest = this._def.rest;
-    if (!rest && ctx.data.length > this._def.items.length) {
-      addIssueToContext(ctx, {
+    if (!rest && ctx2.data.length > this._def.items.length) {
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.too_big,
         maximum: this._def.items.length,
         inclusive: true,
@@ -17101,13 +17101,13 @@ var ZodTuple = class _ZodTuple extends ZodType {
       });
       status.dirty();
     }
-    const items = [...ctx.data].map((item, itemIndex) => {
+    const items = [...ctx2.data].map((item, itemIndex) => {
       const schema = this._def.items[itemIndex] || this._def.rest;
       if (!schema)
         return null;
-      return schema._parse(new ParseInputLazyPath(ctx, item, ctx.path, itemIndex));
+      return schema._parse(new ParseInputLazyPath(ctx2, item, ctx2.path, itemIndex));
     }).filter((x) => !!x);
-    if (ctx.common.async) {
+    if (ctx2.common.async) {
       return Promise.all(items).then((results) => {
         return ParseStatus.mergeArray(status, results);
       });
@@ -17144,26 +17144,26 @@ var ZodRecord = class _ZodRecord extends ZodType {
     return this._def.valueType;
   }
   _parse(input) {
-    const { status, ctx } = this._processInputParams(input);
-    if (ctx.parsedType !== ZodParsedType.object) {
-      addIssueToContext(ctx, {
+    const { status, ctx: ctx2 } = this._processInputParams(input);
+    if (ctx2.parsedType !== ZodParsedType.object) {
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.object,
-        received: ctx.parsedType
+        received: ctx2.parsedType
       });
       return INVALID;
     }
     const pairs = [];
     const keyType = this._def.keyType;
     const valueType = this._def.valueType;
-    for (const key in ctx.data) {
+    for (const key in ctx2.data) {
       pairs.push({
-        key: keyType._parse(new ParseInputLazyPath(ctx, key, ctx.path, key)),
-        value: valueType._parse(new ParseInputLazyPath(ctx, ctx.data[key], ctx.path, key)),
-        alwaysSet: key in ctx.data
+        key: keyType._parse(new ParseInputLazyPath(ctx2, key, ctx2.path, key)),
+        value: valueType._parse(new ParseInputLazyPath(ctx2, ctx2.data[key], ctx2.path, key)),
+        alwaysSet: key in ctx2.data
       });
     }
-    if (ctx.common.async) {
+    if (ctx2.common.async) {
       return ParseStatus.mergeObjectAsync(status, pairs);
     } else {
       return ParseStatus.mergeObjectSync(status, pairs);
@@ -17197,24 +17197,24 @@ var ZodMap = class extends ZodType {
     return this._def.valueType;
   }
   _parse(input) {
-    const { status, ctx } = this._processInputParams(input);
-    if (ctx.parsedType !== ZodParsedType.map) {
-      addIssueToContext(ctx, {
+    const { status, ctx: ctx2 } = this._processInputParams(input);
+    if (ctx2.parsedType !== ZodParsedType.map) {
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.map,
-        received: ctx.parsedType
+        received: ctx2.parsedType
       });
       return INVALID;
     }
     const keyType = this._def.keyType;
     const valueType = this._def.valueType;
-    const pairs = [...ctx.data.entries()].map(([key, value], index) => {
+    const pairs = [...ctx2.data.entries()].map(([key, value], index) => {
       return {
-        key: keyType._parse(new ParseInputLazyPath(ctx, key, ctx.path, [index, "key"])),
-        value: valueType._parse(new ParseInputLazyPath(ctx, value, ctx.path, [index, "value"]))
+        key: keyType._parse(new ParseInputLazyPath(ctx2, key, ctx2.path, [index, "key"])),
+        value: valueType._parse(new ParseInputLazyPath(ctx2, value, ctx2.path, [index, "value"]))
       };
     });
-    if (ctx.common.async) {
+    if (ctx2.common.async) {
       const finalMap = /* @__PURE__ */ new Map();
       return Promise.resolve().then(async () => {
         for (const pair of pairs) {
@@ -17257,19 +17257,19 @@ ZodMap.create = (keyType, valueType, params) => {
 };
 var ZodSet = class _ZodSet extends ZodType {
   _parse(input) {
-    const { status, ctx } = this._processInputParams(input);
-    if (ctx.parsedType !== ZodParsedType.set) {
-      addIssueToContext(ctx, {
+    const { status, ctx: ctx2 } = this._processInputParams(input);
+    if (ctx2.parsedType !== ZodParsedType.set) {
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.set,
-        received: ctx.parsedType
+        received: ctx2.parsedType
       });
       return INVALID;
     }
     const def = this._def;
     if (def.minSize !== null) {
-      if (ctx.data.size < def.minSize.value) {
-        addIssueToContext(ctx, {
+      if (ctx2.data.size < def.minSize.value) {
+        addIssueToContext(ctx2, {
           code: ZodIssueCode.too_small,
           minimum: def.minSize.value,
           type: "set",
@@ -17281,8 +17281,8 @@ var ZodSet = class _ZodSet extends ZodType {
       }
     }
     if (def.maxSize !== null) {
-      if (ctx.data.size > def.maxSize.value) {
-        addIssueToContext(ctx, {
+      if (ctx2.data.size > def.maxSize.value) {
+        addIssueToContext(ctx2, {
           code: ZodIssueCode.too_big,
           maximum: def.maxSize.value,
           type: "set",
@@ -17305,8 +17305,8 @@ var ZodSet = class _ZodSet extends ZodType {
       }
       return { status: status.value, value: parsedSet };
     }
-    const elements = [...ctx.data.values()].map((item, i) => valueType._parse(new ParseInputLazyPath(ctx, item, ctx.path, i)));
-    if (ctx.common.async) {
+    const elements = [...ctx2.data.values()].map((item, i) => valueType._parse(new ParseInputLazyPath(ctx2, item, ctx2.path, i)));
+    if (ctx2.common.async) {
       return Promise.all(elements).then((elements2) => finalizeSet(elements2));
     } else {
       return finalizeSet(elements);
@@ -17346,20 +17346,20 @@ var ZodFunction = class _ZodFunction extends ZodType {
     this.validate = this.implement;
   }
   _parse(input) {
-    const { ctx } = this._processInputParams(input);
-    if (ctx.parsedType !== ZodParsedType.function) {
-      addIssueToContext(ctx, {
+    const { ctx: ctx2 } = this._processInputParams(input);
+    if (ctx2.parsedType !== ZodParsedType.function) {
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.function,
-        received: ctx.parsedType
+        received: ctx2.parsedType
       });
       return INVALID;
     }
     function makeArgsIssue(args, error2) {
       return makeIssue({
         data: args,
-        path: ctx.path,
-        errorMaps: [ctx.common.contextualErrorMap, ctx.schemaErrorMap, getErrorMap(), en_default].filter((x) => !!x),
+        path: ctx2.path,
+        errorMaps: [ctx2.common.contextualErrorMap, ctx2.schemaErrorMap, getErrorMap(), en_default].filter((x) => !!x),
         issueData: {
           code: ZodIssueCode.invalid_arguments,
           argumentsError: error2
@@ -17369,16 +17369,16 @@ var ZodFunction = class _ZodFunction extends ZodType {
     function makeReturnsIssue(returns, error2) {
       return makeIssue({
         data: returns,
-        path: ctx.path,
-        errorMaps: [ctx.common.contextualErrorMap, ctx.schemaErrorMap, getErrorMap(), en_default].filter((x) => !!x),
+        path: ctx2.path,
+        errorMaps: [ctx2.common.contextualErrorMap, ctx2.schemaErrorMap, getErrorMap(), en_default].filter((x) => !!x),
         issueData: {
           code: ZodIssueCode.invalid_return_type,
           returnTypeError: error2
         }
       });
     }
-    const params = { errorMap: ctx.common.contextualErrorMap };
-    const fn = ctx.data;
+    const params = { errorMap: ctx2.common.contextualErrorMap };
+    const fn = ctx2.data;
     if (this._def.returns instanceof ZodPromise) {
       const me = this;
       return OK(async function(...args) {
@@ -17450,9 +17450,9 @@ var ZodLazy = class extends ZodType {
     return this._def.getter();
   }
   _parse(input) {
-    const { ctx } = this._processInputParams(input);
+    const { ctx: ctx2 } = this._processInputParams(input);
     const lazySchema = this._def.getter();
-    return lazySchema._parse({ data: ctx.data, path: ctx.path, parent: ctx });
+    return lazySchema._parse({ data: ctx2.data, path: ctx2.path, parent: ctx2 });
   }
 };
 ZodLazy.create = (getter, params) => {
@@ -17465,9 +17465,9 @@ ZodLazy.create = (getter, params) => {
 var ZodLiteral = class extends ZodType {
   _parse(input) {
     if (input.data !== this._def.value) {
-      const ctx = this._getOrReturnCtx(input);
-      addIssueToContext(ctx, {
-        received: ctx.data,
+      const ctx2 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx2, {
+        received: ctx2.data,
         code: ZodIssueCode.invalid_literal,
         expected: this._def.value
       });
@@ -17496,11 +17496,11 @@ function createZodEnum(values, params) {
 var ZodEnum = class _ZodEnum extends ZodType {
   _parse(input) {
     if (typeof input.data !== "string") {
-      const ctx = this._getOrReturnCtx(input);
+      const ctx2 = this._getOrReturnCtx(input);
       const expectedValues = this._def.values;
-      addIssueToContext(ctx, {
+      addIssueToContext(ctx2, {
         expected: util.joinValues(expectedValues),
-        received: ctx.parsedType,
+        received: ctx2.parsedType,
         code: ZodIssueCode.invalid_type
       });
       return INVALID;
@@ -17509,10 +17509,10 @@ var ZodEnum = class _ZodEnum extends ZodType {
       this._cache = new Set(this._def.values);
     }
     if (!this._cache.has(input.data)) {
-      const ctx = this._getOrReturnCtx(input);
+      const ctx2 = this._getOrReturnCtx(input);
       const expectedValues = this._def.values;
-      addIssueToContext(ctx, {
-        received: ctx.data,
+      addIssueToContext(ctx2, {
+        received: ctx2.data,
         code: ZodIssueCode.invalid_enum_value,
         options: expectedValues
       });
@@ -17561,12 +17561,12 @@ ZodEnum.create = createZodEnum;
 var ZodNativeEnum = class extends ZodType {
   _parse(input) {
     const nativeEnumValues = util.getValidEnumValues(this._def.values);
-    const ctx = this._getOrReturnCtx(input);
-    if (ctx.parsedType !== ZodParsedType.string && ctx.parsedType !== ZodParsedType.number) {
+    const ctx2 = this._getOrReturnCtx(input);
+    if (ctx2.parsedType !== ZodParsedType.string && ctx2.parsedType !== ZodParsedType.number) {
       const expectedValues = util.objectValues(nativeEnumValues);
-      addIssueToContext(ctx, {
+      addIssueToContext(ctx2, {
         expected: util.joinValues(expectedValues),
-        received: ctx.parsedType,
+        received: ctx2.parsedType,
         code: ZodIssueCode.invalid_type
       });
       return INVALID;
@@ -17576,8 +17576,8 @@ var ZodNativeEnum = class extends ZodType {
     }
     if (!this._cache.has(input.data)) {
       const expectedValues = util.objectValues(nativeEnumValues);
-      addIssueToContext(ctx, {
-        received: ctx.data,
+      addIssueToContext(ctx2, {
+        received: ctx2.data,
         code: ZodIssueCode.invalid_enum_value,
         options: expectedValues
       });
@@ -17601,20 +17601,20 @@ var ZodPromise = class extends ZodType {
     return this._def.type;
   }
   _parse(input) {
-    const { ctx } = this._processInputParams(input);
-    if (ctx.parsedType !== ZodParsedType.promise && ctx.common.async === false) {
-      addIssueToContext(ctx, {
+    const { ctx: ctx2 } = this._processInputParams(input);
+    if (ctx2.parsedType !== ZodParsedType.promise && ctx2.common.async === false) {
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.promise,
-        received: ctx.parsedType
+        received: ctx2.parsedType
       });
       return INVALID;
     }
-    const promisified = ctx.parsedType === ZodParsedType.promise ? ctx.data : Promise.resolve(ctx.data);
+    const promisified = ctx2.parsedType === ZodParsedType.promise ? ctx2.data : Promise.resolve(ctx2.data);
     return OK(promisified.then((data) => {
       return this._def.type.parseAsync(data, {
-        path: ctx.path,
-        errorMap: ctx.common.contextualErrorMap
+        path: ctx2.path,
+        errorMap: ctx2.common.contextualErrorMap
       });
     }));
   }
@@ -17634,11 +17634,11 @@ var ZodEffects = class extends ZodType {
     return this._def.schema._def.typeName === ZodFirstPartyTypeKind.ZodEffects ? this._def.schema.sourceType() : this._def.schema;
   }
   _parse(input) {
-    const { status, ctx } = this._processInputParams(input);
+    const { status, ctx: ctx2 } = this._processInputParams(input);
     const effect = this._def.effect || null;
     const checkCtx = {
       addIssue: (arg) => {
-        addIssueToContext(ctx, arg);
+        addIssueToContext(ctx2, arg);
         if (arg.fatal) {
           status.abort();
         } else {
@@ -17646,20 +17646,20 @@ var ZodEffects = class extends ZodType {
         }
       },
       get path() {
-        return ctx.path;
+        return ctx2.path;
       }
     };
     checkCtx.addIssue = checkCtx.addIssue.bind(checkCtx);
     if (effect.type === "preprocess") {
-      const processed = effect.transform(ctx.data, checkCtx);
-      if (ctx.common.async) {
+      const processed = effect.transform(ctx2.data, checkCtx);
+      if (ctx2.common.async) {
         return Promise.resolve(processed).then(async (processed2) => {
           if (status.value === "aborted")
             return INVALID;
           const result = await this._def.schema._parseAsync({
             data: processed2,
-            path: ctx.path,
-            parent: ctx
+            path: ctx2.path,
+            parent: ctx2
           });
           if (result.status === "aborted")
             return INVALID;
@@ -17674,8 +17674,8 @@ var ZodEffects = class extends ZodType {
           return INVALID;
         const result = this._def.schema._parseSync({
           data: processed,
-          path: ctx.path,
-          parent: ctx
+          path: ctx2.path,
+          parent: ctx2
         });
         if (result.status === "aborted")
           return INVALID;
@@ -17689,7 +17689,7 @@ var ZodEffects = class extends ZodType {
     if (effect.type === "refinement") {
       const executeRefinement = (acc) => {
         const result = effect.refinement(acc, checkCtx);
-        if (ctx.common.async) {
+        if (ctx2.common.async) {
           return Promise.resolve(result);
         }
         if (result instanceof Promise) {
@@ -17697,11 +17697,11 @@ var ZodEffects = class extends ZodType {
         }
         return acc;
       };
-      if (ctx.common.async === false) {
+      if (ctx2.common.async === false) {
         const inner = this._def.schema._parseSync({
-          data: ctx.data,
-          path: ctx.path,
-          parent: ctx
+          data: ctx2.data,
+          path: ctx2.path,
+          parent: ctx2
         });
         if (inner.status === "aborted")
           return INVALID;
@@ -17710,7 +17710,7 @@ var ZodEffects = class extends ZodType {
         executeRefinement(inner.value);
         return { status: status.value, value: inner.value };
       } else {
-        return this._def.schema._parseAsync({ data: ctx.data, path: ctx.path, parent: ctx }).then((inner) => {
+        return this._def.schema._parseAsync({ data: ctx2.data, path: ctx2.path, parent: ctx2 }).then((inner) => {
           if (inner.status === "aborted")
             return INVALID;
           if (inner.status === "dirty")
@@ -17722,11 +17722,11 @@ var ZodEffects = class extends ZodType {
       }
     }
     if (effect.type === "transform") {
-      if (ctx.common.async === false) {
+      if (ctx2.common.async === false) {
         const base = this._def.schema._parseSync({
-          data: ctx.data,
-          path: ctx.path,
-          parent: ctx
+          data: ctx2.data,
+          path: ctx2.path,
+          parent: ctx2
         });
         if (!isValid(base))
           return INVALID;
@@ -17736,7 +17736,7 @@ var ZodEffects = class extends ZodType {
         }
         return { status: status.value, value: result };
       } else {
-        return this._def.schema._parseAsync({ data: ctx.data, path: ctx.path, parent: ctx }).then((base) => {
+        return this._def.schema._parseAsync({ data: ctx2.data, path: ctx2.path, parent: ctx2 }).then((base) => {
           if (!isValid(base))
             return INVALID;
           return Promise.resolve(effect.transform(base.value, checkCtx)).then((result) => ({
@@ -17805,15 +17805,15 @@ ZodNullable.create = (type, params) => {
 };
 var ZodDefault = class extends ZodType {
   _parse(input) {
-    const { ctx } = this._processInputParams(input);
-    let data = ctx.data;
-    if (ctx.parsedType === ZodParsedType.undefined) {
+    const { ctx: ctx2 } = this._processInputParams(input);
+    let data = ctx2.data;
+    if (ctx2.parsedType === ZodParsedType.undefined) {
       data = this._def.defaultValue();
     }
     return this._def.innerType._parse({
       data,
-      path: ctx.path,
-      parent: ctx
+      path: ctx2.path,
+      parent: ctx2
     });
   }
   removeDefault() {
@@ -17830,11 +17830,11 @@ ZodDefault.create = (type, params) => {
 };
 var ZodCatch = class extends ZodType {
   _parse(input) {
-    const { ctx } = this._processInputParams(input);
+    const { ctx: ctx2 } = this._processInputParams(input);
     const newCtx = {
-      ...ctx,
+      ...ctx2,
       common: {
-        ...ctx.common,
+        ...ctx2.common,
         issues: []
       }
     };
@@ -17885,11 +17885,11 @@ var ZodNaN = class extends ZodType {
   _parse(input) {
     const parsedType2 = this._getType(input);
     if (parsedType2 !== ZodParsedType.nan) {
-      const ctx = this._getOrReturnCtx(input);
-      addIssueToContext(ctx, {
+      const ctx2 = this._getOrReturnCtx(input);
+      addIssueToContext(ctx2, {
         code: ZodIssueCode.invalid_type,
         expected: ZodParsedType.nan,
-        received: ctx.parsedType
+        received: ctx2.parsedType
       });
       return INVALID;
     }
@@ -17904,12 +17904,12 @@ ZodNaN.create = (params) => {
 };
 var ZodBranded = class extends ZodType {
   _parse(input) {
-    const { ctx } = this._processInputParams(input);
-    const data = ctx.data;
+    const { ctx: ctx2 } = this._processInputParams(input);
+    const data = ctx2.data;
     return this._def.type._parse({
       data,
-      path: ctx.path,
-      parent: ctx
+      path: ctx2.path,
+      parent: ctx2
     });
   }
   unwrap() {
@@ -17918,13 +17918,13 @@ var ZodBranded = class extends ZodType {
 };
 var ZodPipeline = class _ZodPipeline extends ZodType {
   _parse(input) {
-    const { status, ctx } = this._processInputParams(input);
-    if (ctx.common.async) {
+    const { status, ctx: ctx2 } = this._processInputParams(input);
+    if (ctx2.common.async) {
       const handleAsync = async () => {
         const inResult = await this._def.in._parseAsync({
-          data: ctx.data,
-          path: ctx.path,
-          parent: ctx
+          data: ctx2.data,
+          path: ctx2.path,
+          parent: ctx2
         });
         if (inResult.status === "aborted")
           return INVALID;
@@ -17934,17 +17934,17 @@ var ZodPipeline = class _ZodPipeline extends ZodType {
         } else {
           return this._def.out._parseAsync({
             data: inResult.value,
-            path: ctx.path,
-            parent: ctx
+            path: ctx2.path,
+            parent: ctx2
           });
         }
       };
       return handleAsync();
     } else {
       const inResult = this._def.in._parseSync({
-        data: ctx.data,
-        path: ctx.path,
-        parent: ctx
+        data: ctx2.data,
+        path: ctx2.path,
+        parent: ctx2
       });
       if (inResult.status === "aborted")
         return INVALID;
@@ -17957,8 +17957,8 @@ var ZodPipeline = class _ZodPipeline extends ZodType {
       } else {
         return this._def.out._parseSync({
           data: inResult.value,
-          path: ctx.path,
-          parent: ctx
+          path: ctx2.path,
+          parent: ctx2
         });
       }
     }
@@ -18317,10 +18317,10 @@ function mergeDefs(...defs) {
 function cloneDef(schema) {
   return mergeDefs(schema._zod.def);
 }
-function getElementAtPath(obj, path8) {
-  if (!path8)
+function getElementAtPath(obj, path10) {
+  if (!path10)
     return obj;
-  return path8.reduce((acc, key) => acc?.[key], obj);
+  return path10.reduce((acc, key) => acc?.[key], obj);
 }
 function promiseAllObject(promisesObj) {
   const keys = Object.keys(promisesObj);
@@ -18703,26 +18703,26 @@ function aborted(x, startIndex = 0) {
   }
   return false;
 }
-function prefixIssues(path8, issues) {
+function prefixIssues(path10, issues) {
   return issues.map((iss) => {
     var _a2;
     (_a2 = iss).path ?? (_a2.path = []);
-    iss.path.unshift(path8);
+    iss.path.unshift(path10);
     return iss;
   });
 }
 function unwrapMessage(message) {
   return typeof message === "string" ? message : message?.message;
 }
-function finalizeIssue(iss, ctx, config2) {
+function finalizeIssue(iss, ctx2, config2) {
   const full = { ...iss, path: iss.path ?? [] };
   if (!iss.message) {
-    const message = unwrapMessage(iss.inst?._zod.def?.error?.(iss)) ?? unwrapMessage(ctx?.error?.(iss)) ?? unwrapMessage(config2.customError?.(iss)) ?? unwrapMessage(config2.localeError?.(iss)) ?? "Invalid input";
+    const message = unwrapMessage(iss.inst?._zod.def?.error?.(iss)) ?? unwrapMessage(ctx2?.error?.(iss)) ?? unwrapMessage(config2.customError?.(iss)) ?? unwrapMessage(config2.localeError?.(iss)) ?? "Invalid input";
     full.message = message;
   }
   delete full.inst;
   delete full.continue;
-  if (!ctx?.reportInput) {
+  if (!ctx2?.reportInput) {
     delete full.input;
   }
   return full;
@@ -18891,13 +18891,13 @@ function formatError(error2, mapper = (issue2) => issue2.message) {
 
 // node_modules/zod/v4/core/parse.js
 var _parse = (_Err) => (schema, value, _ctx, _params) => {
-  const ctx = _ctx ? Object.assign(_ctx, { async: false }) : { async: false };
-  const result = schema._zod.run({ value, issues: [] }, ctx);
+  const ctx2 = _ctx ? Object.assign(_ctx, { async: false }) : { async: false };
+  const result = schema._zod.run({ value, issues: [] }, ctx2);
   if (result instanceof Promise) {
     throw new $ZodAsyncError();
   }
   if (result.issues.length) {
-    const e = new (_params?.Err ?? _Err)(result.issues.map((iss) => finalizeIssue(iss, ctx, config())));
+    const e = new (_params?.Err ?? _Err)(result.issues.map((iss) => finalizeIssue(iss, ctx2, config())));
     captureStackTrace(e, _params?.callee);
     throw e;
   }
@@ -18905,12 +18905,12 @@ var _parse = (_Err) => (schema, value, _ctx, _params) => {
 };
 var parse = /* @__PURE__ */ _parse($ZodRealError);
 var _parseAsync = (_Err) => async (schema, value, _ctx, params) => {
-  const ctx = _ctx ? Object.assign(_ctx, { async: true }) : { async: true };
-  let result = schema._zod.run({ value, issues: [] }, ctx);
+  const ctx2 = _ctx ? Object.assign(_ctx, { async: true }) : { async: true };
+  let result = schema._zod.run({ value, issues: [] }, ctx2);
   if (result instanceof Promise)
     result = await result;
   if (result.issues.length) {
-    const e = new (params?.Err ?? _Err)(result.issues.map((iss) => finalizeIssue(iss, ctx, config())));
+    const e = new (params?.Err ?? _Err)(result.issues.map((iss) => finalizeIssue(iss, ctx2, config())));
     captureStackTrace(e, params?.callee);
     throw e;
   }
@@ -18918,52 +18918,52 @@ var _parseAsync = (_Err) => async (schema, value, _ctx, params) => {
 };
 var parseAsync = /* @__PURE__ */ _parseAsync($ZodRealError);
 var _safeParse = (_Err) => (schema, value, _ctx) => {
-  const ctx = _ctx ? { ..._ctx, async: false } : { async: false };
-  const result = schema._zod.run({ value, issues: [] }, ctx);
+  const ctx2 = _ctx ? { ..._ctx, async: false } : { async: false };
+  const result = schema._zod.run({ value, issues: [] }, ctx2);
   if (result instanceof Promise) {
     throw new $ZodAsyncError();
   }
   return result.issues.length ? {
     success: false,
-    error: new (_Err ?? $ZodError)(result.issues.map((iss) => finalizeIssue(iss, ctx, config())))
+    error: new (_Err ?? $ZodError)(result.issues.map((iss) => finalizeIssue(iss, ctx2, config())))
   } : { success: true, data: result.value };
 };
 var safeParse = /* @__PURE__ */ _safeParse($ZodRealError);
 var _safeParseAsync = (_Err) => async (schema, value, _ctx) => {
-  const ctx = _ctx ? Object.assign(_ctx, { async: true }) : { async: true };
-  let result = schema._zod.run({ value, issues: [] }, ctx);
+  const ctx2 = _ctx ? Object.assign(_ctx, { async: true }) : { async: true };
+  let result = schema._zod.run({ value, issues: [] }, ctx2);
   if (result instanceof Promise)
     result = await result;
   return result.issues.length ? {
     success: false,
-    error: new _Err(result.issues.map((iss) => finalizeIssue(iss, ctx, config())))
+    error: new _Err(result.issues.map((iss) => finalizeIssue(iss, ctx2, config())))
   } : { success: true, data: result.value };
 };
 var safeParseAsync = /* @__PURE__ */ _safeParseAsync($ZodRealError);
 var _encode = (_Err) => (schema, value, _ctx) => {
-  const ctx = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
-  return _parse(_Err)(schema, value, ctx);
+  const ctx2 = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
+  return _parse(_Err)(schema, value, ctx2);
 };
 var _decode = (_Err) => (schema, value, _ctx) => {
   return _parse(_Err)(schema, value, _ctx);
 };
 var _encodeAsync = (_Err) => async (schema, value, _ctx) => {
-  const ctx = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
-  return _parseAsync(_Err)(schema, value, ctx);
+  const ctx2 = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
+  return _parseAsync(_Err)(schema, value, ctx2);
 };
 var _decodeAsync = (_Err) => async (schema, value, _ctx) => {
   return _parseAsync(_Err)(schema, value, _ctx);
 };
 var _safeEncode = (_Err) => (schema, value, _ctx) => {
-  const ctx = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
-  return _safeParse(_Err)(schema, value, ctx);
+  const ctx2 = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
+  return _safeParse(_Err)(schema, value, ctx2);
 };
 var _safeDecode = (_Err) => (schema, value, _ctx) => {
   return _safeParse(_Err)(schema, value, _ctx);
 };
 var _safeEncodeAsync = (_Err) => async (schema, value, _ctx) => {
-  const ctx = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
-  return _safeParseAsync(_Err)(schema, value, ctx);
+  const ctx2 = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
+  return _safeParseAsync(_Err)(schema, value, ctx2);
 };
 var _safeDecodeAsync = (_Err) => async (schema, value, _ctx) => {
   return _safeParseAsync(_Err)(schema, value, _ctx);
@@ -19739,7 +19739,7 @@ var $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
       inst._zod.run = inst._zod.parse;
     });
   } else {
-    const runChecks = (payload, checks2, ctx) => {
+    const runChecks = (payload, checks2, ctx2) => {
       let isAborted2 = aborted(payload);
       let asyncResult;
       for (const ch of checks2) {
@@ -19752,7 +19752,7 @@ var $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
         }
         const currLen = payload.issues.length;
         const _ = ch._zod.check(payload);
-        if (_ instanceof Promise && ctx?.async === false) {
+        if (_ instanceof Promise && ctx2?.async === false) {
           throw new $ZodAsyncError();
         }
         if (asyncResult || _ instanceof Promise) {
@@ -19779,39 +19779,39 @@ var $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
       }
       return payload;
     };
-    const handleCanaryResult = (canary, payload, ctx) => {
+    const handleCanaryResult = (canary, payload, ctx2) => {
       if (aborted(canary)) {
         canary.aborted = true;
         return canary;
       }
-      const checkResult = runChecks(payload, checks, ctx);
+      const checkResult = runChecks(payload, checks, ctx2);
       if (checkResult instanceof Promise) {
-        if (ctx.async === false)
+        if (ctx2.async === false)
           throw new $ZodAsyncError();
-        return checkResult.then((checkResult2) => inst._zod.parse(checkResult2, ctx));
+        return checkResult.then((checkResult2) => inst._zod.parse(checkResult2, ctx2));
       }
-      return inst._zod.parse(checkResult, ctx);
+      return inst._zod.parse(checkResult, ctx2);
     };
-    inst._zod.run = (payload, ctx) => {
-      if (ctx.skipChecks) {
-        return inst._zod.parse(payload, ctx);
+    inst._zod.run = (payload, ctx2) => {
+      if (ctx2.skipChecks) {
+        return inst._zod.parse(payload, ctx2);
       }
-      if (ctx.direction === "backward") {
-        const canary = inst._zod.parse({ value: payload.value, issues: [] }, { ...ctx, skipChecks: true });
+      if (ctx2.direction === "backward") {
+        const canary = inst._zod.parse({ value: payload.value, issues: [] }, { ...ctx2, skipChecks: true });
         if (canary instanceof Promise) {
           return canary.then((canary2) => {
-            return handleCanaryResult(canary2, payload, ctx);
+            return handleCanaryResult(canary2, payload, ctx2);
           });
         }
-        return handleCanaryResult(canary, payload, ctx);
+        return handleCanaryResult(canary, payload, ctx2);
       }
-      const result = inst._zod.parse(payload, ctx);
+      const result = inst._zod.parse(payload, ctx2);
       if (result instanceof Promise) {
-        if (ctx.async === false)
+        if (ctx2.async === false)
           throw new $ZodAsyncError();
-        return result.then((result2) => runChecks(result2, checks, ctx));
+        return result.then((result2) => runChecks(result2, checks, ctx2));
       }
-      return runChecks(result, checks, ctx);
+      return runChecks(result, checks, ctx2);
     };
   }
   defineLazy(inst, "~standard", () => ({
@@ -20328,7 +20328,7 @@ function handleArrayResult(result, final, index) {
 }
 var $ZodArray = /* @__PURE__ */ $constructor("$ZodArray", (inst, def) => {
   $ZodType.init(inst, def);
-  inst._zod.parse = (payload, ctx) => {
+  inst._zod.parse = (payload, ctx2) => {
     const input = payload.value;
     if (!Array.isArray(input)) {
       payload.issues.push({
@@ -20346,7 +20346,7 @@ var $ZodArray = /* @__PURE__ */ $constructor("$ZodArray", (inst, def) => {
       const result = def.element._zod.run({
         value: item,
         issues: []
-      }, ctx);
+      }, ctx2);
       if (result instanceof Promise) {
         proms.push(result.then((result2) => handleArrayResult(result2, payload, i)));
       } else {
@@ -20390,7 +20390,7 @@ function normalizeDef(def) {
     optionalKeys: new Set(okeys)
   };
 }
-function handleCatchall(proms, input, payload, ctx, def, inst) {
+function handleCatchall(proms, input, payload, ctx2, def, inst) {
   const unrecognized = [];
   const keySet = def.keySet;
   const _catchall = def.catchall._zod;
@@ -20403,7 +20403,7 @@ function handleCatchall(proms, input, payload, ctx, def, inst) {
       unrecognized.push(key);
       continue;
     }
-    const r = _catchall.run({ value: input[key], issues: [] }, ctx);
+    const r = _catchall.run({ value: input[key], issues: [] }, ctx2);
     if (r instanceof Promise) {
       proms.push(r.then((r2) => handlePropertyResult(r2, payload, key, input, isOptionalOut)));
     } else {
@@ -20456,7 +20456,7 @@ var $ZodObject = /* @__PURE__ */ $constructor("$ZodObject", (inst, def) => {
   const isObject2 = isObject;
   const catchall = def.catchall;
   let value;
-  inst._zod.parse = (payload, ctx) => {
+  inst._zod.parse = (payload, ctx2) => {
     value ?? (value = _normalized.value);
     const input = payload.value;
     if (!isObject2(input)) {
@@ -20474,7 +20474,7 @@ var $ZodObject = /* @__PURE__ */ $constructor("$ZodObject", (inst, def) => {
     for (const key of value.keys) {
       const el = shape[key];
       const isOptionalOut = el._zod.optout === "optional";
-      const r = el._zod.run({ value: input[key], issues: [] }, ctx);
+      const r = el._zod.run({ value: input[key], issues: [] }, ctx2);
       if (r instanceof Promise) {
         proms.push(r.then((r2) => handlePropertyResult(r2, payload, key, input, isOptionalOut)));
       } else {
@@ -20484,7 +20484,7 @@ var $ZodObject = /* @__PURE__ */ $constructor("$ZodObject", (inst, def) => {
     if (!catchall) {
       return proms.length ? Promise.all(proms).then(() => payload) : payload;
     }
-    return handleCatchall(proms, input, payload, ctx, _normalized.value, inst);
+    return handleCatchall(proms, input, payload, ctx2, _normalized.value, inst);
   };
 });
 var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) => {
@@ -20554,7 +20554,7 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
     doc.write(`payload.value = newResult;`);
     doc.write(`return payload;`);
     const fn = doc.compile();
-    return (payload, ctx) => fn(shape, payload, ctx);
+    return (payload, ctx2) => fn(shape, payload, ctx2);
   };
   let fastpass;
   const isObject2 = isObject;
@@ -20563,7 +20563,7 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
   const fastEnabled = jit && allowsEval2.value;
   const catchall = def.catchall;
   let value;
-  inst._zod.parse = (payload, ctx) => {
+  inst._zod.parse = (payload, ctx2) => {
     value ?? (value = _normalized.value);
     const input = payload.value;
     if (!isObject2(input)) {
@@ -20575,18 +20575,18 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
       });
       return payload;
     }
-    if (jit && fastEnabled && ctx?.async === false && ctx.jitless !== true) {
+    if (jit && fastEnabled && ctx2?.async === false && ctx2.jitless !== true) {
       if (!fastpass)
         fastpass = generateFastpass(def.shape);
-      payload = fastpass(payload, ctx);
+      payload = fastpass(payload, ctx2);
       if (!catchall)
         return payload;
-      return handleCatchall([], input, payload, ctx, value, inst);
+      return handleCatchall([], input, payload, ctx2, value, inst);
     }
-    return superParse(payload, ctx);
+    return superParse(payload, ctx2);
   };
 });
-function handleUnionResults(results, final, inst, ctx) {
+function handleUnionResults(results, final, inst, ctx2) {
   for (const result of results) {
     if (result.issues.length === 0) {
       final.value = result.value;
@@ -20602,7 +20602,7 @@ function handleUnionResults(results, final, inst, ctx) {
     code: "invalid_union",
     input: final.value,
     inst,
-    errors: results.map((result) => result.issues.map((iss) => finalizeIssue(iss, ctx, config())))
+    errors: results.map((result) => result.issues.map((iss) => finalizeIssue(iss, ctx2, config())))
   });
   return final;
 }
@@ -20625,9 +20625,9 @@ var $ZodUnion = /* @__PURE__ */ $constructor("$ZodUnion", (inst, def) => {
   });
   const single = def.options.length === 1;
   const first = def.options[0]._zod.run;
-  inst._zod.parse = (payload, ctx) => {
+  inst._zod.parse = (payload, ctx2) => {
     if (single) {
-      return first(payload, ctx);
+      return first(payload, ctx2);
     }
     let async = false;
     const results = [];
@@ -20635,7 +20635,7 @@ var $ZodUnion = /* @__PURE__ */ $constructor("$ZodUnion", (inst, def) => {
       const result = option._zod.run({
         value: payload.value,
         issues: []
-      }, ctx);
+      }, ctx2);
       if (result instanceof Promise) {
         results.push(result);
         async = true;
@@ -20646,13 +20646,13 @@ var $ZodUnion = /* @__PURE__ */ $constructor("$ZodUnion", (inst, def) => {
       }
     }
     if (!async)
-      return handleUnionResults(results, payload, inst, ctx);
+      return handleUnionResults(results, payload, inst, ctx2);
     return Promise.all(results).then((results2) => {
-      return handleUnionResults(results2, payload, inst, ctx);
+      return handleUnionResults(results2, payload, inst, ctx2);
     });
   };
 });
-function handleExclusiveUnionResults(results, final, inst, ctx) {
+function handleExclusiveUnionResults(results, final, inst, ctx2) {
   const successes = results.filter((r) => r.issues.length === 0);
   if (successes.length === 1) {
     final.value = successes[0].value;
@@ -20663,7 +20663,7 @@ function handleExclusiveUnionResults(results, final, inst, ctx) {
       code: "invalid_union",
       input: final.value,
       inst,
-      errors: results.map((result) => result.issues.map((iss) => finalizeIssue(iss, ctx, config())))
+      errors: results.map((result) => result.issues.map((iss) => finalizeIssue(iss, ctx2, config())))
     });
   } else {
     final.issues.push({
@@ -20681,9 +20681,9 @@ var $ZodXor = /* @__PURE__ */ $constructor("$ZodXor", (inst, def) => {
   def.inclusive = false;
   const single = def.options.length === 1;
   const first = def.options[0]._zod.run;
-  inst._zod.parse = (payload, ctx) => {
+  inst._zod.parse = (payload, ctx2) => {
     if (single) {
-      return first(payload, ctx);
+      return first(payload, ctx2);
     }
     let async = false;
     const results = [];
@@ -20691,7 +20691,7 @@ var $ZodXor = /* @__PURE__ */ $constructor("$ZodXor", (inst, def) => {
       const result = option._zod.run({
         value: payload.value,
         issues: []
-      }, ctx);
+      }, ctx2);
       if (result instanceof Promise) {
         results.push(result);
         async = true;
@@ -20700,9 +20700,9 @@ var $ZodXor = /* @__PURE__ */ $constructor("$ZodXor", (inst, def) => {
       }
     }
     if (!async)
-      return handleExclusiveUnionResults(results, payload, inst, ctx);
+      return handleExclusiveUnionResults(results, payload, inst, ctx2);
     return Promise.all(results).then((results2) => {
-      return handleExclusiveUnionResults(results2, payload, inst, ctx);
+      return handleExclusiveUnionResults(results2, payload, inst, ctx2);
     });
   };
 });
@@ -20742,7 +20742,7 @@ var $ZodDiscriminatedUnion = /* @__PURE__ */ $constructor("$ZodDiscriminatedUnio
     }
     return map2;
   });
-  inst._zod.parse = (payload, ctx) => {
+  inst._zod.parse = (payload, ctx2) => {
     const input = payload.value;
     if (!isObject(input)) {
       payload.issues.push({
@@ -20755,10 +20755,10 @@ var $ZodDiscriminatedUnion = /* @__PURE__ */ $constructor("$ZodDiscriminatedUnio
     }
     const opt = disc.value.get(input?.[def.discriminator]);
     if (opt) {
-      return opt._zod.run(payload, ctx);
+      return opt._zod.run(payload, ctx2);
     }
     if (def.unionFallback) {
-      return _super(payload, ctx);
+      return _super(payload, ctx2);
     }
     payload.issues.push({
       code: "invalid_union",
@@ -20774,10 +20774,10 @@ var $ZodDiscriminatedUnion = /* @__PURE__ */ $constructor("$ZodDiscriminatedUnio
 });
 var $ZodIntersection = /* @__PURE__ */ $constructor("$ZodIntersection", (inst, def) => {
   $ZodType.init(inst, def);
-  inst._zod.parse = (payload, ctx) => {
+  inst._zod.parse = (payload, ctx2) => {
     const input = payload.value;
-    const left = def.left._zod.run({ value: input, issues: [] }, ctx);
-    const right = def.right._zod.run({ value: input, issues: [] }, ctx);
+    const left = def.left._zod.run({ value: input, issues: [] }, ctx2);
+    const right = def.right._zod.run({ value: input, issues: [] }, ctx2);
     const async = left instanceof Promise || right instanceof Promise;
     if (async) {
       return Promise.all([left, right]).then(([left2, right2]) => {
@@ -20873,7 +20873,7 @@ function handleIntersectionResults(result, left, right) {
 var $ZodTuple = /* @__PURE__ */ $constructor("$ZodTuple", (inst, def) => {
   $ZodType.init(inst, def);
   const items = def.items;
-  inst._zod.parse = (payload, ctx) => {
+  inst._zod.parse = (payload, ctx2) => {
     const input = payload.value;
     if (!Array.isArray(input)) {
       payload.issues.push({
@@ -20911,7 +20911,7 @@ var $ZodTuple = /* @__PURE__ */ $constructor("$ZodTuple", (inst, def) => {
       const result = item._zod.run({
         value: input[i],
         issues: []
-      }, ctx);
+      }, ctx2);
       if (result instanceof Promise) {
         proms.push(result.then((result2) => handleTupleResult(result2, payload, i)));
       } else {
@@ -20925,7 +20925,7 @@ var $ZodTuple = /* @__PURE__ */ $constructor("$ZodTuple", (inst, def) => {
         const result = def.rest._zod.run({
           value: el,
           issues: []
-        }, ctx);
+        }, ctx2);
         if (result instanceof Promise) {
           proms.push(result.then((result2) => handleTupleResult(result2, payload, i)));
         } else {
@@ -20946,7 +20946,7 @@ function handleTupleResult(result, final, index) {
 }
 var $ZodRecord = /* @__PURE__ */ $constructor("$ZodRecord", (inst, def) => {
   $ZodType.init(inst, def);
-  inst._zod.parse = (payload, ctx) => {
+  inst._zod.parse = (payload, ctx2) => {
     const input = payload.value;
     if (!isPlainObject(input)) {
       payload.issues.push({
@@ -20965,7 +20965,7 @@ var $ZodRecord = /* @__PURE__ */ $constructor("$ZodRecord", (inst, def) => {
       for (const key of values) {
         if (typeof key === "string" || typeof key === "number" || typeof key === "symbol") {
           recordKeys.add(typeof key === "number" ? key.toString() : key);
-          const result = def.valueType._zod.run({ value: input[key], issues: [] }, ctx);
+          const result = def.valueType._zod.run({ value: input[key], issues: [] }, ctx2);
           if (result instanceof Promise) {
             proms.push(result.then((result2) => {
               if (result2.issues.length) {
@@ -21001,13 +21001,13 @@ var $ZodRecord = /* @__PURE__ */ $constructor("$ZodRecord", (inst, def) => {
       for (const key of Reflect.ownKeys(input)) {
         if (key === "__proto__")
           continue;
-        let keyResult = def.keyType._zod.run({ value: key, issues: [] }, ctx);
+        let keyResult = def.keyType._zod.run({ value: key, issues: [] }, ctx2);
         if (keyResult instanceof Promise) {
           throw new Error("Async schemas not supported in object keys currently");
         }
         const checkNumericKey = typeof key === "string" && number.test(key) && keyResult.issues.length;
         if (checkNumericKey) {
-          const retryResult = def.keyType._zod.run({ value: Number(key), issues: [] }, ctx);
+          const retryResult = def.keyType._zod.run({ value: Number(key), issues: [] }, ctx2);
           if (retryResult instanceof Promise) {
             throw new Error("Async schemas not supported in object keys currently");
           }
@@ -21022,7 +21022,7 @@ var $ZodRecord = /* @__PURE__ */ $constructor("$ZodRecord", (inst, def) => {
             payload.issues.push({
               code: "invalid_key",
               origin: "record",
-              issues: keyResult.issues.map((iss) => finalizeIssue(iss, ctx, config())),
+              issues: keyResult.issues.map((iss) => finalizeIssue(iss, ctx2, config())),
               input: key,
               path: [key],
               inst
@@ -21030,7 +21030,7 @@ var $ZodRecord = /* @__PURE__ */ $constructor("$ZodRecord", (inst, def) => {
           }
           continue;
         }
-        const result = def.valueType._zod.run({ value: input[key], issues: [] }, ctx);
+        const result = def.valueType._zod.run({ value: input[key], issues: [] }, ctx2);
         if (result instanceof Promise) {
           proms.push(result.then((result2) => {
             if (result2.issues.length) {
@@ -21054,7 +21054,7 @@ var $ZodRecord = /* @__PURE__ */ $constructor("$ZodRecord", (inst, def) => {
 });
 var $ZodMap = /* @__PURE__ */ $constructor("$ZodMap", (inst, def) => {
   $ZodType.init(inst, def);
-  inst._zod.parse = (payload, ctx) => {
+  inst._zod.parse = (payload, ctx2) => {
     const input = payload.value;
     if (!(input instanceof Map)) {
       payload.issues.push({
@@ -21068,14 +21068,14 @@ var $ZodMap = /* @__PURE__ */ $constructor("$ZodMap", (inst, def) => {
     const proms = [];
     payload.value = /* @__PURE__ */ new Map();
     for (const [key, value] of input) {
-      const keyResult = def.keyType._zod.run({ value: key, issues: [] }, ctx);
-      const valueResult = def.valueType._zod.run({ value, issues: [] }, ctx);
+      const keyResult = def.keyType._zod.run({ value: key, issues: [] }, ctx2);
+      const valueResult = def.valueType._zod.run({ value, issues: [] }, ctx2);
       if (keyResult instanceof Promise || valueResult instanceof Promise) {
         proms.push(Promise.all([keyResult, valueResult]).then(([keyResult2, valueResult2]) => {
-          handleMapResult(keyResult2, valueResult2, payload, key, input, inst, ctx);
+          handleMapResult(keyResult2, valueResult2, payload, key, input, inst, ctx2);
         }));
       } else {
-        handleMapResult(keyResult, valueResult, payload, key, input, inst, ctx);
+        handleMapResult(keyResult, valueResult, payload, key, input, inst, ctx2);
       }
     }
     if (proms.length)
@@ -21083,7 +21083,7 @@ var $ZodMap = /* @__PURE__ */ $constructor("$ZodMap", (inst, def) => {
     return payload;
   };
 });
-function handleMapResult(keyResult, valueResult, final, key, input, inst, ctx) {
+function handleMapResult(keyResult, valueResult, final, key, input, inst, ctx2) {
   if (keyResult.issues.length) {
     if (propertyKeyTypes.has(typeof key)) {
       final.issues.push(...prefixIssues(key, keyResult.issues));
@@ -21093,7 +21093,7 @@ function handleMapResult(keyResult, valueResult, final, key, input, inst, ctx) {
         origin: "map",
         input,
         inst,
-        issues: keyResult.issues.map((iss) => finalizeIssue(iss, ctx, config()))
+        issues: keyResult.issues.map((iss) => finalizeIssue(iss, ctx2, config()))
       });
     }
   }
@@ -21107,7 +21107,7 @@ function handleMapResult(keyResult, valueResult, final, key, input, inst, ctx) {
         input,
         inst,
         key,
-        issues: valueResult.issues.map((iss) => finalizeIssue(iss, ctx, config()))
+        issues: valueResult.issues.map((iss) => finalizeIssue(iss, ctx2, config()))
       });
     }
   }
@@ -21115,7 +21115,7 @@ function handleMapResult(keyResult, valueResult, final, key, input, inst, ctx) {
 }
 var $ZodSet = /* @__PURE__ */ $constructor("$ZodSet", (inst, def) => {
   $ZodType.init(inst, def);
-  inst._zod.parse = (payload, ctx) => {
+  inst._zod.parse = (payload, ctx2) => {
     const input = payload.value;
     if (!(input instanceof Set)) {
       payload.issues.push({
@@ -21129,7 +21129,7 @@ var $ZodSet = /* @__PURE__ */ $constructor("$ZodSet", (inst, def) => {
     const proms = [];
     payload.value = /* @__PURE__ */ new Set();
     for (const item of input) {
-      const result = def.valueType._zod.run({ value: item, issues: [] }, ctx);
+      const result = def.valueType._zod.run({ value: item, issues: [] }, ctx2);
       if (result instanceof Promise) {
         proms.push(result.then((result2) => handleSetResult(result2, payload)));
       } else
@@ -21205,12 +21205,12 @@ var $ZodFile = /* @__PURE__ */ $constructor("$ZodFile", (inst, def) => {
 });
 var $ZodTransform = /* @__PURE__ */ $constructor("$ZodTransform", (inst, def) => {
   $ZodType.init(inst, def);
-  inst._zod.parse = (payload, ctx) => {
-    if (ctx.direction === "backward") {
+  inst._zod.parse = (payload, ctx2) => {
+    if (ctx2.direction === "backward") {
       throw new $ZodEncodeError(inst.constructor.name);
     }
     const _out = def.transform(payload.value, payload);
-    if (ctx.async) {
+    if (ctx2.async) {
       const output = _out instanceof Promise ? _out : Promise.resolve(_out);
       return output.then((output2) => {
         payload.value = output2;
@@ -21241,9 +21241,9 @@ var $ZodOptional = /* @__PURE__ */ $constructor("$ZodOptional", (inst, def) => {
     const pattern = def.innerType._zod.pattern;
     return pattern ? new RegExp(`^(${cleanRegex(pattern.source)})?$`) : void 0;
   });
-  inst._zod.parse = (payload, ctx) => {
+  inst._zod.parse = (payload, ctx2) => {
     if (def.innerType._zod.optin === "optional") {
-      const result = def.innerType._zod.run(payload, ctx);
+      const result = def.innerType._zod.run(payload, ctx2);
       if (result instanceof Promise)
         return result.then((r) => handleOptionalResult(r, payload.value));
       return handleOptionalResult(result, payload.value);
@@ -21251,15 +21251,15 @@ var $ZodOptional = /* @__PURE__ */ $constructor("$ZodOptional", (inst, def) => {
     if (payload.value === void 0) {
       return payload;
     }
-    return def.innerType._zod.run(payload, ctx);
+    return def.innerType._zod.run(payload, ctx2);
   };
 });
 var $ZodExactOptional = /* @__PURE__ */ $constructor("$ZodExactOptional", (inst, def) => {
   $ZodOptional.init(inst, def);
   defineLazy(inst._zod, "values", () => def.innerType._zod.values);
   defineLazy(inst._zod, "pattern", () => def.innerType._zod.pattern);
-  inst._zod.parse = (payload, ctx) => {
-    return def.innerType._zod.run(payload, ctx);
+  inst._zod.parse = (payload, ctx2) => {
+    return def.innerType._zod.run(payload, ctx2);
   };
 });
 var $ZodNullable = /* @__PURE__ */ $constructor("$ZodNullable", (inst, def) => {
@@ -21273,25 +21273,25 @@ var $ZodNullable = /* @__PURE__ */ $constructor("$ZodNullable", (inst, def) => {
   defineLazy(inst._zod, "values", () => {
     return def.innerType._zod.values ? /* @__PURE__ */ new Set([...def.innerType._zod.values, null]) : void 0;
   });
-  inst._zod.parse = (payload, ctx) => {
+  inst._zod.parse = (payload, ctx2) => {
     if (payload.value === null)
       return payload;
-    return def.innerType._zod.run(payload, ctx);
+    return def.innerType._zod.run(payload, ctx2);
   };
 });
 var $ZodDefault = /* @__PURE__ */ $constructor("$ZodDefault", (inst, def) => {
   $ZodType.init(inst, def);
   inst._zod.optin = "optional";
   defineLazy(inst._zod, "values", () => def.innerType._zod.values);
-  inst._zod.parse = (payload, ctx) => {
-    if (ctx.direction === "backward") {
-      return def.innerType._zod.run(payload, ctx);
+  inst._zod.parse = (payload, ctx2) => {
+    if (ctx2.direction === "backward") {
+      return def.innerType._zod.run(payload, ctx2);
     }
     if (payload.value === void 0) {
       payload.value = def.defaultValue;
       return payload;
     }
-    const result = def.innerType._zod.run(payload, ctx);
+    const result = def.innerType._zod.run(payload, ctx2);
     if (result instanceof Promise) {
       return result.then((result2) => handleDefaultResult(result2, def));
     }
@@ -21308,14 +21308,14 @@ var $ZodPrefault = /* @__PURE__ */ $constructor("$ZodPrefault", (inst, def) => {
   $ZodType.init(inst, def);
   inst._zod.optin = "optional";
   defineLazy(inst._zod, "values", () => def.innerType._zod.values);
-  inst._zod.parse = (payload, ctx) => {
-    if (ctx.direction === "backward") {
-      return def.innerType._zod.run(payload, ctx);
+  inst._zod.parse = (payload, ctx2) => {
+    if (ctx2.direction === "backward") {
+      return def.innerType._zod.run(payload, ctx2);
     }
     if (payload.value === void 0) {
       payload.value = def.defaultValue;
     }
-    return def.innerType._zod.run(payload, ctx);
+    return def.innerType._zod.run(payload, ctx2);
   };
 });
 var $ZodNonOptional = /* @__PURE__ */ $constructor("$ZodNonOptional", (inst, def) => {
@@ -21324,8 +21324,8 @@ var $ZodNonOptional = /* @__PURE__ */ $constructor("$ZodNonOptional", (inst, def
     const v = def.innerType._zod.values;
     return v ? new Set([...v].filter((x) => x !== void 0)) : void 0;
   });
-  inst._zod.parse = (payload, ctx) => {
-    const result = def.innerType._zod.run(payload, ctx);
+  inst._zod.parse = (payload, ctx2) => {
+    const result = def.innerType._zod.run(payload, ctx2);
     if (result instanceof Promise) {
       return result.then((result2) => handleNonOptionalResult(result2, inst));
     }
@@ -21345,11 +21345,11 @@ function handleNonOptionalResult(payload, inst) {
 }
 var $ZodSuccess = /* @__PURE__ */ $constructor("$ZodSuccess", (inst, def) => {
   $ZodType.init(inst, def);
-  inst._zod.parse = (payload, ctx) => {
-    if (ctx.direction === "backward") {
+  inst._zod.parse = (payload, ctx2) => {
+    if (ctx2.direction === "backward") {
       throw new $ZodEncodeError("ZodSuccess");
     }
-    const result = def.innerType._zod.run(payload, ctx);
+    const result = def.innerType._zod.run(payload, ctx2);
     if (result instanceof Promise) {
       return result.then((result2) => {
         payload.value = result2.issues.length === 0;
@@ -21365,11 +21365,11 @@ var $ZodCatch = /* @__PURE__ */ $constructor("$ZodCatch", (inst, def) => {
   defineLazy(inst._zod, "optin", () => def.innerType._zod.optin);
   defineLazy(inst._zod, "optout", () => def.innerType._zod.optout);
   defineLazy(inst._zod, "values", () => def.innerType._zod.values);
-  inst._zod.parse = (payload, ctx) => {
-    if (ctx.direction === "backward") {
-      return def.innerType._zod.run(payload, ctx);
+  inst._zod.parse = (payload, ctx2) => {
+    if (ctx2.direction === "backward") {
+      return def.innerType._zod.run(payload, ctx2);
     }
-    const result = def.innerType._zod.run(payload, ctx);
+    const result = def.innerType._zod.run(payload, ctx2);
     if (result instanceof Promise) {
       return result.then((result2) => {
         payload.value = result2.value;
@@ -21377,7 +21377,7 @@ var $ZodCatch = /* @__PURE__ */ $constructor("$ZodCatch", (inst, def) => {
           payload.value = def.catchValue({
             ...payload,
             error: {
-              issues: result2.issues.map((iss) => finalizeIssue(iss, ctx, config()))
+              issues: result2.issues.map((iss) => finalizeIssue(iss, ctx2, config()))
             },
             input: payload.value
           });
@@ -21391,7 +21391,7 @@ var $ZodCatch = /* @__PURE__ */ $constructor("$ZodCatch", (inst, def) => {
       payload.value = def.catchValue({
         ...payload,
         error: {
-          issues: result.issues.map((iss) => finalizeIssue(iss, ctx, config()))
+          issues: result.issues.map((iss) => finalizeIssue(iss, ctx2, config()))
         },
         input: payload.value
       });
@@ -21421,27 +21421,27 @@ var $ZodPipe = /* @__PURE__ */ $constructor("$ZodPipe", (inst, def) => {
   defineLazy(inst._zod, "optin", () => def.in._zod.optin);
   defineLazy(inst._zod, "optout", () => def.out._zod.optout);
   defineLazy(inst._zod, "propValues", () => def.in._zod.propValues);
-  inst._zod.parse = (payload, ctx) => {
-    if (ctx.direction === "backward") {
-      const right = def.out._zod.run(payload, ctx);
+  inst._zod.parse = (payload, ctx2) => {
+    if (ctx2.direction === "backward") {
+      const right = def.out._zod.run(payload, ctx2);
       if (right instanceof Promise) {
-        return right.then((right2) => handlePipeResult(right2, def.in, ctx));
+        return right.then((right2) => handlePipeResult(right2, def.in, ctx2));
       }
-      return handlePipeResult(right, def.in, ctx);
+      return handlePipeResult(right, def.in, ctx2);
     }
-    const left = def.in._zod.run(payload, ctx);
+    const left = def.in._zod.run(payload, ctx2);
     if (left instanceof Promise) {
-      return left.then((left2) => handlePipeResult(left2, def.out, ctx));
+      return left.then((left2) => handlePipeResult(left2, def.out, ctx2));
     }
-    return handlePipeResult(left, def.out, ctx);
+    return handlePipeResult(left, def.out, ctx2);
   };
 });
-function handlePipeResult(left, next, ctx) {
+function handlePipeResult(left, next, ctx2) {
   if (left.issues.length) {
     left.aborted = true;
     return left;
   }
-  return next._zod.run({ value: left.value, issues: left.issues }, ctx);
+  return next._zod.run({ value: left.value, issues: left.issues }, ctx2);
 }
 var $ZodCodec = /* @__PURE__ */ $constructor("$ZodCodec", (inst, def) => {
   $ZodType.init(inst, def);
@@ -21449,49 +21449,49 @@ var $ZodCodec = /* @__PURE__ */ $constructor("$ZodCodec", (inst, def) => {
   defineLazy(inst._zod, "optin", () => def.in._zod.optin);
   defineLazy(inst._zod, "optout", () => def.out._zod.optout);
   defineLazy(inst._zod, "propValues", () => def.in._zod.propValues);
-  inst._zod.parse = (payload, ctx) => {
-    const direction = ctx.direction || "forward";
+  inst._zod.parse = (payload, ctx2) => {
+    const direction = ctx2.direction || "forward";
     if (direction === "forward") {
-      const left = def.in._zod.run(payload, ctx);
+      const left = def.in._zod.run(payload, ctx2);
       if (left instanceof Promise) {
-        return left.then((left2) => handleCodecAResult(left2, def, ctx));
+        return left.then((left2) => handleCodecAResult(left2, def, ctx2));
       }
-      return handleCodecAResult(left, def, ctx);
+      return handleCodecAResult(left, def, ctx2);
     } else {
-      const right = def.out._zod.run(payload, ctx);
+      const right = def.out._zod.run(payload, ctx2);
       if (right instanceof Promise) {
-        return right.then((right2) => handleCodecAResult(right2, def, ctx));
+        return right.then((right2) => handleCodecAResult(right2, def, ctx2));
       }
-      return handleCodecAResult(right, def, ctx);
+      return handleCodecAResult(right, def, ctx2);
     }
   };
 });
-function handleCodecAResult(result, def, ctx) {
+function handleCodecAResult(result, def, ctx2) {
   if (result.issues.length) {
     result.aborted = true;
     return result;
   }
-  const direction = ctx.direction || "forward";
+  const direction = ctx2.direction || "forward";
   if (direction === "forward") {
     const transformed = def.transform(result.value, result);
     if (transformed instanceof Promise) {
-      return transformed.then((value) => handleCodecTxResult(result, value, def.out, ctx));
+      return transformed.then((value) => handleCodecTxResult(result, value, def.out, ctx2));
     }
-    return handleCodecTxResult(result, transformed, def.out, ctx);
+    return handleCodecTxResult(result, transformed, def.out, ctx2);
   } else {
     const transformed = def.reverseTransform(result.value, result);
     if (transformed instanceof Promise) {
-      return transformed.then((value) => handleCodecTxResult(result, value, def.in, ctx));
+      return transformed.then((value) => handleCodecTxResult(result, value, def.in, ctx2));
     }
-    return handleCodecTxResult(result, transformed, def.in, ctx);
+    return handleCodecTxResult(result, transformed, def.in, ctx2);
   }
 }
-function handleCodecTxResult(left, value, nextSchema, ctx) {
+function handleCodecTxResult(left, value, nextSchema, ctx2) {
   if (left.issues.length) {
     left.aborted = true;
     return left;
   }
-  return nextSchema._zod.run({ value, issues: left.issues }, ctx);
+  return nextSchema._zod.run({ value, issues: left.issues }, ctx2);
 }
 var $ZodReadonly = /* @__PURE__ */ $constructor("$ZodReadonly", (inst, def) => {
   $ZodType.init(inst, def);
@@ -21499,11 +21499,11 @@ var $ZodReadonly = /* @__PURE__ */ $constructor("$ZodReadonly", (inst, def) => {
   defineLazy(inst._zod, "values", () => def.innerType._zod.values);
   defineLazy(inst._zod, "optin", () => def.innerType?._zod?.optin);
   defineLazy(inst._zod, "optout", () => def.innerType?._zod?.optout);
-  inst._zod.parse = (payload, ctx) => {
-    if (ctx.direction === "backward") {
-      return def.innerType._zod.run(payload, ctx);
+  inst._zod.parse = (payload, ctx2) => {
+    if (ctx2.direction === "backward") {
+      return def.innerType._zod.run(payload, ctx2);
     }
-    const result = def.innerType._zod.run(payload, ctx);
+    const result = def.innerType._zod.run(payload, ctx2);
     if (result instanceof Promise) {
       return result.then(handleReadonlyResult);
     }
@@ -21638,8 +21638,8 @@ var $ZodFunction = /* @__PURE__ */ $constructor("$ZodFunction", (inst, def) => {
 });
 var $ZodPromise = /* @__PURE__ */ $constructor("$ZodPromise", (inst, def) => {
   $ZodType.init(inst, def);
-  inst._zod.parse = (payload, ctx) => {
-    return Promise.resolve(payload.value).then((inner) => def.innerType._zod.run({ value: inner, issues: [] }, ctx));
+  inst._zod.parse = (payload, ctx2) => {
+    return Promise.resolve(payload.value).then((inner) => def.innerType._zod.run({ value: inner, issues: [] }, ctx2));
   };
 });
 var $ZodLazy = /* @__PURE__ */ $constructor("$ZodLazy", (inst, def) => {
@@ -21649,9 +21649,9 @@ var $ZodLazy = /* @__PURE__ */ $constructor("$ZodLazy", (inst, def) => {
   defineLazy(inst._zod, "propValues", () => inst._zod.innerType?._zod?.propValues);
   defineLazy(inst._zod, "optin", () => inst._zod.innerType?._zod?.optin ?? void 0);
   defineLazy(inst._zod, "optout", () => inst._zod.innerType?._zod?.optout ?? void 0);
-  inst._zod.parse = (payload, ctx) => {
+  inst._zod.parse = (payload, ctx2) => {
     const inner = inst._zod.innerType;
-    return inner._zod.run(payload, ctx);
+    return inner._zod.run(payload, ctx2);
   };
 });
 var $ZodCustom = /* @__PURE__ */ $constructor("$ZodCustom", (inst, def) => {
@@ -22712,10 +22712,10 @@ function initializeContext(params) {
     external: params?.external ?? void 0
   };
 }
-function process2(schema, ctx, _params = { path: [], schemaPath: [] }) {
+function process2(schema, ctx2, _params = { path: [], schemaPath: [] }) {
   var _a2;
   const def = schema._zod.def;
-  const seen = ctx.seen.get(schema);
+  const seen = ctx2.seen.get(schema);
   if (seen) {
     seen.count++;
     const isCycle = _params.schemaPath.includes(schema);
@@ -22725,7 +22725,7 @@ function process2(schema, ctx, _params = { path: [], schemaPath: [] }) {
     return seen.schema;
   }
   const result = { schema: {}, count: 1, cycle: void 0, path: _params.path };
-  ctx.seen.set(schema, result);
+  ctx2.seen.set(schema, result);
   const overrideSchema = schema._zod.toJSONSchema?.();
   if (overrideSchema) {
     result.schema = overrideSchema;
@@ -22736,43 +22736,43 @@ function process2(schema, ctx, _params = { path: [], schemaPath: [] }) {
       path: _params.path
     };
     if (schema._zod.processJSONSchema) {
-      schema._zod.processJSONSchema(ctx, result.schema, params);
+      schema._zod.processJSONSchema(ctx2, result.schema, params);
     } else {
       const _json = result.schema;
-      const processor = ctx.processors[def.type];
+      const processor = ctx2.processors[def.type];
       if (!processor) {
         throw new Error(`[toJSONSchema]: Non-representable type encountered: ${def.type}`);
       }
-      processor(schema, ctx, _json, params);
+      processor(schema, ctx2, _json, params);
     }
     const parent = schema._zod.parent;
     if (parent) {
       if (!result.ref)
         result.ref = parent;
-      process2(parent, ctx, params);
-      ctx.seen.get(parent).isParent = true;
+      process2(parent, ctx2, params);
+      ctx2.seen.get(parent).isParent = true;
     }
   }
-  const meta3 = ctx.metadataRegistry.get(schema);
+  const meta3 = ctx2.metadataRegistry.get(schema);
   if (meta3)
     Object.assign(result.schema, meta3);
-  if (ctx.io === "input" && isTransforming(schema)) {
+  if (ctx2.io === "input" && isTransforming(schema)) {
     delete result.schema.examples;
     delete result.schema.default;
   }
-  if (ctx.io === "input" && result.schema._prefault)
+  if (ctx2.io === "input" && result.schema._prefault)
     (_a2 = result.schema).default ?? (_a2.default = result.schema._prefault);
   delete result.schema._prefault;
-  const _result = ctx.seen.get(schema);
+  const _result = ctx2.seen.get(schema);
   return _result.schema;
 }
-function extractDefs(ctx, schema) {
-  const root = ctx.seen.get(schema);
+function extractDefs(ctx2, schema) {
+  const root = ctx2.seen.get(schema);
   if (!root)
     throw new Error("Unprocessed schema. This is a bug in Zod.");
   const idToSchema = /* @__PURE__ */ new Map();
-  for (const entry of ctx.seen.entries()) {
-    const id = ctx.metadataRegistry.get(entry[0])?.id;
+  for (const entry of ctx2.seen.entries()) {
+    const id = ctx2.metadataRegistry.get(entry[0])?.id;
     if (id) {
       const existing = idToSchema.get(id);
       if (existing && existing !== entry[0]) {
@@ -22782,14 +22782,14 @@ function extractDefs(ctx, schema) {
     }
   }
   const makeURI = (entry) => {
-    const defsSegment = ctx.target === "draft-2020-12" ? "$defs" : "definitions";
-    if (ctx.external) {
-      const externalId = ctx.external.registry.get(entry[0])?.id;
-      const uriGenerator = ctx.external.uri ?? ((id2) => id2);
+    const defsSegment = ctx2.target === "draft-2020-12" ? "$defs" : "definitions";
+    if (ctx2.external) {
+      const externalId = ctx2.external.registry.get(entry[0])?.id;
+      const uriGenerator = ctx2.external.uri ?? ((id2) => id2);
       if (externalId) {
         return { ref: uriGenerator(externalId) };
       }
-      const id = entry[1].defId ?? entry[1].schema.id ?? `schema${ctx.counter++}`;
+      const id = entry[1].defId ?? entry[1].schema.id ?? `schema${ctx2.counter++}`;
       entry[1].defId = id;
       return { defId: id, ref: `${uriGenerator("__shared")}#/${defsSegment}/${id}` };
     }
@@ -22798,7 +22798,7 @@ function extractDefs(ctx, schema) {
     }
     const uriPrefix = `#`;
     const defUriPrefix = `${uriPrefix}/${defsSegment}/`;
-    const defId = entry[1].schema.id ?? `__schema${ctx.counter++}`;
+    const defId = entry[1].schema.id ?? `__schema${ctx2.counter++}`;
     return { defId, ref: defUriPrefix + defId };
   };
   const extractToDef = (entry) => {
@@ -22816,8 +22816,8 @@ function extractDefs(ctx, schema) {
     }
     schema2.$ref = ref;
   };
-  if (ctx.cycles === "throw") {
-    for (const entry of ctx.seen.entries()) {
+  if (ctx2.cycles === "throw") {
+    for (const entry of ctx2.seen.entries()) {
       const seen = entry[1];
       if (seen.cycle) {
         throw new Error(`Cycle detected: #/${seen.cycle?.join("/")}/<root>
@@ -22826,20 +22826,20 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
       }
     }
   }
-  for (const entry of ctx.seen.entries()) {
+  for (const entry of ctx2.seen.entries()) {
     const seen = entry[1];
     if (schema === entry[0]) {
       extractToDef(entry);
       continue;
     }
-    if (ctx.external) {
-      const ext = ctx.external.registry.get(entry[0])?.id;
+    if (ctx2.external) {
+      const ext = ctx2.external.registry.get(entry[0])?.id;
       if (schema !== entry[0] && ext) {
         extractToDef(entry);
         continue;
       }
     }
-    const id = ctx.metadataRegistry.get(entry[0])?.id;
+    const id = ctx2.metadataRegistry.get(entry[0])?.id;
     if (id) {
       extractToDef(entry);
       continue;
@@ -22849,19 +22849,19 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
       continue;
     }
     if (seen.count > 1) {
-      if (ctx.reused === "ref") {
+      if (ctx2.reused === "ref") {
         extractToDef(entry);
         continue;
       }
     }
   }
 }
-function finalize(ctx, schema) {
-  const root = ctx.seen.get(schema);
+function finalize(ctx2, schema) {
+  const root = ctx2.seen.get(schema);
   if (!root)
     throw new Error("Unprocessed schema. This is a bug in Zod.");
   const flattenRef = (zodSchema) => {
-    const seen = ctx.seen.get(zodSchema);
+    const seen = ctx2.seen.get(zodSchema);
     if (seen.ref === null)
       return;
     const schema2 = seen.def ?? seen.schema;
@@ -22870,9 +22870,9 @@ function finalize(ctx, schema) {
     seen.ref = null;
     if (ref) {
       flattenRef(ref);
-      const refSeen = ctx.seen.get(ref);
+      const refSeen = ctx2.seen.get(ref);
       const refSchema = refSeen.schema;
-      if (refSchema.$ref && (ctx.target === "draft-07" || ctx.target === "draft-04" || ctx.target === "openapi-3.0")) {
+      if (refSchema.$ref && (ctx2.target === "draft-07" || ctx2.target === "draft-04" || ctx2.target === "openapi-3.0")) {
         schema2.allOf = schema2.allOf ?? [];
         schema2.allOf.push(refSchema);
       } else {
@@ -22902,7 +22902,7 @@ function finalize(ctx, schema) {
     const parent = zodSchema._zod.parent;
     if (parent && parent !== ref) {
       flattenRef(parent);
-      const parentSeen = ctx.seen.get(parent);
+      const parentSeen = ctx2.seen.get(parent);
       if (parentSeen?.schema.$ref) {
         schema2.$ref = parentSeen.schema.$ref;
         if (parentSeen.def) {
@@ -22916,43 +22916,43 @@ function finalize(ctx, schema) {
         }
       }
     }
-    ctx.override({
+    ctx2.override({
       zodSchema,
       jsonSchema: schema2,
       path: seen.path ?? []
     });
   };
-  for (const entry of [...ctx.seen.entries()].reverse()) {
+  for (const entry of [...ctx2.seen.entries()].reverse()) {
     flattenRef(entry[0]);
   }
   const result = {};
-  if (ctx.target === "draft-2020-12") {
+  if (ctx2.target === "draft-2020-12") {
     result.$schema = "https://json-schema.org/draft/2020-12/schema";
-  } else if (ctx.target === "draft-07") {
+  } else if (ctx2.target === "draft-07") {
     result.$schema = "http://json-schema.org/draft-07/schema#";
-  } else if (ctx.target === "draft-04") {
+  } else if (ctx2.target === "draft-04") {
     result.$schema = "http://json-schema.org/draft-04/schema#";
-  } else if (ctx.target === "openapi-3.0") {
+  } else if (ctx2.target === "openapi-3.0") {
   } else {
   }
-  if (ctx.external?.uri) {
-    const id = ctx.external.registry.get(schema)?.id;
+  if (ctx2.external?.uri) {
+    const id = ctx2.external.registry.get(schema)?.id;
     if (!id)
       throw new Error("Schema is missing an `id` property");
-    result.$id = ctx.external.uri(id);
+    result.$id = ctx2.external.uri(id);
   }
   Object.assign(result, root.def ?? root.schema);
-  const defs = ctx.external?.defs ?? {};
-  for (const entry of ctx.seen.entries()) {
+  const defs = ctx2.external?.defs ?? {};
+  for (const entry of ctx2.seen.entries()) {
     const seen = entry[1];
     if (seen.def && seen.defId) {
       defs[seen.defId] = seen.def;
     }
   }
-  if (ctx.external) {
+  if (ctx2.external) {
   } else {
     if (Object.keys(defs).length > 0) {
-      if (ctx.target === "draft-2020-12") {
+      if (ctx2.target === "draft-2020-12") {
         result.$defs = defs;
       } else {
         result.definitions = defs;
@@ -22965,8 +22965,8 @@ function finalize(ctx, schema) {
       value: {
         ...schema["~standard"],
         jsonSchema: {
-          input: createStandardJSONSchemaMethod(schema, "input", ctx.processors),
-          output: createStandardJSONSchemaMethod(schema, "output", ctx.processors)
+          input: createStandardJSONSchemaMethod(schema, "input", ctx2.processors),
+          output: createStandardJSONSchemaMethod(schema, "output", ctx2.processors)
         }
       },
       enumerable: false,
@@ -22978,68 +22978,68 @@ function finalize(ctx, schema) {
   }
 }
 function isTransforming(_schema, _ctx) {
-  const ctx = _ctx ?? { seen: /* @__PURE__ */ new Set() };
-  if (ctx.seen.has(_schema))
+  const ctx2 = _ctx ?? { seen: /* @__PURE__ */ new Set() };
+  if (ctx2.seen.has(_schema))
     return false;
-  ctx.seen.add(_schema);
+  ctx2.seen.add(_schema);
   const def = _schema._zod.def;
   if (def.type === "transform")
     return true;
   if (def.type === "array")
-    return isTransforming(def.element, ctx);
+    return isTransforming(def.element, ctx2);
   if (def.type === "set")
-    return isTransforming(def.valueType, ctx);
+    return isTransforming(def.valueType, ctx2);
   if (def.type === "lazy")
-    return isTransforming(def.getter(), ctx);
+    return isTransforming(def.getter(), ctx2);
   if (def.type === "promise" || def.type === "optional" || def.type === "nonoptional" || def.type === "nullable" || def.type === "readonly" || def.type === "default" || def.type === "prefault") {
-    return isTransforming(def.innerType, ctx);
+    return isTransforming(def.innerType, ctx2);
   }
   if (def.type === "intersection") {
-    return isTransforming(def.left, ctx) || isTransforming(def.right, ctx);
+    return isTransforming(def.left, ctx2) || isTransforming(def.right, ctx2);
   }
   if (def.type === "record" || def.type === "map") {
-    return isTransforming(def.keyType, ctx) || isTransforming(def.valueType, ctx);
+    return isTransforming(def.keyType, ctx2) || isTransforming(def.valueType, ctx2);
   }
   if (def.type === "pipe") {
-    return isTransforming(def.in, ctx) || isTransforming(def.out, ctx);
+    return isTransforming(def.in, ctx2) || isTransforming(def.out, ctx2);
   }
   if (def.type === "object") {
     for (const key in def.shape) {
-      if (isTransforming(def.shape[key], ctx))
+      if (isTransforming(def.shape[key], ctx2))
         return true;
     }
     return false;
   }
   if (def.type === "union") {
     for (const option of def.options) {
-      if (isTransforming(option, ctx))
+      if (isTransforming(option, ctx2))
         return true;
     }
     return false;
   }
   if (def.type === "tuple") {
     for (const item of def.items) {
-      if (isTransforming(item, ctx))
+      if (isTransforming(item, ctx2))
         return true;
     }
-    if (def.rest && isTransforming(def.rest, ctx))
+    if (def.rest && isTransforming(def.rest, ctx2))
       return true;
     return false;
   }
   return false;
 }
 var createToJSONSchemaMethod = (schema, processors = {}) => (params) => {
-  const ctx = initializeContext({ ...params, processors });
-  process2(schema, ctx);
-  extractDefs(ctx, schema);
-  return finalize(ctx, schema);
+  const ctx2 = initializeContext({ ...params, processors });
+  process2(schema, ctx2);
+  extractDefs(ctx2, schema);
+  return finalize(ctx2, schema);
 };
 var createStandardJSONSchemaMethod = (schema, io, processors = {}) => (params) => {
   const { libraryOptions, target } = params ?? {};
-  const ctx = initializeContext({ ...libraryOptions ?? {}, target, io, processors });
-  process2(schema, ctx);
-  extractDefs(ctx, schema);
-  return finalize(ctx, schema);
+  const ctx2 = initializeContext({ ...libraryOptions ?? {}, target, io, processors });
+  process2(schema, ctx2);
+  extractDefs(ctx2, schema);
+  return finalize(ctx2, schema);
 };
 
 // node_modules/zod/v4/core/json-schema-processors.js
@@ -23051,7 +23051,7 @@ var formatMap = {
   regex: ""
   // do not set
 };
-var stringProcessor = (schema, ctx, _json, _params) => {
+var stringProcessor = (schema, ctx2, _json, _params) => {
   const json2 = _json;
   json2.type = "string";
   const { minimum, maximum, format, patterns, contentEncoding } = schema._zod.bag;
@@ -23076,14 +23076,14 @@ var stringProcessor = (schema, ctx, _json, _params) => {
     else if (regexes.length > 1) {
       json2.allOf = [
         ...regexes.map((regex) => ({
-          ...ctx.target === "draft-07" || ctx.target === "draft-04" || ctx.target === "openapi-3.0" ? { type: "string" } : {},
+          ...ctx2.target === "draft-07" || ctx2.target === "draft-04" || ctx2.target === "openapi-3.0" ? { type: "string" } : {},
           pattern: regex.source
         }))
       ];
     }
   }
 };
-var numberProcessor = (schema, ctx, _json, _params) => {
+var numberProcessor = (schema, ctx2, _json, _params) => {
   const json2 = _json;
   const { minimum, maximum, format, multipleOf, exclusiveMaximum, exclusiveMinimum } = schema._zod.bag;
   if (typeof format === "string" && format.includes("int"))
@@ -23091,7 +23091,7 @@ var numberProcessor = (schema, ctx, _json, _params) => {
   else
     json2.type = "number";
   if (typeof exclusiveMinimum === "number") {
-    if (ctx.target === "draft-04" || ctx.target === "openapi-3.0") {
+    if (ctx2.target === "draft-04" || ctx2.target === "openapi-3.0") {
       json2.minimum = exclusiveMinimum;
       json2.exclusiveMinimum = true;
     } else {
@@ -23100,7 +23100,7 @@ var numberProcessor = (schema, ctx, _json, _params) => {
   }
   if (typeof minimum === "number") {
     json2.minimum = minimum;
-    if (typeof exclusiveMinimum === "number" && ctx.target !== "draft-04") {
+    if (typeof exclusiveMinimum === "number" && ctx2.target !== "draft-04") {
       if (exclusiveMinimum >= minimum)
         delete json2.minimum;
       else
@@ -23108,7 +23108,7 @@ var numberProcessor = (schema, ctx, _json, _params) => {
     }
   }
   if (typeof exclusiveMaximum === "number") {
-    if (ctx.target === "draft-04" || ctx.target === "openapi-3.0") {
+    if (ctx2.target === "draft-04" || ctx2.target === "openapi-3.0") {
       json2.maximum = exclusiveMaximum;
       json2.exclusiveMaximum = true;
     } else {
@@ -23117,7 +23117,7 @@ var numberProcessor = (schema, ctx, _json, _params) => {
   }
   if (typeof maximum === "number") {
     json2.maximum = maximum;
-    if (typeof exclusiveMaximum === "number" && ctx.target !== "draft-04") {
+    if (typeof exclusiveMaximum === "number" && ctx2.target !== "draft-04") {
       if (exclusiveMaximum <= maximum)
         delete json2.maximum;
       else
@@ -23130,18 +23130,18 @@ var numberProcessor = (schema, ctx, _json, _params) => {
 var booleanProcessor = (_schema, _ctx, json2, _params) => {
   json2.type = "boolean";
 };
-var bigintProcessor = (_schema, ctx, _json, _params) => {
-  if (ctx.unrepresentable === "throw") {
+var bigintProcessor = (_schema, ctx2, _json, _params) => {
+  if (ctx2.unrepresentable === "throw") {
     throw new Error("BigInt cannot be represented in JSON Schema");
   }
 };
-var symbolProcessor = (_schema, ctx, _json, _params) => {
-  if (ctx.unrepresentable === "throw") {
+var symbolProcessor = (_schema, ctx2, _json, _params) => {
+  if (ctx2.unrepresentable === "throw") {
     throw new Error("Symbols cannot be represented in JSON Schema");
   }
 };
-var nullProcessor = (_schema, ctx, json2, _params) => {
-  if (ctx.target === "openapi-3.0") {
+var nullProcessor = (_schema, ctx2, json2, _params) => {
+  if (ctx2.target === "openapi-3.0") {
     json2.type = "string";
     json2.nullable = true;
     json2.enum = [null];
@@ -23149,13 +23149,13 @@ var nullProcessor = (_schema, ctx, json2, _params) => {
     json2.type = "null";
   }
 };
-var undefinedProcessor = (_schema, ctx, _json, _params) => {
-  if (ctx.unrepresentable === "throw") {
+var undefinedProcessor = (_schema, ctx2, _json, _params) => {
+  if (ctx2.unrepresentable === "throw") {
     throw new Error("Undefined cannot be represented in JSON Schema");
   }
 };
-var voidProcessor = (_schema, ctx, _json, _params) => {
-  if (ctx.unrepresentable === "throw") {
+var voidProcessor = (_schema, ctx2, _json, _params) => {
+  if (ctx2.unrepresentable === "throw") {
     throw new Error("Void cannot be represented in JSON Schema");
   }
 };
@@ -23166,8 +23166,8 @@ var anyProcessor = (_schema, _ctx, _json, _params) => {
 };
 var unknownProcessor = (_schema, _ctx, _json, _params) => {
 };
-var dateProcessor = (_schema, ctx, _json, _params) => {
-  if (ctx.unrepresentable === "throw") {
+var dateProcessor = (_schema, ctx2, _json, _params) => {
+  if (ctx2.unrepresentable === "throw") {
     throw new Error("Date cannot be represented in JSON Schema");
   }
 };
@@ -23180,17 +23180,17 @@ var enumProcessor = (schema, _ctx, json2, _params) => {
     json2.type = "string";
   json2.enum = values;
 };
-var literalProcessor = (schema, ctx, json2, _params) => {
+var literalProcessor = (schema, ctx2, json2, _params) => {
   const def = schema._zod.def;
   const vals = [];
   for (const val of def.values) {
     if (val === void 0) {
-      if (ctx.unrepresentable === "throw") {
+      if (ctx2.unrepresentable === "throw") {
         throw new Error("Literal `undefined` cannot be represented in JSON Schema");
       } else {
       }
     } else if (typeof val === "bigint") {
-      if (ctx.unrepresentable === "throw") {
+      if (ctx2.unrepresentable === "throw") {
         throw new Error("BigInt literals cannot be represented in JSON Schema");
       } else {
         vals.push(Number(val));
@@ -23203,7 +23203,7 @@ var literalProcessor = (schema, ctx, json2, _params) => {
   } else if (vals.length === 1) {
     const val = vals[0];
     json2.type = val === null ? "null" : typeof val;
-    if (ctx.target === "draft-04" || ctx.target === "openapi-3.0") {
+    if (ctx2.target === "draft-04" || ctx2.target === "openapi-3.0") {
       json2.enum = [val];
     } else {
       json2.const = val;
@@ -23220,8 +23220,8 @@ var literalProcessor = (schema, ctx, json2, _params) => {
     json2.enum = vals;
   }
 };
-var nanProcessor = (_schema, ctx, _json, _params) => {
-  if (ctx.unrepresentable === "throw") {
+var nanProcessor = (_schema, ctx2, _json, _params) => {
+  if (ctx2.unrepresentable === "throw") {
     throw new Error("NaN cannot be represented in JSON Schema");
   }
 };
@@ -23260,32 +23260,32 @@ var fileProcessor = (schema, _ctx, json2, _params) => {
 var successProcessor = (_schema, _ctx, json2, _params) => {
   json2.type = "boolean";
 };
-var customProcessor = (_schema, ctx, _json, _params) => {
-  if (ctx.unrepresentable === "throw") {
+var customProcessor = (_schema, ctx2, _json, _params) => {
+  if (ctx2.unrepresentable === "throw") {
     throw new Error("Custom types cannot be represented in JSON Schema");
   }
 };
-var functionProcessor = (_schema, ctx, _json, _params) => {
-  if (ctx.unrepresentable === "throw") {
+var functionProcessor = (_schema, ctx2, _json, _params) => {
+  if (ctx2.unrepresentable === "throw") {
     throw new Error("Function types cannot be represented in JSON Schema");
   }
 };
-var transformProcessor = (_schema, ctx, _json, _params) => {
-  if (ctx.unrepresentable === "throw") {
+var transformProcessor = (_schema, ctx2, _json, _params) => {
+  if (ctx2.unrepresentable === "throw") {
     throw new Error("Transforms cannot be represented in JSON Schema");
   }
 };
-var mapProcessor = (_schema, ctx, _json, _params) => {
-  if (ctx.unrepresentable === "throw") {
+var mapProcessor = (_schema, ctx2, _json, _params) => {
+  if (ctx2.unrepresentable === "throw") {
     throw new Error("Map cannot be represented in JSON Schema");
   }
 };
-var setProcessor = (_schema, ctx, _json, _params) => {
-  if (ctx.unrepresentable === "throw") {
+var setProcessor = (_schema, ctx2, _json, _params) => {
+  if (ctx2.unrepresentable === "throw") {
     throw new Error("Set cannot be represented in JSON Schema");
   }
 };
-var arrayProcessor = (schema, ctx, _json, params) => {
+var arrayProcessor = (schema, ctx2, _json, params) => {
   const json2 = _json;
   const def = schema._zod.def;
   const { minimum, maximum } = schema._zod.bag;
@@ -23294,16 +23294,16 @@ var arrayProcessor = (schema, ctx, _json, params) => {
   if (typeof maximum === "number")
     json2.maxItems = maximum;
   json2.type = "array";
-  json2.items = process2(def.element, ctx, { ...params, path: [...params.path, "items"] });
+  json2.items = process2(def.element, ctx2, { ...params, path: [...params.path, "items"] });
 };
-var objectProcessor = (schema, ctx, _json, params) => {
+var objectProcessor = (schema, ctx2, _json, params) => {
   const json2 = _json;
   const def = schema._zod.def;
   json2.type = "object";
   json2.properties = {};
   const shape = def.shape;
   for (const key in shape) {
-    json2.properties[key] = process2(shape[key], ctx, {
+    json2.properties[key] = process2(shape[key], ctx2, {
       ...params,
       path: [...params.path, "properties", key]
     });
@@ -23311,7 +23311,7 @@ var objectProcessor = (schema, ctx, _json, params) => {
   const allKeys = new Set(Object.keys(shape));
   const requiredKeys = new Set([...allKeys].filter((key) => {
     const v = def.shape[key]._zod;
-    if (ctx.io === "input") {
+    if (ctx2.io === "input") {
       return v.optin === void 0;
     } else {
       return v.optout === void 0;
@@ -23323,19 +23323,19 @@ var objectProcessor = (schema, ctx, _json, params) => {
   if (def.catchall?._zod.def.type === "never") {
     json2.additionalProperties = false;
   } else if (!def.catchall) {
-    if (ctx.io === "output")
+    if (ctx2.io === "output")
       json2.additionalProperties = false;
   } else if (def.catchall) {
-    json2.additionalProperties = process2(def.catchall, ctx, {
+    json2.additionalProperties = process2(def.catchall, ctx2, {
       ...params,
       path: [...params.path, "additionalProperties"]
     });
   }
 };
-var unionProcessor = (schema, ctx, json2, params) => {
+var unionProcessor = (schema, ctx2, json2, params) => {
   const def = schema._zod.def;
   const isExclusive = def.inclusive === false;
-  const options = def.options.map((x, i) => process2(x, ctx, {
+  const options = def.options.map((x, i) => process2(x, ctx2, {
     ...params,
     path: [...params.path, isExclusive ? "oneOf" : "anyOf", i]
   }));
@@ -23345,13 +23345,13 @@ var unionProcessor = (schema, ctx, json2, params) => {
     json2.anyOf = options;
   }
 };
-var intersectionProcessor = (schema, ctx, json2, params) => {
+var intersectionProcessor = (schema, ctx2, json2, params) => {
   const def = schema._zod.def;
-  const a = process2(def.left, ctx, {
+  const a = process2(def.left, ctx2, {
     ...params,
     path: [...params.path, "allOf", 0]
   });
-  const b = process2(def.right, ctx, {
+  const b = process2(def.right, ctx2, {
     ...params,
     path: [...params.path, "allOf", 1]
   });
@@ -23362,26 +23362,26 @@ var intersectionProcessor = (schema, ctx, json2, params) => {
   ];
   json2.allOf = allOf;
 };
-var tupleProcessor = (schema, ctx, _json, params) => {
+var tupleProcessor = (schema, ctx2, _json, params) => {
   const json2 = _json;
   const def = schema._zod.def;
   json2.type = "array";
-  const prefixPath = ctx.target === "draft-2020-12" ? "prefixItems" : "items";
-  const restPath = ctx.target === "draft-2020-12" ? "items" : ctx.target === "openapi-3.0" ? "items" : "additionalItems";
-  const prefixItems = def.items.map((x, i) => process2(x, ctx, {
+  const prefixPath = ctx2.target === "draft-2020-12" ? "prefixItems" : "items";
+  const restPath = ctx2.target === "draft-2020-12" ? "items" : ctx2.target === "openapi-3.0" ? "items" : "additionalItems";
+  const prefixItems = def.items.map((x, i) => process2(x, ctx2, {
     ...params,
     path: [...params.path, prefixPath, i]
   }));
-  const rest = def.rest ? process2(def.rest, ctx, {
+  const rest = def.rest ? process2(def.rest, ctx2, {
     ...params,
-    path: [...params.path, restPath, ...ctx.target === "openapi-3.0" ? [def.items.length] : []]
+    path: [...params.path, restPath, ...ctx2.target === "openapi-3.0" ? [def.items.length] : []]
   }) : null;
-  if (ctx.target === "draft-2020-12") {
+  if (ctx2.target === "draft-2020-12") {
     json2.prefixItems = prefixItems;
     if (rest) {
       json2.items = rest;
     }
-  } else if (ctx.target === "openapi-3.0") {
+  } else if (ctx2.target === "openapi-3.0") {
     json2.items = {
       anyOf: prefixItems
     };
@@ -23404,7 +23404,7 @@ var tupleProcessor = (schema, ctx, _json, params) => {
   if (typeof maximum === "number")
     json2.maxItems = maximum;
 };
-var recordProcessor = (schema, ctx, _json, params) => {
+var recordProcessor = (schema, ctx2, _json, params) => {
   const json2 = _json;
   const def = schema._zod.def;
   json2.type = "object";
@@ -23412,7 +23412,7 @@ var recordProcessor = (schema, ctx, _json, params) => {
   const keyBag = keyType._zod.bag;
   const patterns = keyBag?.patterns;
   if (def.mode === "loose" && patterns && patterns.size > 0) {
-    const valueSchema = process2(def.valueType, ctx, {
+    const valueSchema = process2(def.valueType, ctx2, {
       ...params,
       path: [...params.path, "patternProperties", "*"]
     });
@@ -23421,13 +23421,13 @@ var recordProcessor = (schema, ctx, _json, params) => {
       json2.patternProperties[pattern.source] = valueSchema;
     }
   } else {
-    if (ctx.target === "draft-07" || ctx.target === "draft-2020-12") {
-      json2.propertyNames = process2(def.keyType, ctx, {
+    if (ctx2.target === "draft-07" || ctx2.target === "draft-2020-12") {
+      json2.propertyNames = process2(def.keyType, ctx2, {
         ...params,
         path: [...params.path, "propertyNames"]
       });
     }
-    json2.additionalProperties = process2(def.valueType, ctx, {
+    json2.additionalProperties = process2(def.valueType, ctx2, {
       ...params,
       path: [...params.path, "additionalProperties"]
     });
@@ -23440,42 +23440,42 @@ var recordProcessor = (schema, ctx, _json, params) => {
     }
   }
 };
-var nullableProcessor = (schema, ctx, json2, params) => {
+var nullableProcessor = (schema, ctx2, json2, params) => {
   const def = schema._zod.def;
-  const inner = process2(def.innerType, ctx, params);
-  const seen = ctx.seen.get(schema);
-  if (ctx.target === "openapi-3.0") {
+  const inner = process2(def.innerType, ctx2, params);
+  const seen = ctx2.seen.get(schema);
+  if (ctx2.target === "openapi-3.0") {
     seen.ref = def.innerType;
     json2.nullable = true;
   } else {
     json2.anyOf = [inner, { type: "null" }];
   }
 };
-var nonoptionalProcessor = (schema, ctx, _json, params) => {
+var nonoptionalProcessor = (schema, ctx2, _json, params) => {
   const def = schema._zod.def;
-  process2(def.innerType, ctx, params);
-  const seen = ctx.seen.get(schema);
+  process2(def.innerType, ctx2, params);
+  const seen = ctx2.seen.get(schema);
   seen.ref = def.innerType;
 };
-var defaultProcessor = (schema, ctx, json2, params) => {
+var defaultProcessor = (schema, ctx2, json2, params) => {
   const def = schema._zod.def;
-  process2(def.innerType, ctx, params);
-  const seen = ctx.seen.get(schema);
+  process2(def.innerType, ctx2, params);
+  const seen = ctx2.seen.get(schema);
   seen.ref = def.innerType;
   json2.default = JSON.parse(JSON.stringify(def.defaultValue));
 };
-var prefaultProcessor = (schema, ctx, json2, params) => {
+var prefaultProcessor = (schema, ctx2, json2, params) => {
   const def = schema._zod.def;
-  process2(def.innerType, ctx, params);
-  const seen = ctx.seen.get(schema);
+  process2(def.innerType, ctx2, params);
+  const seen = ctx2.seen.get(schema);
   seen.ref = def.innerType;
-  if (ctx.io === "input")
+  if (ctx2.io === "input")
     json2._prefault = JSON.parse(JSON.stringify(def.defaultValue));
 };
-var catchProcessor = (schema, ctx, json2, params) => {
+var catchProcessor = (schema, ctx2, json2, params) => {
   const def = schema._zod.def;
-  process2(def.innerType, ctx, params);
-  const seen = ctx.seen.get(schema);
+  process2(def.innerType, ctx2, params);
+  const seen = ctx2.seen.get(schema);
   seen.ref = def.innerType;
   let catchValue;
   try {
@@ -23485,36 +23485,36 @@ var catchProcessor = (schema, ctx, json2, params) => {
   }
   json2.default = catchValue;
 };
-var pipeProcessor = (schema, ctx, _json, params) => {
+var pipeProcessor = (schema, ctx2, _json, params) => {
   const def = schema._zod.def;
-  const innerType = ctx.io === "input" ? def.in._zod.def.type === "transform" ? def.out : def.in : def.out;
-  process2(innerType, ctx, params);
-  const seen = ctx.seen.get(schema);
+  const innerType = ctx2.io === "input" ? def.in._zod.def.type === "transform" ? def.out : def.in : def.out;
+  process2(innerType, ctx2, params);
+  const seen = ctx2.seen.get(schema);
   seen.ref = innerType;
 };
-var readonlyProcessor = (schema, ctx, json2, params) => {
+var readonlyProcessor = (schema, ctx2, json2, params) => {
   const def = schema._zod.def;
-  process2(def.innerType, ctx, params);
-  const seen = ctx.seen.get(schema);
+  process2(def.innerType, ctx2, params);
+  const seen = ctx2.seen.get(schema);
   seen.ref = def.innerType;
   json2.readOnly = true;
 };
-var promiseProcessor = (schema, ctx, _json, params) => {
+var promiseProcessor = (schema, ctx2, _json, params) => {
   const def = schema._zod.def;
-  process2(def.innerType, ctx, params);
-  const seen = ctx.seen.get(schema);
+  process2(def.innerType, ctx2, params);
+  const seen = ctx2.seen.get(schema);
   seen.ref = def.innerType;
 };
-var optionalProcessor = (schema, ctx, _json, params) => {
+var optionalProcessor = (schema, ctx2, _json, params) => {
   const def = schema._zod.def;
-  process2(def.innerType, ctx, params);
-  const seen = ctx.seen.get(schema);
+  process2(def.innerType, ctx2, params);
+  const seen = ctx2.seen.get(schema);
   seen.ref = def.innerType;
 };
-var lazyProcessor = (schema, ctx, _json, params) => {
+var lazyProcessor = (schema, ctx2, _json, params) => {
   const innerType = schema._zod.innerType;
-  process2(innerType, ctx, params);
-  const seen = ctx.seen.get(schema);
+  process2(innerType, ctx2, params);
+  const seen = ctx2.seen.get(schema);
   seen.ref = innerType;
 };
 
@@ -23966,7 +23966,7 @@ var ZodType2 = /* @__PURE__ */ $constructor("ZodType", (inst, def) => {
 var _ZodString = /* @__PURE__ */ $constructor("_ZodString", (inst, def) => {
   $ZodString.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => stringProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => stringProcessor(inst, ctx2, json2, params);
   const bag = inst._zod.bag;
   inst.format = bag.format ?? null;
   inst.minLength = bag.minimum ?? null;
@@ -24205,7 +24205,7 @@ function hash(alg, params) {
 var ZodNumber2 = /* @__PURE__ */ $constructor("ZodNumber", (inst, def) => {
   $ZodNumber.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => numberProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => numberProcessor(inst, ctx2, json2, params);
   inst.gt = (value, params) => inst.check(_gt(value, params));
   inst.gte = (value, params) => inst.check(_gte(value, params));
   inst.min = (value, params) => inst.check(_gte(value, params));
@@ -24253,7 +24253,7 @@ function uint32(params) {
 var ZodBoolean2 = /* @__PURE__ */ $constructor("ZodBoolean", (inst, def) => {
   $ZodBoolean.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => booleanProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => booleanProcessor(inst, ctx2, json2, params);
 });
 function boolean2(params) {
   return _boolean(ZodBoolean2, params);
@@ -24261,7 +24261,7 @@ function boolean2(params) {
 var ZodBigInt2 = /* @__PURE__ */ $constructor("ZodBigInt", (inst, def) => {
   $ZodBigInt.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => bigintProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => bigintProcessor(inst, ctx2, json2, params);
   inst.gte = (value, params) => inst.check(_gte(value, params));
   inst.min = (value, params) => inst.check(_gte(value, params));
   inst.gt = (value, params) => inst.check(_gt(value, params));
@@ -24296,7 +24296,7 @@ function uint64(params) {
 var ZodSymbol2 = /* @__PURE__ */ $constructor("ZodSymbol", (inst, def) => {
   $ZodSymbol.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => symbolProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => symbolProcessor(inst, ctx2, json2, params);
 });
 function symbol(params) {
   return _symbol(ZodSymbol2, params);
@@ -24304,7 +24304,7 @@ function symbol(params) {
 var ZodUndefined2 = /* @__PURE__ */ $constructor("ZodUndefined", (inst, def) => {
   $ZodUndefined.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => undefinedProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => undefinedProcessor(inst, ctx2, json2, params);
 });
 function _undefined3(params) {
   return _undefined2(ZodUndefined2, params);
@@ -24312,7 +24312,7 @@ function _undefined3(params) {
 var ZodNull2 = /* @__PURE__ */ $constructor("ZodNull", (inst, def) => {
   $ZodNull.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => nullProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => nullProcessor(inst, ctx2, json2, params);
 });
 function _null3(params) {
   return _null2(ZodNull2, params);
@@ -24320,7 +24320,7 @@ function _null3(params) {
 var ZodAny2 = /* @__PURE__ */ $constructor("ZodAny", (inst, def) => {
   $ZodAny.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => anyProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => anyProcessor(inst, ctx2, json2, params);
 });
 function any() {
   return _any(ZodAny2);
@@ -24328,7 +24328,7 @@ function any() {
 var ZodUnknown2 = /* @__PURE__ */ $constructor("ZodUnknown", (inst, def) => {
   $ZodUnknown.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => unknownProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => unknownProcessor(inst, ctx2, json2, params);
 });
 function unknown() {
   return _unknown(ZodUnknown2);
@@ -24336,7 +24336,7 @@ function unknown() {
 var ZodNever2 = /* @__PURE__ */ $constructor("ZodNever", (inst, def) => {
   $ZodNever.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => neverProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => neverProcessor(inst, ctx2, json2, params);
 });
 function never(params) {
   return _never(ZodNever2, params);
@@ -24344,7 +24344,7 @@ function never(params) {
 var ZodVoid2 = /* @__PURE__ */ $constructor("ZodVoid", (inst, def) => {
   $ZodVoid.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => voidProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => voidProcessor(inst, ctx2, json2, params);
 });
 function _void2(params) {
   return _void(ZodVoid2, params);
@@ -24352,7 +24352,7 @@ function _void2(params) {
 var ZodDate2 = /* @__PURE__ */ $constructor("ZodDate", (inst, def) => {
   $ZodDate.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => dateProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => dateProcessor(inst, ctx2, json2, params);
   inst.min = (value, params) => inst.check(_gte(value, params));
   inst.max = (value, params) => inst.check(_lte(value, params));
   const c = inst._zod.bag;
@@ -24365,7 +24365,7 @@ function date3(params) {
 var ZodArray2 = /* @__PURE__ */ $constructor("ZodArray", (inst, def) => {
   $ZodArray.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => arrayProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => arrayProcessor(inst, ctx2, json2, params);
   inst.element = def.element;
   inst.min = (minLength, params) => inst.check(_minLength(minLength, params));
   inst.nonempty = (params) => inst.check(_minLength(1, params));
@@ -24383,7 +24383,7 @@ function keyof(schema) {
 var ZodObject2 = /* @__PURE__ */ $constructor("ZodObject", (inst, def) => {
   $ZodObjectJIT.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => objectProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => objectProcessor(inst, ctx2, json2, params);
   util_exports.defineLazy(inst, "shape", () => {
     return def.shape;
   });
@@ -24432,7 +24432,7 @@ function looseObject(shape, params) {
 var ZodUnion2 = /* @__PURE__ */ $constructor("ZodUnion", (inst, def) => {
   $ZodUnion.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => unionProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => unionProcessor(inst, ctx2, json2, params);
   inst.options = def.options;
 });
 function union(options, params) {
@@ -24445,7 +24445,7 @@ function union(options, params) {
 var ZodXor = /* @__PURE__ */ $constructor("ZodXor", (inst, def) => {
   ZodUnion2.init(inst, def);
   $ZodXor.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => unionProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => unionProcessor(inst, ctx2, json2, params);
   inst.options = def.options;
 });
 function xor(options, params) {
@@ -24471,7 +24471,7 @@ function discriminatedUnion(discriminator, options, params) {
 var ZodIntersection2 = /* @__PURE__ */ $constructor("ZodIntersection", (inst, def) => {
   $ZodIntersection.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => intersectionProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => intersectionProcessor(inst, ctx2, json2, params);
 });
 function intersection(left, right) {
   return new ZodIntersection2({
@@ -24483,7 +24483,7 @@ function intersection(left, right) {
 var ZodTuple2 = /* @__PURE__ */ $constructor("ZodTuple", (inst, def) => {
   $ZodTuple.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => tupleProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => tupleProcessor(inst, ctx2, json2, params);
   inst.rest = (rest) => inst.clone({
     ...inst._zod.def,
     rest
@@ -24503,7 +24503,7 @@ function tuple(items, _paramsOrRest, _params) {
 var ZodRecord2 = /* @__PURE__ */ $constructor("ZodRecord", (inst, def) => {
   $ZodRecord.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => recordProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => recordProcessor(inst, ctx2, json2, params);
   inst.keyType = def.keyType;
   inst.valueType = def.valueType;
 });
@@ -24537,7 +24537,7 @@ function looseRecord(keyType, valueType, params) {
 var ZodMap2 = /* @__PURE__ */ $constructor("ZodMap", (inst, def) => {
   $ZodMap.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => mapProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => mapProcessor(inst, ctx2, json2, params);
   inst.keyType = def.keyType;
   inst.valueType = def.valueType;
   inst.min = (...args) => inst.check(_minSize(...args));
@@ -24556,7 +24556,7 @@ function map(keyType, valueType, params) {
 var ZodSet2 = /* @__PURE__ */ $constructor("ZodSet", (inst, def) => {
   $ZodSet.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => setProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => setProcessor(inst, ctx2, json2, params);
   inst.min = (...args) => inst.check(_minSize(...args));
   inst.nonempty = (params) => inst.check(_minSize(1, params));
   inst.max = (...args) => inst.check(_maxSize(...args));
@@ -24572,7 +24572,7 @@ function set(valueType, params) {
 var ZodEnum2 = /* @__PURE__ */ $constructor("ZodEnum", (inst, def) => {
   $ZodEnum.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => enumProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => enumProcessor(inst, ctx2, json2, params);
   inst.enum = def.entries;
   inst.options = Object.values(def.entries);
   const keys = new Set(Object.keys(def.entries));
@@ -24625,7 +24625,7 @@ function nativeEnum(entries, params) {
 var ZodLiteral2 = /* @__PURE__ */ $constructor("ZodLiteral", (inst, def) => {
   $ZodLiteral.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => literalProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => literalProcessor(inst, ctx2, json2, params);
   inst.values = new Set(def.values);
   Object.defineProperty(inst, "value", {
     get() {
@@ -24646,7 +24646,7 @@ function literal(value, params) {
 var ZodFile = /* @__PURE__ */ $constructor("ZodFile", (inst, def) => {
   $ZodFile.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => fileProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => fileProcessor(inst, ctx2, json2, params);
   inst.min = (size, params) => inst.check(_minSize(size, params));
   inst.max = (size, params) => inst.check(_maxSize(size, params));
   inst.mime = (types, params) => inst.check(_mime(Array.isArray(types) ? types : [types], params));
@@ -24657,7 +24657,7 @@ function file(params) {
 var ZodTransform = /* @__PURE__ */ $constructor("ZodTransform", (inst, def) => {
   $ZodTransform.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => transformProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => transformProcessor(inst, ctx2, json2, params);
   inst._zod.parse = (payload, _ctx) => {
     if (_ctx.direction === "backward") {
       throw new $ZodEncodeError(inst.constructor.name);
@@ -24695,7 +24695,7 @@ function transform(fn) {
 var ZodOptional2 = /* @__PURE__ */ $constructor("ZodOptional", (inst, def) => {
   $ZodOptional.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => optionalProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => optionalProcessor(inst, ctx2, json2, params);
   inst.unwrap = () => inst._zod.def.innerType;
 });
 function optional(innerType) {
@@ -24707,7 +24707,7 @@ function optional(innerType) {
 var ZodExactOptional = /* @__PURE__ */ $constructor("ZodExactOptional", (inst, def) => {
   $ZodExactOptional.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => optionalProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => optionalProcessor(inst, ctx2, json2, params);
   inst.unwrap = () => inst._zod.def.innerType;
 });
 function exactOptional(innerType) {
@@ -24719,7 +24719,7 @@ function exactOptional(innerType) {
 var ZodNullable2 = /* @__PURE__ */ $constructor("ZodNullable", (inst, def) => {
   $ZodNullable.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => nullableProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => nullableProcessor(inst, ctx2, json2, params);
   inst.unwrap = () => inst._zod.def.innerType;
 });
 function nullable(innerType) {
@@ -24734,7 +24734,7 @@ function nullish2(innerType) {
 var ZodDefault2 = /* @__PURE__ */ $constructor("ZodDefault", (inst, def) => {
   $ZodDefault.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => defaultProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => defaultProcessor(inst, ctx2, json2, params);
   inst.unwrap = () => inst._zod.def.innerType;
   inst.removeDefault = inst.unwrap;
 });
@@ -24750,7 +24750,7 @@ function _default(innerType, defaultValue) {
 var ZodPrefault = /* @__PURE__ */ $constructor("ZodPrefault", (inst, def) => {
   $ZodPrefault.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => prefaultProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => prefaultProcessor(inst, ctx2, json2, params);
   inst.unwrap = () => inst._zod.def.innerType;
 });
 function prefault(innerType, defaultValue) {
@@ -24765,7 +24765,7 @@ function prefault(innerType, defaultValue) {
 var ZodNonOptional = /* @__PURE__ */ $constructor("ZodNonOptional", (inst, def) => {
   $ZodNonOptional.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => nonoptionalProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => nonoptionalProcessor(inst, ctx2, json2, params);
   inst.unwrap = () => inst._zod.def.innerType;
 });
 function nonoptional(innerType, params) {
@@ -24778,7 +24778,7 @@ function nonoptional(innerType, params) {
 var ZodSuccess = /* @__PURE__ */ $constructor("ZodSuccess", (inst, def) => {
   $ZodSuccess.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => successProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => successProcessor(inst, ctx2, json2, params);
   inst.unwrap = () => inst._zod.def.innerType;
 });
 function success(innerType) {
@@ -24790,7 +24790,7 @@ function success(innerType) {
 var ZodCatch2 = /* @__PURE__ */ $constructor("ZodCatch", (inst, def) => {
   $ZodCatch.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => catchProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => catchProcessor(inst, ctx2, json2, params);
   inst.unwrap = () => inst._zod.def.innerType;
   inst.removeCatch = inst.unwrap;
 });
@@ -24804,7 +24804,7 @@ function _catch(innerType, catchValue) {
 var ZodNaN2 = /* @__PURE__ */ $constructor("ZodNaN", (inst, def) => {
   $ZodNaN.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => nanProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => nanProcessor(inst, ctx2, json2, params);
 });
 function nan(params) {
   return _nan(ZodNaN2, params);
@@ -24812,7 +24812,7 @@ function nan(params) {
 var ZodPipe = /* @__PURE__ */ $constructor("ZodPipe", (inst, def) => {
   $ZodPipe.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => pipeProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => pipeProcessor(inst, ctx2, json2, params);
   inst.in = def.in;
   inst.out = def.out;
 });
@@ -24840,7 +24840,7 @@ function codec(in_, out, params) {
 var ZodReadonly2 = /* @__PURE__ */ $constructor("ZodReadonly", (inst, def) => {
   $ZodReadonly.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => readonlyProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => readonlyProcessor(inst, ctx2, json2, params);
   inst.unwrap = () => inst._zod.def.innerType;
 });
 function readonly(innerType) {
@@ -24852,7 +24852,7 @@ function readonly(innerType) {
 var ZodTemplateLiteral = /* @__PURE__ */ $constructor("ZodTemplateLiteral", (inst, def) => {
   $ZodTemplateLiteral.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => templateLiteralProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => templateLiteralProcessor(inst, ctx2, json2, params);
 });
 function templateLiteral(parts, params) {
   return new ZodTemplateLiteral({
@@ -24864,7 +24864,7 @@ function templateLiteral(parts, params) {
 var ZodLazy2 = /* @__PURE__ */ $constructor("ZodLazy", (inst, def) => {
   $ZodLazy.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => lazyProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => lazyProcessor(inst, ctx2, json2, params);
   inst.unwrap = () => inst._zod.def.getter();
 });
 function lazy(getter) {
@@ -24876,7 +24876,7 @@ function lazy(getter) {
 var ZodPromise2 = /* @__PURE__ */ $constructor("ZodPromise", (inst, def) => {
   $ZodPromise.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => promiseProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => promiseProcessor(inst, ctx2, json2, params);
   inst.unwrap = () => inst._zod.def.innerType;
 });
 function promise(innerType) {
@@ -24888,7 +24888,7 @@ function promise(innerType) {
 var ZodFunction2 = /* @__PURE__ */ $constructor("ZodFunction", (inst, def) => {
   $ZodFunction.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => functionProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => functionProcessor(inst, ctx2, json2, params);
 });
 function _function(params) {
   return new ZodFunction2({
@@ -24900,7 +24900,7 @@ function _function(params) {
 var ZodCustom = /* @__PURE__ */ $constructor("ZodCustom", (inst, def) => {
   $ZodCustom.init(inst, def);
   ZodType2.init(inst, def);
-  inst._zod.processJSONSchema = (ctx, json2, params) => customProcessor(inst, ctx, json2, params);
+  inst._zod.processJSONSchema = (ctx2, json2, params) => customProcessor(inst, ctx2, json2, params);
 });
 function check(fn) {
   const ch = new $ZodCheck({
@@ -28303,8 +28303,8 @@ var StdioServerTransport = class {
 };
 
 // src/index.ts
-import path7 from "node:path";
-import fs7 from "node:fs";
+import path9 from "node:path";
+import fs9 from "node:fs";
 import { homedir as homedir5 } from "node:os";
 
 // node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/client.js
@@ -29052,9 +29052,9 @@ async function pkceChallenge(length) {
 }
 
 // node_modules/@modelcontextprotocol/sdk/dist/esm/shared/auth.js
-var SafeUrlSchema = url().superRefine((val, ctx) => {
+var SafeUrlSchema = url().superRefine((val, ctx2) => {
   if (!URL.canParse(val)) {
-    ctx.addIssue({
+    ctx2.addIssue({
       code: ZodIssueCode2.custom,
       message: "URL must be parseable",
       fatal: true
@@ -30957,7 +30957,7 @@ async function writeSkillsToDisk(skills, baseDir) {
   }
   return index;
 }
-function formatAvailableSkillsPrompt(index) {
+function formatAvailableSkillsPrompt(index, opts = {}) {
   if (index.length === 0) {
     return "<available_skills />";
   }
@@ -30966,15 +30966,29 @@ function formatAvailableSkillsPrompt(index) {
     const fileLines = skillMd ? `
       <file path="${escapeXml(skillMd)}" />
     ` : "";
+    const dirName = entry.skillDir.split(/[\\/]/).pop() ?? entry.name;
+    const learned = opts.observed?.get(dirName);
+    let learnedBlock = "";
+    if (learned && learned.size) {
+      const lines = [...learned.entries()].map(
+        ([tool, shape]) => `      <tool name="${escapeXml(tool)}" shape="${escapeXml(shape)}" />`
+      ).join("\n");
+      learnedBlock = `
+    <observed_output_schemas note="shapes seen in past runs; observed-not-guaranteed">
+${lines}
+    </observed_output_schemas>`;
+    }
     return [
       `  <skill name="${escapeXml(entry.name)}" description="${escapeXml(entry.description)}">`,
-      `    <files>${fileLines}</files>`,
+      `    <files>${fileLines}</files>${learnedBlock}`,
       `  </skill>`
     ].join("\n");
   });
+  const runToolInstructions = "To use a skill: (1) Browse the skills below and select the one most relevant to the user's request. (2) Read its SKILL.md for instructions. (3) Read each tool's JSON file (e.g. tools/TOOL_NAME.json) to get the exact server_id, name, and inputSchema with exact parameter names and types. (4) Call run_tool with the server_id, tool_name (from the name field), and arguments matching the inputSchema. Do NOT guess parameter names \u2014 always read the tool JSON file first.";
+  const runCodeInstructions = "To use a skill: (1) Browse the skills below and pick the most relevant. (2) Read its SKILL.md. (3) Read each tool's JSON file (tools/TOOL_NAME.json) for the exact `name` and `inputSchema` (argument names/types) \u2014 do NOT guess parameter names. (4) For a SINGLE one-off tool call, use `run_tool` (server_id + tool_name + arguments). For a BATCH \u2014 2+ calls, chaining one tool's output into the next, fanning out, or looping a call over many inputs \u2014 use `run_code` (a single-call run_code is rejected). In run_code, invoke each tool as `await PTC_<TOOL_NAME>(args)` (the binding name is `PTC_` + the tool's `name`; server_id is bound automatically). Each call returns a ToolResult (`.text`, `.json()`, `.get('a.b', fallback)`). Outputs have no fixed schema: any <observed_output_schemas> above show shapes learned from past runs; otherwise `inspect(value)` returns a value's SHAPE (not its data). Do multi-step work (loops, filtering, chaining one tool's output into the next) inside ONE run_code call: fetch, then format and `print()` or `return` only the final answer. `return` sends the value back verbatim; if it's over ~5000 chars it's written to a file and you get {shape, path} \u2014 Read the file, do NOT re-run the tool. The full result always stays in the runtime, so read the fields you need from the variable you already have rather than re-fetching. run_code is a stateful REPL: to persist a variable across calls, assign it with a BARE assignment \u2014 no var/let/const (e.g. `bugs = await PTC_X()`). `var`, `let`, and `const` are ALL temporary (this call only; var does not persist). Persistence lasts until the plugin process exits or you pass reset:true.";
   const instructions = [
     "<instructions>",
-    "To use a skill: (1) Browse the skills below and select the one most relevant to the user's request. (2) Read its SKILL.md for instructions. (3) Read each tool's JSON file (e.g. tools/TOOL_NAME.json) to get the exact server_id, name, and inputSchema with exact parameter names and types. (4) Call run_tool with the server_id, tool_name (from the name field), and arguments matching the inputSchema. Do NOT guess parameter names \u2014 always read the tool JSON file first.",
+    opts.codeMode ? runCodeInstructions : runToolInstructions,
     "</instructions>"
   ].join("\n");
   return [
@@ -30988,8 +31002,133 @@ function escapeXml(s) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
+// src/skill-tools.ts
+import fs4 from "node:fs/promises";
+import path4 from "node:path";
+var CORE_SKILL = "_core";
+async function discoverTools(skillsBaseDir) {
+  let skillDirs;
+  try {
+    skillDirs = await fs4.readdir(skillsBaseDir, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+  const out = [];
+  const sortedSkills = skillDirs.filter((d) => d.isDirectory()).map((d) => d.name).sort();
+  for (const skillName of sortedSkills) {
+    const toolsDir = path4.join(skillsBaseDir, skillName, "tools");
+    let toolFiles;
+    try {
+      toolFiles = await fs4.readdir(toolsDir);
+    } catch {
+      continue;
+    }
+    for (const file2 of toolFiles.filter((f) => f.endsWith(".json")).sort()) {
+      const toolName = file2.slice(0, -".json".length);
+      try {
+        const raw = JSON.parse(
+          await fs4.readFile(path4.join(toolsDir, file2), "utf-8")
+        );
+        const direct = raw.direct === true;
+        if (typeof raw.server_id !== "string" && !direct) continue;
+        out.push({
+          toolName,
+          skillName,
+          serverId: typeof raw.server_id === "string" ? raw.server_id : "",
+          requiresApproval: raw.requires_approval === true,
+          direct,
+          description: typeof raw.description === "string" ? raw.description : "",
+          inputSchema: raw.inputSchema,
+          annotations: raw.annotations && typeof raw.annotations === "object" ? raw.annotations : void 0
+        });
+      } catch {
+        continue;
+      }
+    }
+  }
+  return out;
+}
+async function findToolMeta(skillsBaseDir, toolName) {
+  const all = await discoverTools(skillsBaseDir);
+  const matches = all.filter((t) => t.toolName === toolName);
+  if (matches.length === 0) return { meta: null, ambiguous: [] };
+  const serverIds = [...new Set(matches.map((m) => m.serverId))];
+  return {
+    meta: matches[0],
+    ambiguous: serverIds.length > 1 ? serverIds : []
+  };
+}
+var OBSERVED_DIR = ".observed";
+function observedSchemaPath(skillsBaseDir, skillName, toolName) {
+  return path4.join(skillsBaseDir, OBSERVED_DIR, skillName, `${toolName}.schema.json`);
+}
+async function writeCoreTools(skillsBaseDir, headTools) {
+  if (!headTools.length) return;
+  const coreDir = path4.join(skillsBaseDir, CORE_SKILL);
+  const toolsDir = path4.join(coreDir, "tools");
+  try {
+    await fs4.rm(coreDir, { recursive: true, force: true });
+    await fs4.mkdir(toolsDir, { recursive: true });
+    await Promise.all(
+      headTools.map(
+        (t) => fs4.writeFile(
+          path4.join(toolsDir, `${t.name}.json`),
+          JSON.stringify(
+            {
+              name: t.name,
+              direct: true,
+              requires_approval: false,
+              description: t.description ?? "",
+              inputSchema: t.inputSchema ?? { type: "object", properties: {} }
+            },
+            null,
+            2
+          ),
+          "utf-8"
+        )
+      )
+    );
+  } catch {
+  }
+}
+async function loadObservedSchemas(skillsBaseDir) {
+  const out = /* @__PURE__ */ new Map();
+  const root = path4.join(skillsBaseDir, OBSERVED_DIR);
+  let skillDirs;
+  try {
+    skillDirs = await fs4.readdir(root, { withFileTypes: true });
+  } catch {
+    return out;
+  }
+  for (const d of skillDirs) {
+    if (!d.isDirectory()) continue;
+    let files;
+    try {
+      files = await fs4.readdir(path4.join(root, d.name));
+    } catch {
+      continue;
+    }
+    const byTool = /* @__PURE__ */ new Map();
+    for (const f of files) {
+      if (!f.endsWith(".schema.json")) continue;
+      try {
+        const raw = JSON.parse(
+          await fs4.readFile(path4.join(root, d.name, f), "utf-8")
+        );
+        if (typeof raw.shape === "string") {
+          byTool.set(f.slice(0, -".schema.json".length), raw.shape);
+        }
+      } catch {
+        continue;
+      }
+    }
+    if (byTool.size) out.set(d.name, byTool);
+  }
+  return out;
+}
+
 // src/tools/find-skills.ts
-async function handleFindSkills(remoteClient, skillsBaseDir, args) {
+async function handleFindSkills(remoteClient, skillsBaseDir, args, opts = {}) {
   const toolArgs = {};
   if (Array.isArray(args.queries)) {
     toolArgs.queries = args.queries;
@@ -31012,12 +31151,13 @@ async function handleFindSkills(remoteClient, skillsBaseDir, args) {
     return "<available_skills />";
   }
   const index = await writeSkillsToDisk(parsed.skills, skillsBaseDir);
-  return formatAvailableSkillsPrompt(index);
+  const observed = opts.codeMode ? await loadObservedSchemas(skillsBaseDir) : void 0;
+  return formatAvailableSkillsPrompt(index, { codeMode: opts.codeMode, observed });
 }
 
 // src/tools/run-tool.ts
-import fs4 from "node:fs/promises";
-import path4 from "node:path";
+import fs5 from "node:fs/promises";
+import path5 from "node:path";
 var HITL_ENABLED = process.env.ENABLE_HITL === "true";
 var DEFAULT_FILE_ARG_MAX_BYTES = 1 * 1024 * 1024;
 var FileArgsError = class extends Error {
@@ -31049,7 +31189,7 @@ async function resolveFileArgs(fileArgs, baseArgs) {
         `file_args.${argName} must be a non-empty string path`
       );
     }
-    if (!path4.isAbsolute(filePathRaw)) {
+    if (!path5.isAbsolute(filePathRaw)) {
       throw new FileArgsError(
         `file_args.${argName} must be an absolute path; got "${filePathRaw}"`
       );
@@ -31061,7 +31201,7 @@ async function resolveFileArgs(fileArgs, baseArgs) {
     }
     let stat;
     try {
-      stat = await fs4.stat(filePathRaw);
+      stat = await fs5.stat(filePathRaw);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       throw new FileArgsError(
@@ -31078,26 +31218,51 @@ async function resolveFileArgs(fileArgs, baseArgs) {
         `file_args.${argName}: "${filePathRaw}" is ${stat.size} bytes, exceeds ${maxBytes} byte limit (set GLEAN_FILE_ARG_MAX_BYTES to override)`
       );
     }
-    merged[argName] = await fs4.readFile(filePathRaw, "utf-8");
+    merged[argName] = await fs5.readFile(filePathRaw, "utf-8");
   }
   return merged;
 }
-async function findToolJson(skillsBaseDir, toolName) {
-  try {
-    const skillDirs = await fs4.readdir(skillsBaseDir, { withFileTypes: true });
-    for (const dir of skillDirs) {
-      if (!dir.isDirectory()) continue;
-      const toolPath = path4.join(skillsBaseDir, dir.name, "tools", `${toolName}.json`);
-      try {
-        const content = await fs4.readFile(toolPath, "utf-8");
-        return JSON.parse(content);
-      } catch {
-        continue;
-      }
-    }
-  } catch {
+async function requestToolApproval(mcpServer, skillsBaseDir, toolName, serverId, opts = {}) {
+  if (!HITL_ENABLED || !mcpServer.getClientCapabilities()?.elicitation) {
+    return { kind: "approved" };
   }
-  return null;
+  const { meta: meta3 } = await findToolMeta(skillsBaseDir, toolName);
+  if (!meta3?.requiresApproval) return { kind: "approved" };
+  const message = opts.message ?? [
+    `**Action: ${toolName}**`,
+    meta3.description || "",
+    `Server: ${serverId}`,
+    "",
+    "Accept to execute, or decline to cancel."
+  ].filter(Boolean).join("\n");
+  try {
+    const result = await mcpServer.elicitInput({
+      message,
+      requestedSchema: { type: "object", properties: {} }
+    });
+    if (result.action !== "accept") {
+      return { kind: "declined", action: result.action };
+    }
+    return { kind: "approved" };
+  } catch {
+    return opts.failClosed ? { kind: "declined", action: "elicitation-error" } : { kind: "approved" };
+  }
+}
+async function invokeTool(remoteClient, params) {
+  const baseArgs = params.arguments != null && typeof params.arguments === "object" ? params.arguments : {};
+  const resolvedArgs = await resolveFileArgs(params.fileArgs, baseArgs);
+  return callRemoteTool(
+    remoteClient,
+    "run_tool",
+    buildRemoteArgs(params.serverId, params.toolName, resolvedArgs)
+  );
+}
+function buildRemoteArgs(serverId, toolName, resolvedArgs) {
+  return {
+    server_id: serverId,
+    tool_name: toolName,
+    arguments: resolvedArgs
+  };
 }
 async function handleRunTool(remoteClient, mcpServer, skillsBaseDir, args) {
   const serverId = args.server_id;
@@ -31110,16 +31275,471 @@ async function handleRunTool(remoteClient, mcpServer, skillsBaseDir, args) {
       isError: true
     };
   }
-  if (HITL_ENABLED && mcpServer.getClientCapabilities()?.elicitation) {
-    const toolMeta = await findToolJson(skillsBaseDir, toolName);
-    if (toolMeta?.requires_approval) {
-      const message = [
-        `**Action: ${toolName}**`,
-        toolMeta.description ? `${toolMeta.description}` : "",
-        `Server: ${serverId}`,
-        "",
-        "Accept to execute, or decline to cancel."
-      ].filter(Boolean).join("\n");
+  const approval = await requestToolApproval(
+    mcpServer,
+    skillsBaseDir,
+    toolName,
+    serverId
+  );
+  if (approval.kind === "declined") {
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Action ${toolName} was ${approval.action === "decline" ? "declined" : "cancelled"} by the user.`
+        }
+      ]
+    };
+  }
+  try {
+    return await invokeTool(remoteClient, {
+      serverId,
+      toolName,
+      arguments: args.arguments,
+      fileArgs: args.file_args
+    });
+  } catch (err) {
+    if (err instanceof FileArgsError) {
+      return {
+        content: [{ type: "text", text: err.message }],
+        isError: true
+      };
+    }
+    throw err;
+  }
+}
+
+// src/tools/run-code.ts
+import vm from "node:vm";
+import fs6 from "node:fs/promises";
+import path6 from "node:path";
+function envInt(name, fallback) {
+  const raw = process.env[name];
+  if (!raw) return fallback;
+  const n = Number.parseInt(raw, 10);
+  return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+var TIMEOUT_MS = () => envInt("GLEAN_PTC_TIMEOUT_MS", 6e4);
+var MAX_CALLS = () => envInt("GLEAN_PTC_MAX_CALLS", 200);
+var MAX_INLINE_CHARS = () => envInt("GLEAN_PTC_MAX_INLINE_CHARS", 5e3);
+var SHAPE_MAX_DEPTH = 6;
+var SHAPE_MAX_KEYS = 40;
+var ARRAY_SAMPLE = 5;
+var resultFileCounter = 0;
+var ctx;
+var ctxFresh = false;
+var sessionApproved = /* @__PURE__ */ new Set();
+var current;
+var lockTail = Promise.resolve();
+function acquireLock() {
+  let release;
+  const next = new Promise((res) => release = res);
+  const prev = lockTail;
+  lockTail = lockTail.then(() => next);
+  return prev.then(() => release);
+}
+function shapeOf(v, depth, seen) {
+  if (v === null) return "null";
+  const t = typeof v;
+  if (t === "string") return "string";
+  if (t === "number") return "number";
+  if (t === "boolean") return "boolean";
+  if (t === "undefined") return "undefined";
+  if (t === "bigint") return "bigint";
+  if (t === "symbol") return "symbol";
+  if (t === "function") return "function";
+  const obj = v;
+  if (seen.has(obj)) return "[circular]";
+  seen.add(obj);
+  if (Array.isArray(v)) {
+    if (v.length === 0) return "Array<unknown>[0]";
+    return `Array<${arrayElemShape(v, depth, seen)}>[${v.length}]`;
+  }
+  if (depth >= SHAPE_MAX_DEPTH) return "{\u2026}";
+  const keys = Object.keys(obj);
+  const shown = keys.slice(0, SHAPE_MAX_KEYS);
+  const parts = shown.map(
+    (k) => `${k}: ${shapeOf(obj[k], depth + 1, seen)}`
+  );
+  const more = keys.length > shown.length ? ", \u2026" : "";
+  return `{ ${parts.join(", ")}${more} }`;
+}
+function isPlainObject3(v) {
+  return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+function arrayElemShape(arr, depth, seen) {
+  const sample = arr.slice(0, ARRAY_SAMPLE);
+  const objs = sample.filter(isPlainObject3);
+  if (objs.length === sample.length && objs.length > 0) {
+    if (depth + 1 >= SHAPE_MAX_DEPTH) return "{\u2026}";
+    const keyInfo = /* @__PURE__ */ new Map();
+    for (const o of objs) {
+      for (const k of Object.keys(o)) {
+        const e = keyInfo.get(k) ?? { shapes: /* @__PURE__ */ new Set(), count: 0 };
+        e.shapes.add(shapeOf(o[k], depth + 2, seen));
+        e.count++;
+        keyInfo.set(k, e);
+      }
+    }
+    const keys = [...keyInfo.keys()].slice(0, SHAPE_MAX_KEYS);
+    const parts = keys.map((k) => {
+      const e = keyInfo.get(k);
+      const optional2 = e.count < objs.length ? "?" : "";
+      return `${k}${optional2}: ${[...e.shapes].join(" | ")}`;
+    });
+    const more = keyInfo.size > keys.length ? ", \u2026" : "";
+    return `{ ${parts.join(", ")}${more} }`;
+  }
+  const uniq = [...new Set(sample.map((e) => shapeOf(e, depth + 1, seen)))];
+  return uniq.join(" | ") || "unknown";
+}
+function shapeStr(v) {
+  return shapeOf(normalizeForSummary(v), 0, /* @__PURE__ */ new WeakSet());
+}
+function serialize(v) {
+  try {
+    const s = JSON.stringify(
+      v,
+      (_k, val) => typeof val === "bigint" ? `${val}n` : val
+    );
+    return s === void 0 ? String(v) : s;
+  } catch {
+    return String(v);
+  }
+}
+function extractText(res) {
+  if (!Array.isArray(res.content)) return "";
+  return res.content.filter((c) => c.type === "text").map((c) => c.text).join("");
+}
+function normalizeForSummary(v) {
+  if (v && typeof v === "object" && v.__isToolResult) {
+    const tr = v;
+    if (tr.__structured !== void 0 && tr.__structured !== null) {
+      return tr.__structured;
+    }
+    try {
+      if (tr.text) return JSON.parse(tr.text);
+    } catch {
+    }
+    return tr.text ?? null;
+  }
+  return v;
+}
+function resultsDir(skillsBaseDir) {
+  return path6.resolve(skillsBaseDir, "..", "glean-run-code-results");
+}
+async function writeOverflowFile(skillsBaseDir, kind, ext, content) {
+  const dir = resultsDir(skillsBaseDir);
+  await fs6.mkdir(dir, { recursive: true });
+  const file2 = path6.join(dir, `${kind}-${Date.now()}-${resultFileCounter++}.${ext}`);
+  await fs6.writeFile(file2, content, "utf-8");
+  return file2;
+}
+var PREAMBLE = `
+class ToolResult {
+  constructor(raw) {
+    this.__isToolResult = true;
+    this.isError = !!(raw && raw.isError);
+    this.content = (raw && raw.content) || [];
+    this.text = (raw && typeof raw.text === "string") ? raw.text : "";
+    this.__structured = raw ? raw.structured : undefined;
+    this.__parsed = false;
+    this.__json = undefined;
+  }
+  json() {
+    // Prefer the tool's structuredContent; fall back to parsing .text as JSON
+    // (undefined if it isn't JSON \u2014 use .text then).
+    if (this.__structured !== undefined && this.__structured !== null) {
+      return this.__structured;
+    }
+    if (!this.__parsed) {
+      this.__parsed = true;
+      try { this.__json = JSON.parse(this.text); } catch { this.__json = undefined; }
+    }
+    return this.__json;
+  }
+  get(p, fallback) {
+    let cur = this.json();
+    if (cur === undefined) return fallback;
+    for (const part of String(p).split(".")) {
+      if (cur == null) return fallback;
+      cur = cur[part];
+    }
+    return cur === undefined ? fallback : cur;
+  }
+  // "json" if .json() yields data, "empty" if there's no text, else "text"
+  // (the output is prose/non-JSON \u2014 work with .text). Branch on this instead
+  // of if(r.json()), which is the truthiness trap.
+  get format() {
+    const j = this.json();
+    if (j !== undefined && j !== null) return "json";
+    return (this.text || "").length > 0 ? "text" : "empty";
+  }
+}
+globalThis.ToolResult = ToolResult;
+globalThis.__mkResult = (raw) => new ToolResult(raw);
+function __norm(x) {
+  if (x && x.__isToolResult) {
+    const j = x.json();
+    return j !== undefined ? j : x.text;
+  }
+  return x;
+}
+// inspect(x): return (and print) the STRUCTURE/shape of any value \u2014 never the
+// data itself. For a ToolResult, say plainly whether it's JSON (and its shape)
+// or non-JSON text, so the model isn't left guessing from a bare "string".
+globalThis.inspect = (x) => {
+  let out;
+  if (x && x.__isToolResult) {
+    const j = x.json();
+    if (j !== undefined && j !== null) {
+      out = __ptcShape(j);
+    } else if ((x.text || "").length === 0) {
+      out = "ToolResult: empty (isError=" + x.isError + ")";
+    } else {
+      out =
+        "ToolResult: non-JSON text (~" + (x.text || "").length +
+        " chars) \u2014 .json() is undefined; use .text and parse it";
+    }
+  } else {
+    out = __ptcShape(x);
+  }
+  __ptcPrint(out);
+  return out;
+};
+globalThis.print = (...a) => __ptcPrint(a.map(String).join(" "));
+globalThis.schemaOf = (name) => __ptcSchemaOf(name);
+`;
+function ensureContext(reset) {
+  if (reset || !ctx) {
+    ctx = vm.createContext({
+      // Host bridges — stable closures reading module-level `current`.
+      __ptcDispatch: ptcDispatch,
+      __ptcShape: (v) => shapeStr(v),
+      __ptcPrint: (s) => {
+        if (current) current.stdout.push(s);
+      },
+      __ptcSchemaOf: (name) => {
+        const hit = current?.learned.get(name);
+        return hit ? JSON.stringify(hit) : null;
+      }
+    });
+    vm.runInContext(PREAMBLE, ctx, { filename: "ptc-preamble.js" });
+    sessionApproved.clear();
+    ctxFresh = true;
+  } else {
+    ctxFresh = false;
+  }
+}
+async function ptcDispatch(toolName, args) {
+  const st = current;
+  if (!st) throw new Error("PTC runtime is not active");
+  if (st.aborted || Date.now() > st.deadline) {
+    st.aborted = true;
+    throw new Error("run_code wall-clock timeout exceeded");
+  }
+  const meta3 = st.toolsByName.get(toolName);
+  if (!meta3) {
+    throw new Error(
+      `Unknown tool PTC_${toolName} \u2014 not found in discovered skills. Call find_skills first, or check the name.`
+    );
+  }
+  if (st.calls >= MAX_CALLS()) {
+    throw new Error(`run_code tool-call budget exceeded (${MAX_CALLS()} calls)`);
+  }
+  if (meta3.requiresApproval && !st.approved.has(toolName)) {
+    const outcome = await requestToolApproval(
+      st.mcpServer,
+      st.skillsBaseDir,
+      toolName,
+      meta3.serverId,
+      {
+        failClosed: true,
+        message: `**${toolName}** (not pre-approved) is about to run.
+` + (meta3.description ? `${meta3.description}
+` : "") + `Server: ${meta3.serverId}
+
+Accept to run it, or decline to stop.`
+      }
+    );
+    if (outcome.kind === "declined") {
+      st.ledger.push({ toolName, serverId: meta3.serverId, state: "declined" });
+      throw new Error(`Approval declined for PTC_${toolName}.`);
+    }
+    st.approved.add(toolName);
+    sessionApproved.add(toolName);
+  }
+  st.calls++;
+  const startedAt = Date.now();
+  const entry = {
+    toolName,
+    serverId: meta3.serverId,
+    state: "ambiguous"
+  };
+  st.ledger.push(entry);
+  try {
+    const res = meta3.direct ? await callRemoteTool(
+      st.remoteClient,
+      toolName,
+      args ?? {}
+    ) : await invokeTool(st.remoteClient, {
+      serverId: meta3.serverId,
+      toolName,
+      arguments: args ?? {}
+    });
+    entry.state = res.isError ? "failed" : "committed";
+    entry.durationMs = Date.now() - startedAt;
+    const text = extractText(res);
+    const structured = res.structuredContent;
+    if (!res.isError) learnShape(st, meta3, text, structured);
+    return { isError: !!res.isError, content: res.content, text, structured };
+  } catch (err) {
+    entry.durationMs = Date.now() - startedAt;
+    throw err;
+  }
+}
+function learnShape(st, meta3, text, structured) {
+  let data = structured;
+  if (data === void 0 || data === null) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = void 0;
+    }
+  }
+  const shape = data !== void 0 && data !== null ? shapeOf(data, 0, /* @__PURE__ */ new WeakSet()) : `non-JSON text (~${text.length} chars) \u2014 read .text and parse it; .json() is undefined`;
+  st.observedThisRun.set(meta3.toolName, { skillName: meta3.skillName, shape });
+}
+async function loadLearned(skillsBaseDir, metas) {
+  const out = /* @__PURE__ */ new Map();
+  await Promise.all(
+    metas.map(async (m) => {
+      try {
+        const p = observedSchemaPath(skillsBaseDir, m.skillName, m.toolName);
+        const raw = JSON.parse(await fs6.readFile(p, "utf-8"));
+        if (typeof raw.shape === "string") {
+          out.set(m.toolName, {
+            shape: raw.shape,
+            samples: typeof raw.samples === "number" ? raw.samples : 1
+          });
+        }
+      } catch {
+      }
+    })
+  );
+  return out;
+}
+async function persistLearned(skillsBaseDir, st) {
+  await Promise.all(
+    [...st.observedThisRun.entries()].map(async ([toolName, { skillName, shape }]) => {
+      try {
+        const file2 = observedSchemaPath(skillsBaseDir, skillName, toolName);
+        await fs6.mkdir(path6.dirname(file2), { recursive: true });
+        const prior = st.learned.get(toolName);
+        const samples = (prior?.samples ?? 0) + 1;
+        await fs6.writeFile(
+          file2,
+          JSON.stringify(
+            { shape, samples, note: "observed-not-guaranteed", updatedAt: Date.now() },
+            null,
+            2
+          ),
+          "utf-8"
+        );
+      } catch {
+      }
+    })
+  );
+}
+function scanReferencedTools(code) {
+  const re = /\bPTC_([A-Za-z0-9_]+)\s*\(/g;
+  const found = /* @__PURE__ */ new Set();
+  let m;
+  while ((m = re.exec(code)) !== null) found.add(m[1]);
+  return [...found];
+}
+function countToolCallSites(code) {
+  const m = code.match(/\bPTC_[A-Za-z0-9_]+\s*\(/g);
+  return m ? m.length : 0;
+}
+function hasLoopOrFanout(code) {
+  return /\b(for|while|do)\b|\.\s*(map|forEach|flatMap)\s*\(|Promise\s*\.\s*all/.test(
+    code
+  );
+}
+function batchOnlyRejection(code) {
+  if (process.env.GLEAN_PTC_BATCH_ONLY === "false") return null;
+  const sites = countToolCallSites(code);
+  if (sites === 1 && !hasLoopOrFanout(code)) {
+    return "[USE_RUN_TOOL]\n\nrun_code is for BATCH jobs \u2014 2+ tool calls (chaining one tool's output into the next, or fanning out), or a loop/Promise.all around a call. This code makes a single one-off tool call. For that, call the tool directly: a skill tool via the `run_tool` tool (server_id + tool_name + arguments, from its find_skills JSON), or a first-class tool (search, read_document) as the top-level tool. Re-issue with run_code only when you genuinely need 2+ calls or a loop.";
+  }
+  return null;
+}
+function bindingsSource(toolNames) {
+  return toolNames.map(
+    (n) => `globalThis.PTC_${n} = async (args) => __mkResult(await __ptcDispatch(${JSON.stringify(n)}, args));`
+  ).join("\n");
+}
+async function handleRunCode(remoteClient, mcpServer, skillsBaseDir, args, headTools = []) {
+  const code = args.code;
+  if (typeof code !== "string" || code.trim() === "") {
+    return {
+      content: [{ type: "text", text: "`code` must be a non-empty string." }],
+      isError: true
+    };
+  }
+  const rejection = batchOnlyRejection(code);
+  if (rejection) {
+    return { content: [{ type: "text", text: rejection }], isError: true };
+  }
+  const reset = args.reset === true;
+  const release = await acquireLock();
+  const hints = [];
+  try {
+    ensureContext(reset);
+    if (reset) hints.push("Session was reset \u2014 all prior variables were cleared.");
+    await writeCoreTools(skillsBaseDir, headTools);
+    const allTools = await discoverTools(skillsBaseDir);
+    const toolsByName = /* @__PURE__ */ new Map();
+    const collisions = [];
+    const ordered = [
+      ...allTools.filter((t) => t.direct),
+      ...allTools.filter((t) => !t.direct)
+    ];
+    for (const t of ordered) {
+      const existing = toolsByName.get(t.toolName);
+      if (existing) {
+        if (!existing.direct && !t.direct && existing.serverId !== t.serverId && !collisions.includes(t.toolName)) {
+          collisions.push(t.toolName);
+        }
+        continue;
+      }
+      toolsByName.set(t.toolName, t);
+    }
+    if (collisions.length) {
+      hints.push(
+        `Tool name collision across skills (used first match): ${collisions.join(", ")}.`
+      );
+    }
+    const referenced = scanReferencedTools(code);
+    const unknown2 = referenced.filter((n) => !toolsByName.has(n));
+    if (unknown2.length) {
+      hints.push(
+        `Referenced unknown tools (will throw if called): ${unknown2.map((n) => "PTC_" + n).join(", ")}.`
+      );
+    }
+    const hitl = process.env.ENABLE_HITL === "true";
+    const canElicit = !!mcpServer.getClientCapabilities()?.elicitation;
+    const approved = new Set(sessionApproved);
+    const needApproval = referenced.map((n) => toolsByName.get(n)).filter((m) => !!m && m.requiresApproval && !approved.has(m.toolName));
+    if (needApproval.length && hitl && canElicit) {
+      const list = needApproval.map((m) => `\u2022 PTC_${m.toolName} \u2014 ${m.description?.split("\n")[0] || m.serverId}`).join("\n");
+      const message = `This code will run the following approval-required tools:
+
+${list}
+
+Some may run inside loops \u2014 exact counts depend on data fetched at runtime.
+Accept to approve all of them for this session, or decline to run nothing.`;
       try {
         const result = await mcpServer.elicitInput({
           message,
@@ -31130,58 +31750,183 @@ async function handleRunTool(remoteClient, mcpServer, skillsBaseDir, args) {
             content: [
               {
                 type: "text",
-                text: `Action ${toolName} was ${result.action === "decline" ? "declined" : "cancelled"} by the user.`
+                text: JSON.stringify(
+                  {
+                    ok: false,
+                    error: { message: "Bulk approval declined; nothing ran." },
+                    hints
+                  },
+                  null,
+                  2
+                )
               }
             ]
           };
         }
+        for (const m of needApproval) {
+          approved.add(m.toolName);
+          sessionApproved.add(m.toolName);
+        }
       } catch {
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(
+                {
+                  ok: false,
+                  error: {
+                    message: "Approval channel unavailable; refusing to run approval-required tools."
+                  },
+                  hints
+                },
+                null,
+                2
+              )
+            }
+          ],
+          isError: true
+        };
+      }
+    } else if (needApproval.length) {
+      for (const m of needApproval) approved.add(m.toolName);
+    }
+    const learned = await loadLearned(skillsBaseDir, [...toolsByName.values()]);
+    const state = {
+      remoteClient,
+      mcpServer,
+      skillsBaseDir,
+      toolsByName,
+      approved,
+      learned,
+      observedThisRun: /* @__PURE__ */ new Map(),
+      ledger: [],
+      stdout: [],
+      calls: 0,
+      deadline: Date.now() + TIMEOUT_MS(),
+      aborted: false
+    };
+    current = state;
+    const bindNames = [.../* @__PURE__ */ new Set([...toolsByName.keys(), ...referenced])];
+    const script = bindingsSource(bindNames) + "\n;__ptcCell = (function(){ return (async () => {\n" + code + "\n})(); })();\n";
+    let value;
+    let errorMessage;
+    let timer;
+    try {
+      vm.runInContext(script, ctx, {
+        filename: "ptc-cell.js",
+        timeout: TIMEOUT_MS()
+      });
+      const cellPromise = ctx.__ptcCell;
+      const timeoutPromise = new Promise((_res, rej) => {
+        timer = setTimeout(() => {
+          state.aborted = true;
+          rej(new Error("run_code wall-clock timeout exceeded"));
+        }, TIMEOUT_MS());
+      });
+      value = await Promise.race([cellPromise, timeoutPromise]);
+    } catch (err) {
+      errorMessage = err instanceof Error ? err.message : String(err);
+    } finally {
+      if (timer) clearTimeout(timer);
+      state.aborted = true;
+    }
+    await persistLearned(skillsBaseDir, state);
+    const cap = MAX_INLINE_CHARS();
+    let stdout = state.stdout.join("\n");
+    let stdoutPath;
+    let stdoutOverflow = false;
+    if (stdout.length > cap) {
+      try {
+        stdoutPath = await writeOverflowFile(skillsBaseDir, "stdout", "txt", stdout);
+        stdout = stdout.slice(0, cap) + `
+\u2026[stdout exceeded ${cap} chars \u2014 full output written to a file; see stdout_path]`;
+      } catch {
+        stdout = stdout.slice(0, cap) + "\n\u2026[stdout truncated; could not write overflow file]";
+      }
+      stdoutOverflow = true;
+    }
+    const observed = {};
+    for (const [name, { shape }] of state.observedThisRun) observed[name] = shape;
+    let valueField;
+    let valueOverflow = false;
+    if (!errorMessage) {
+      const norm = normalizeForSummary(value);
+      const serialized = serialize(norm);
+      if (serialized.length <= cap) {
+        valueField = norm;
+      } else {
+        const shape = shapeOf(norm, 0, /* @__PURE__ */ new WeakSet());
+        let p;
+        try {
+          p = await writeOverflowFile(skillsBaseDir, "value", "json", serialized);
+        } catch {
+        }
+        const pointer = {
+          __overflow: true,
+          shape,
+          bytes: serialized.length,
+          path: p ?? "(file write failed)",
+          note: "Return value exceeded the inline cap and was written to this file. Read it (offset/limit/grep) for specific fields \u2014 the data is also still in your session variables. Do NOT re-run tools to regenerate it."
+        };
+        valueField = pointer;
+        valueOverflow = true;
       }
     }
-  }
-  const baseArgs = args.arguments != null && typeof args.arguments === "object" ? args.arguments : {};
-  let resolvedArgs;
-  try {
-    resolvedArgs = await resolveFileArgs(args.file_args, baseArgs);
-  } catch (err) {
-    if (err instanceof FileArgsError) {
-      return {
-        content: [{ type: "text", text: err.message }],
-        isError: true
-      };
+    const overflow = stdoutOverflow || valueOverflow;
+    if (errorMessage) {
+      hints.push(
+        "Cell threw \u2014 variables assigned before the throw are still available; fix the failing line and continue. Committed writes were NOT rolled back (see ledger)."
+      );
     }
-    throw err;
+    if (overflow) {
+      hints.push(
+        "Large output was written to a file (see value.path / stdout_path), NOT lost. Read that file for specifics, or narrow what you return/print next time. The full data is also still in your session variables \u2014 do NOT re-run tools."
+      );
+    }
+    if (ctxFresh) {
+      hints.push(
+        "Fresh session. To persist a variable across run_code calls use a BARE assignment \u2014 no var/let/const (e.g. `bugs = await PTC_X()`); var/let/const are all temporary. Persists until the process exits or you pass reset:true."
+      );
+    }
+    const envelope = {
+      ok: !errorMessage,
+      stdout,
+      ...stdoutPath ? { stdout_path: stdoutPath } : {},
+      value: valueField,
+      ledger: state.ledger,
+      observed_schemas: observed,
+      session: { fresh: ctxFresh, calls: state.calls },
+      overflow,
+      hints,
+      ...errorMessage ? { error: { message: errorMessage } } : {}
+    };
+    return {
+      content: [{ type: "text", text: JSON.stringify(envelope, null, 2) }],
+      ...errorMessage ? { isError: true } : {}
+    };
+  } finally {
+    current = void 0;
+    release();
   }
-  return callRemoteTool(
-    remoteClient,
-    "run_tool",
-    buildRemoteArgs(serverId, toolName, resolvedArgs)
-  );
-}
-function buildRemoteArgs(serverId, toolName, resolvedArgs) {
-  return {
-    server_id: serverId,
-    tool_name: toolName,
-    arguments: resolvedArgs
-  };
 }
 
 // src/url-config-store.ts
-import fs5 from "node:fs";
-import path5 from "node:path";
+import fs7 from "node:fs";
+import path7 from "node:path";
 import { homedir as homedir3 } from "node:os";
 var CONFIG_FILENAME = "mcp-server-url.json";
 var DIR_MODE3 = 448;
 var FILE_MODE3 = 384;
 function resolveConfigDir() {
-  return process.env.PLUGIN_DATA_DIR || path5.join(homedir3(), ".glean");
+  return process.env.PLUGIN_DATA_DIR || path7.join(homedir3(), ".glean");
 }
 function configFile() {
-  return path5.join(resolveConfigDir(), CONFIG_FILENAME);
+  return path7.join(resolveConfigDir(), CONFIG_FILENAME);
 }
 function loadServerUrl() {
   try {
-    const raw = fs5.readFileSync(configFile(), "utf-8");
+    const raw = fs7.readFileSync(configFile(), "utf-8");
     const data = JSON.parse(raw);
     if (typeof data.serverUrl !== "string" || !data.serverUrl) return void 0;
     return data.serverUrl;
@@ -31191,39 +31936,39 @@ function loadServerUrl() {
 }
 function saveServerUrl(url2) {
   const filePath = configFile();
-  const dir = path5.dirname(filePath);
-  fs5.mkdirSync(dir, { recursive: true, mode: DIR_MODE3 });
-  fs5.chmodSync(dir, DIR_MODE3);
+  const dir = path7.dirname(filePath);
+  fs7.mkdirSync(dir, { recursive: true, mode: DIR_MODE3 });
+  fs7.chmodSync(dir, DIR_MODE3);
   const data = { serverUrl: url2 };
-  fs5.writeFileSync(filePath, JSON.stringify(data, null, 2), {
+  fs7.writeFileSync(filePath, JSON.stringify(data, null, 2), {
     encoding: "utf-8",
     mode: FILE_MODE3
   });
-  fs5.chmodSync(filePath, FILE_MODE3);
+  fs7.chmodSync(filePath, FILE_MODE3);
 }
 function clearServerUrl() {
   try {
-    fs5.rmSync(configFile(), { force: true });
+    fs7.rmSync(configFile(), { force: true });
   } catch {
   }
 }
 
 // src/remote-tools-cache-store.ts
-import fs6 from "node:fs";
-import path6 from "node:path";
+import fs8 from "node:fs";
+import path8 from "node:path";
 import { homedir as homedir4 } from "node:os";
 var CACHE_FILENAME = "remote-tools-cache.json";
 var DIR_MODE4 = 448;
 var FILE_MODE4 = 384;
 function resolveCacheDir() {
-  return process.env.PLUGIN_DATA_DIR || path6.join(homedir4(), ".glean");
+  return process.env.PLUGIN_DATA_DIR || path8.join(homedir4(), ".glean");
 }
 function cacheFile() {
-  return path6.join(resolveCacheDir(), CACHE_FILENAME);
+  return path8.join(resolveCacheDir(), CACHE_FILENAME);
 }
 function readStore() {
   try {
-    const raw = fs6.readFileSync(cacheFile(), "utf-8");
+    const raw = fs8.readFileSync(cacheFile(), "utf-8");
     const data = JSON.parse(raw);
     if (data && typeof data === "object" && !Array.isArray(data)) {
       return data;
@@ -31235,14 +31980,14 @@ function readStore() {
 }
 function writeStore(store) {
   const filePath = cacheFile();
-  const dir = path6.dirname(filePath);
-  fs6.mkdirSync(dir, { recursive: true, mode: DIR_MODE4 });
-  fs6.chmodSync(dir, DIR_MODE4);
-  fs6.writeFileSync(filePath, JSON.stringify(store, null, 2), {
+  const dir = path8.dirname(filePath);
+  fs8.mkdirSync(dir, { recursive: true, mode: DIR_MODE4 });
+  fs8.chmodSync(dir, DIR_MODE4);
+  fs8.writeFileSync(filePath, JSON.stringify(store, null, 2), {
     encoding: "utf-8",
     mode: FILE_MODE4
   });
-  fs6.chmodSync(filePath, FILE_MODE4);
+  fs8.chmodSync(filePath, FILE_MODE4);
 }
 function loadRemoteTools(serverUrl) {
   if (!serverUrl) return [];
@@ -31265,14 +32010,14 @@ function saveRemoteTools(serverUrl, tools) {
 function clearRemoteTools(serverUrl) {
   try {
     if (!serverUrl) {
-      fs6.rmSync(cacheFile(), { force: true });
+      fs8.rmSync(cacheFile(), { force: true });
       return;
     }
     const store = readStore();
     if (store[serverUrl] !== void 0) {
       delete store[serverUrl];
       if (Object.keys(store).length === 0) {
-        fs6.rmSync(cacheFile(), { force: true });
+        fs8.rmSync(cacheFile(), { force: true });
       } else {
         writeStore(store);
       }
@@ -31317,21 +32062,21 @@ async function fetchAllowedRemoteTools(remoteClient) {
   } while (cursor);
   return collected;
 }
-async function dispatchRemoteTool(toolName, args, ctx) {
+async function dispatchRemoteTool(toolName, args, ctx2) {
   let remoteClient;
   try {
     remoteClient = await createRemoteClient(
-      ctx.serverUrl,
-      ctx.remoteClientOpts
+      ctx2.serverUrl,
+      ctx2.remoteClientOpts
     );
   } catch (err) {
     if (err instanceof AuthRequiredError) {
       return {
-        content: [{ type: "text", text: ctx.authRedirectText }]
+        content: [{ type: "text", text: ctx2.authRedirectText }]
       };
     }
     const msg = err instanceof Error ? err.message : String(err);
-    ctx.logLine("connect.backend-error", { label: toolName, msg });
+    ctx2.logLine("connect.backend-error", { label: toolName, msg });
     return {
       content: [
         { type: "text", text: `Failed to connect to Glean backend: ${msg}` }
@@ -31342,7 +32087,7 @@ async function dispatchRemoteTool(toolName, args, ctx) {
   try {
     const result = await callRemoteTool(remoteClient, toolName, args);
     if (result.isError) {
-      ctx.logLine("dispatch.remote-isError", {
+      ctx2.logLine("dispatch.remote-isError", {
         label: toolName,
         rawResult: JSON.stringify(result).slice(0, 8e3)
       });
@@ -31359,7 +32104,7 @@ async function dispatchRemoteTool(toolName, args, ctx) {
         detail.cause = err.cause instanceof Error ? err.cause.message : err.cause;
       }
     }
-    ctx.logLine("dispatch.execution-failed", detail);
+    ctx2.logLine("dispatch.execution-failed", detail);
     return {
       content: [{ type: "text", text: `${toolName} failed: ${msg}` }],
       isError: true
@@ -31416,14 +32161,14 @@ Then call this tool again with the server_url parameter set to the URL you copie
 var SETUP_NEEDED_ERROR = "Glean is not configured yet. Call the `setup` tool first to provide your Glean Server URL before using find_skills or run_tool.";
 var AUTH_REDIRECT_TO_SETUP_TEXT = "[SETUP_REQUIRED]\n\nAuthentication is required. Call the `setup` tool (no arguments) to sign in to Glean, then retry this tool.";
 function resolveLogPath() {
-  const base = process.env.PLUGIN_DATA_DIR || path7.join(homedir5(), ".glean");
-  return path7.join(base, "glean-server.log");
+  const base = process.env.PLUGIN_DATA_DIR || path9.join(homedir5(), ".glean");
+  return path9.join(base, "glean-server.log");
 }
 var LOG_PATH = resolveLogPath();
 try {
-  const logDir = path7.dirname(LOG_PATH);
-  fs7.mkdirSync(logDir, { recursive: true, mode: 448 });
-  fs7.chmodSync(logDir, 448);
+  const logDir = path9.dirname(LOG_PATH);
+  fs9.mkdirSync(logDir, { recursive: true, mode: 448 });
+  fs9.chmodSync(logDir, 448);
 } catch {
 }
 function logLine(label, detail) {
@@ -31432,8 +32177,8 @@ function logLine(label, detail) {
   const line = `${ts} ${label}${suffix}
 `;
   try {
-    fs7.appendFileSync(LOG_PATH, line, { mode: 384 });
-    fs7.chmodSync(LOG_PATH, 384);
+    fs9.appendFileSync(LOG_PATH, line, { mode: 384 });
+    fs9.chmodSync(LOG_PATH, 384);
   } catch {
   }
   console.error(line.trimEnd());
@@ -31442,7 +32187,7 @@ function resolveSkillsBaseDir() {
   if (process.env.SKILLS_BASE_DIR) {
     return process.env.SKILLS_BASE_DIR;
   }
-  return path7.join("/tmp", "glean-skills-cache");
+  return path9.join("/tmp", "glean-skills-cache");
 }
 function extractAuthCode(pasted) {
   const trimmed = pasted.trim();
@@ -31456,6 +32201,7 @@ function extractAuthCode(pasted) {
   }
 }
 var hostedCallbackUrl = "https://dev.glean.com/mcp/auth/callback";
+var RUN_CODE_ENABLED = process.env.ENABLE_RUN_CODE === "true";
 var server = new Server(
   { name: "glean", version: "1.0.0" },
   { capabilities: { tools: { listChanged: true } } }
@@ -31518,6 +32264,24 @@ var RUN_TOOL_TOOL = {
     required: ["server_id", "tool_name"]
   }
 };
+var RUN_CODE_TOOL = {
+  name: "run_code",
+  description: "Execute JavaScript that orchestrates downstream Glean tools as ordinary async functions, FOR BATCH JOBS ONLY \u2014 i.e. when you need 2+ tool calls: chaining one tool's output into the next, fanning out, or looping a call over many inputs. For a SINGLE one-off call, use `run_tool` (or the first-class tool directly) instead \u2014 a single-call run_code is rejected. Each discovered tool is available as `PTC_<TOOL_NAME>` (e.g. `await PTC_JIRA_SEARCH({ jql })`); the server_id is bound for you. Do multi-step work (loops, conditionals, filtering, passing one tool's output into the next) in a single call instead of many separate tool-call turns. First use find_skills, then read each tool's JSON for its inputSchema (argument names) \u2014 the binding name is `PTC_` + the tool's `name`. Glean's first-class tools (e.g. `PTC_search`, `PTC_read_document`) are also available the same way once authenticated.\n\nEach PTC_ call resolves to a ToolResult: `.text` (raw string), `.json()` (parsed, or undefined if the output isn't JSON \u2014 so don't write `if (r.json())`; branch on `.format` instead), `.format` ('json' | 'text' | 'empty'), `.get('a.b.c', fallback)` (safe nested access \u2014 never throws), `.isError`, `.content`.\n\nOUTPUT SHAPES ARE NOT KNOWN AHEAD OF TIME. `observed_schemas` in the result already gives the shape of every tool you called this run. To inspect the structure of any other value, call `inspect(value)` \u2014 it returns/prints the SHAPE only (never the data; the data stays in the runtime). Use `print(...)` for output and `schemaOf('TOOL')` for a shape learned in past runs.\n\nWHAT COMES BACK: `return <value>` sends that value back VERBATIM (no truncation). If it exceeds ~5000 chars it is written to a file and you get `{ shape, path }` instead \u2014 Read that file (offset/limit/grep) for specifics; do NOT re-run a tool to regenerate data. So return/print ONLY what you need; the full data always stays in your in-memory variables to compute over.\n\nSTATEFUL SESSION: this is a REPL. To persist a variable across run_code calls, use a BARE assignment \u2014 no var/let/const (e.g. `bugs = await PTC_JIRA_SEARCH(...)`). `var`, `let`, and `const` are ALL temporary (this call only \u2014 `var` does NOT persist). The session and its persisted variables last until the plugin process shuts down, or until you call run_code with reset:true. It is NOT durable storage \u2014 re-run setup cells if a result reports session.fresh=true. Top-level `await` is supported.\n\nBE EFFICIENT \u2014 avoid round-trips: do the whole task in ONE call when you can \u2014 fetch, then filter/format the result and `print()` or `return` ONLY the final answer. Output written to a file (overflow) is NOT lost \u2014 the full result also stays in the runtime, so NEVER re-run a tool just to 'get the full data'; read the fields you need from the value you already have. Prefer `print()` formatted lines or `return` a small aggregate (a count, a few fields) over returning a whole result or large array.\n\nSome tools require approval before they run; you may be prompted once for all approval-required tools the code references. Tool calls are recorded in a ledger returned with the result; on error, already-executed writes are NOT rolled back \u2014 read the ledger.",
+  inputSchema: {
+    type: "object",
+    properties: {
+      code: {
+        type: "string",
+        description: "JavaScript to execute. Tools are async `PTC_<TOOL_NAME>(args)` functions. Use `return` to send a value back."
+      },
+      reset: {
+        type: "boolean",
+        description: "If true, clear all persisted session variables and start a fresh runtime before executing this code."
+      }
+    },
+    required: ["code"]
+  }
+};
 var SETUP_TOOL = {
   name: "setup",
   annotations: { readOnlyHint: true },
@@ -31542,7 +32306,7 @@ var SETUP_TOOL = {
   }
 };
 server.setRequestHandler(ListToolsRequestSchema, async () => {
-  const tools = [FIND_SKILLS_TOOL, RUN_TOOL_TOOL, SETUP_TOOL];
+  const tools = RUN_CODE_ENABLED ? [FIND_SKILLS_TOOL, RUN_TOOL_TOOL, RUN_CODE_TOOL, SETUP_TOOL] : [FIND_SKILLS_TOOL, RUN_TOOL_TOOL, SETUP_TOOL];
   const serverUrl = resolveServerUrl();
   if (!serverUrl) {
     return { tools: [...tools, ...cachedRemoteTools] };
@@ -31752,7 +32516,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const text = await handleFindSkills(
           remoteClient,
           skillsBaseDir,
-          args
+          args,
+          { codeMode: RUN_CODE_ENABLED }
         );
         return { content: [{ type: "text", text }] };
       } catch (err) {
@@ -31813,6 +32578,68 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         console.error(`run_tool: execution failed: ${msg}`);
         return {
           content: [{ type: "text", text: `run_tool failed: ${msg}` }],
+          isError: true
+        };
+      } finally {
+        await remoteClient.close();
+      }
+    }
+    case "run_code": {
+      if (!RUN_CODE_ENABLED) {
+        return {
+          content: [{ type: "text", text: "run_code is not enabled." }],
+          isError: true
+        };
+      }
+      const serverUrl = resolveServerUrl();
+      if (!serverUrl) {
+        return {
+          content: [{ type: "text", text: SETUP_NEEDED_ERROR }],
+          isError: true
+        };
+      }
+      if (!getOAuthProvider().tokens()) {
+        return {
+          content: [{ type: "text", text: AUTH_REDIRECT_TO_SETUP_TEXT }]
+        };
+      }
+      const sessionId = resolveSessionId();
+      let remoteClient;
+      try {
+        remoteClient = await createRemoteClient(
+          serverUrl,
+          getRemoteClientOpts(),
+          sessionId
+        );
+      } catch (err) {
+        if (err instanceof AuthRequiredError) {
+          return {
+            content: [{ type: "text", text: AUTH_REDIRECT_TO_SETUP_TEXT }]
+          };
+        }
+        const msg = err instanceof Error ? err.message : String(err);
+        logLine("connect.backend-error", { label: "run_code", msg });
+        return {
+          content: [
+            { type: "text", text: `Failed to connect to Glean backend: ${msg}` }
+          ],
+          isError: true
+        };
+      }
+      try {
+        const skillsBaseDir = resolveSkillsBaseDir();
+        return await handleRunCode(
+          remoteClient,
+          server,
+          skillsBaseDir,
+          args,
+          cachedRemoteTools
+        );
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error(`run_code: execution failed: ${msg}`);
+        return {
+          content: [{ type: "text", text: `run_code failed: ${msg}` }],
           isError: true
         };
       } finally {

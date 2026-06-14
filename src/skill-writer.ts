@@ -120,7 +120,13 @@ export async function writeSkillsToDisk(
   return index;
 }
 
-export function formatAvailableSkillsPrompt(index: SkillIndex[]): string {
+export function formatAvailableSkillsPrompt(
+  index: SkillIndex[],
+  opts: {
+    codeMode?: boolean;
+    observed?: Map<string, Map<string, string>>;
+  } = {},
+): string {
   if (index.length === 0) {
     return "<available_skills />";
   }
@@ -131,22 +137,71 @@ export function formatAvailableSkillsPrompt(index: SkillIndex[]): string {
       ? `\n      <file path="${escapeXml(skillMd)}" />\n    `
       : "";
 
+    // Observed schemas are keyed by skill DIRECTORY name (entry.name may be a
+    // frontmatter display name), so look them up by the dir basename.
+    const dirName = entry.skillDir.split(/[\\/]/).pop() ?? entry.name;
+    const learned = opts.observed?.get(dirName);
+    let learnedBlock = "";
+    if (learned && learned.size) {
+      const lines = [...learned.entries()]
+        .map(
+          ([tool, shape]) =>
+            `      <tool name="${escapeXml(tool)}" shape="${escapeXml(shape)}" />`,
+        )
+        .join("\n");
+      learnedBlock =
+        `\n    <observed_output_schemas note="shapes seen in past runs; observed-not-guaranteed">\n` +
+        `${lines}\n    </observed_output_schemas>`;
+    }
+
     return [
       `  <skill name="${escapeXml(entry.name)}" description="${escapeXml(entry.description)}">`,
-      `    <files>${fileLines}</files>`,
+      `    <files>${fileLines}</files>${learnedBlock}`,
       `  </skill>`,
     ].join("\n");
   });
 
+  const runToolInstructions =
+    "To use a skill: (1) Browse the skills below and select the one most relevant " +
+    "to the user's request. (2) Read its SKILL.md for instructions. " +
+    "(3) Read each tool's JSON file (e.g. tools/TOOL_NAME.json) to get the exact " +
+    "server_id, name, and inputSchema with exact parameter names and types. " +
+    "(4) Call run_tool with the server_id, tool_name (from the name field), " +
+    "and arguments matching the inputSchema. " +
+    "Do NOT guess parameter names — always read the tool JSON file first.";
+
+  // Code mode: the model orchestrates tools by writing JavaScript for run_code,
+  // where each tool is an async `PTC_<TOOL_NAME>` function, instead of issuing
+  // one run_tool call at a time.
+  const runCodeInstructions =
+    "To use a skill: (1) Browse the skills below and pick the most relevant. " +
+    "(2) Read its SKILL.md. (3) Read each tool's JSON file (tools/TOOL_NAME.json) " +
+    "for the exact `name` and `inputSchema` (argument names/types) — do NOT guess " +
+    "parameter names. (4) For a SINGLE one-off tool call, use `run_tool` " +
+    "(server_id + tool_name + arguments). For a BATCH — 2+ calls, chaining one " +
+    "tool's output into the next, fanning out, or looping a call over many " +
+    "inputs — use `run_code` (a single-call run_code is rejected). " +
+    "In run_code, invoke each tool " +
+    "as `await PTC_<TOOL_NAME>(args)` (the binding name is `PTC_` + the tool's " +
+    "`name`; server_id is bound automatically). Each call returns a ToolResult " +
+    "(`.text`, `.json()`, `.get('a.b', fallback)`). Outputs have no fixed schema: " +
+    "any <observed_output_schemas> above show shapes learned from past runs; " +
+    "otherwise `inspect(value)` returns a value's SHAPE (not its data). " +
+    "Do multi-step work (loops, filtering, chaining one tool's output into the " +
+    "next) inside ONE run_code call: fetch, then format and `print()` or `return` " +
+    "only the final answer. `return` sends the value back verbatim; if it's over " +
+    "~5000 chars it's written to a file and you get {shape, path} — Read the file, " +
+    "do NOT re-run the tool. The full result always stays in the runtime, so read " +
+    "the fields you need from the variable you already have rather than re-fetching. " +
+    "run_code is a stateful REPL: to persist a variable across calls, assign it " +
+    "with a BARE assignment — no var/let/const (e.g. `bugs = await PTC_X()`). " +
+    "`var`, `let`, and `const` are ALL temporary (this call only; var does not " +
+    "persist). Persistence lasts until the plugin process exits or you pass " +
+    "reset:true.";
+
   const instructions = [
     "<instructions>",
-    "To use a skill: (1) Browse the skills below and select the one most relevant " +
-      "to the user's request. (2) Read its SKILL.md for instructions. " +
-      "(3) Read each tool's JSON file (e.g. tools/TOOL_NAME.json) to get the exact " +
-      "server_id, name, and inputSchema with exact parameter names and types. " +
-      "(4) Call run_tool with the server_id, tool_name (from the name field), " +
-      "and arguments matching the inputSchema. " +
-      "Do NOT guess parameter names — always read the tool JSON file first.",
+    opts.codeMode ? runCodeInstructions : runToolInstructions,
     "</instructions>",
   ].join("\n");
 
