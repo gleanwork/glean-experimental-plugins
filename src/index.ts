@@ -16,7 +16,7 @@ import {
 } from "./remote-client.js";
 import { GleanOAuthClientProvider } from "./auth-provider.js";
 import { handleFindSkills } from "./tools/find-skills.js";
-import { handleRunTool } from "./tools/run-tool.js";
+import { handleRunTool, runToolAnnotations } from "./tools/run-tool.js";
 import { evictStaleSkills } from "./skill-writer.js";
 import {
   loadServerUrl,
@@ -273,7 +273,14 @@ const SETUP_TOOL: Tool = {
 };
 
 server.setRequestHandler(ListToolsRequestSchema, async () => {
-  const tools: Tool[] = [FIND_SKILLS_TOOL, RUN_TOOL_TOOL, SETUP_TOOL];
+  const runTool: Tool = {
+    ...RUN_TOOL_TOOL,
+    annotations: runToolAnnotations(
+      process.env.ENABLE_HITL === "true",
+      !!server.getClientCapabilities()?.elicitation,
+    ),
+  };
+  const tools: Tool[] = [FIND_SKILLS_TOOL, runTool, SETUP_TOOL];
 
   // Pre-auth gate: tokens() is sync. When unauthenticated (or unconfigured)
   // skip the remote round-trip — but keep surfacing whatever we successfully

@@ -7,6 +7,7 @@ import {
   buildRemoteArgs,
   FileArgsError,
   handleRunTool,
+  runToolAnnotations,
 } from "../src/tools/run-tool.js";
 
 describe("resolveFileArgs", () => {
@@ -338,5 +339,19 @@ describe("handleRunTool (HITL)", () => {
     expect(message).toContain('accept to run "jirasearch"');
     expect(message).not.toContain("Arguments:");
     expect(remote.callTool).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("runToolAnnotations", () => {
+  it("marks run_tool read-only when HITL gates an elicitation-capable client", () => {
+    expect(runToolAnnotations(true, true)).toEqual({ readOnlyHint: true });
+  });
+
+  it("leaves annotations unset when HITL is disabled", () => {
+    expect(runToolAnnotations(false, true)).toBeUndefined();
+  });
+
+  it("leaves annotations unset when the client cannot elicit", () => {
+    expect(runToolAnnotations(true, false)).toBeUndefined();
   });
 });
