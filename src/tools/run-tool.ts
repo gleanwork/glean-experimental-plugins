@@ -1,6 +1,6 @@
 import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type { CallToolResult, Tool } from "@modelcontextprotocol/sdk/types.js";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { callRemoteTool } from "../remote-client.js";
@@ -275,4 +275,20 @@ export function buildRemoteArgs(
     tool_name: toolName,
     arguments: resolvedArgs,
   };
+}
+
+/**
+ * Annotations for the `run_tool` meta-tool. When HITL is active for an
+ * elicitation-capable client, our own approval prompt is the gate, so we mark
+ * the tool `readOnlyHint` to suppress the client's native run-tool confirmation
+ * and avoid a double prompt. Without HITL there is no gate of our own, so we
+ * leave annotations unset and let the client decide.
+ */
+export function runToolAnnotations(
+  enableHitl: boolean,
+  clientSupportsElicitation: boolean,
+): Tool["annotations"] {
+  return enableHitl && clientSupportsElicitation
+    ? { readOnlyHint: true }
+    : undefined;
 }
