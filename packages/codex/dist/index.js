@@ -31108,15 +31108,38 @@ async function findToolJson(skillsBaseDir, toolName) {
 function isCursorClient(mcpServer) {
   return (mcpServer.getClientVersion()?.name ?? "").toLowerCase().startsWith("cursor");
 }
+var argBlockThreshold = 80;
+var maxArgValueChars = 2e3;
+function safeJson(value) {
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return String(value);
+  }
+}
+function truncateArgValue(text) {
+  if (text.length <= maxArgValueChars) return text;
+  const omitted = text.length - maxArgValueChars;
+  return `${text.slice(0, maxArgValueChars)}
+\u2026 (${omitted} more characters; pass large content via file_args to review it as a file)`;
+}
 function formatArguments(args) {
-  if (args == null || typeof args === "object" && Object.keys(args).length === 0) {
+  if (args == null || typeof args === "object" && !Array.isArray(args) && Object.keys(args).length === 0) {
     return "(none)";
   }
-  try {
-    return JSON.stringify(args, null, 2);
-  } catch {
-    return String(args);
+  if (typeof args !== "object" || Array.isArray(args)) {
+    return truncateArgValue(safeJson(args));
   }
+  return Object.entries(args).map(([key, value]) => {
+    if (typeof value === "string" && (value.includes("\n") || value.length > argBlockThreshold)) {
+      return `${key}:
+${truncateArgValue(value)}`;
+    }
+    if (value !== null && typeof value === "object") {
+      return `${key}: ${truncateArgValue(safeJson(value))}`;
+    }
+    return `${key}: ${value}`;
+  }).join("\n\n");
 }
 function buildApprovalMessage(mcpServer, toolName, args) {
   if (isCursorClient(mcpServer)) {

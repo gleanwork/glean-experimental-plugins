@@ -141,18 +141,58 @@ function isCursorClient(mcpServer: Server): boolean {
     .startsWith("cursor");
 }
 
-function formatArguments(args: unknown): string {
+// A string longer than this, or any multi-line string, is rendered as its own
+// de-escaped block; shorter scalars stay inline.
+const argBlockThreshold = 80;
+const maxArgValueChars = 2000;
+
+function safeJson(value: unknown): string {
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return String(value);
+  }
+}
+
+function truncateArgValue(text: string): string {
+  if (text.length <= maxArgValueChars) return text;
+  const omitted = text.length - maxArgValueChars;
+  return `${text.slice(0, maxArgValueChars)}\n… (${omitted} more characters; pass large content via file_args to review it as a file)`;
+}
+
+// JSON.stringify(args, null, 2) escapes every newline inside a string value, so
+// a Markdown body or table collapses into one unreadable line of literal "\n".
+// Render each top-level arg by shape instead — scalars inline, long/multi-line
+// strings as a de-escaped block, nested values as compact JSON — joined by a
+// blank line so a multi-line value can't blur into the next key. Plain text
+// only: the elicitation surface does not render Markdown.
+export function formatArguments(args: unknown): string {
   if (
     args == null ||
-    (typeof args === "object" && Object.keys(args as object).length === 0)
+    (typeof args === "object" &&
+      !Array.isArray(args) &&
+      Object.keys(args as object).length === 0)
   ) {
     return "(none)";
   }
-  try {
-    return JSON.stringify(args, null, 2);
-  } catch {
-    return String(args);
+  if (typeof args !== "object" || Array.isArray(args)) {
+    return truncateArgValue(safeJson(args));
   }
+
+  return Object.entries(args as Record<string, unknown>)
+    .map(([key, value]) => {
+      if (
+        typeof value === "string" &&
+        (value.includes("\n") || value.length > argBlockThreshold)
+      ) {
+        return `${key}:\n${truncateArgValue(value)}`;
+      }
+      if (value !== null && typeof value === "object") {
+        return `${key}: ${truncateArgValue(safeJson(value))}`;
+      }
+      return `${key}: ${value}`;
+    })
+    .join("\n\n");
 }
 
 // Plain text, NOT Markdown: Claude Code does not reliably render Markdown in

@@ -7,6 +7,7 @@ import {
   buildRemoteArgs,
   FileArgsError,
   handleRunTool,
+  formatArguments,
 } from "../src/tools/run-tool.js";
 
 describe("resolveFileArgs", () => {
@@ -255,7 +256,7 @@ describe("handleRunTool (HITL)", () => {
 
     const [params, options] = elicit.mock.calls[0];
     expect(params.message).toContain("Action: jirasearch");
-    expect(params.message).toContain('"project": "ABC"');
+    expect(params.message).toContain("project: ABC");
     expect(params.message).not.toContain("Server:");
     expect(params.message).not.toContain("Search Jira issues");
     expect(params.message).not.toContain("**");
@@ -338,5 +339,47 @@ describe("handleRunTool (HITL)", () => {
     expect(message).toContain('accept to run "jirasearch"');
     expect(message).not.toContain("Arguments:");
     expect(remote.callTool).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("formatArguments", () => {
+  it("returns (none) for empty or null args", () => {
+    expect(formatArguments(null)).toBe("(none)");
+    expect(formatArguments({})).toBe("(none)");
+  });
+
+  it("renders scalars inline, one per blank-line-separated block", () => {
+    expect(
+      formatArguments({ project: "ABC", limit: 10, dryRun: true }),
+    ).toBe("project: ABC\n\nlimit: 10\n\ndryRun: true");
+  });
+
+  it("de-escapes a multi-line string into a real-newline block", () => {
+    const out = formatArguments({
+      channel: "C1",
+      body: "# Title\n\n| A | B |\n|---|---|\n| 1 | 2 |",
+    });
+    expect(out).toContain("channel: C1");
+    expect(out).toContain("body:\n# Title");
+    expect(out).toContain("| A | B |");
+    expect(out).not.toContain("\\n");
+  });
+
+  it("blocks a single-line string over the threshold", () => {
+    const long = "x".repeat(100);
+    expect(formatArguments({ note: long })).toBe(`note:\n${long}`);
+  });
+
+  it("compacts a nested object onto one line", () => {
+    expect(formatArguments({ filters: { status: ["open", "wip"] } })).toBe(
+      'filters: {"status":["open","wip"]}',
+    );
+  });
+
+  it("truncates a value past the size cap and points to file_args", () => {
+    const out = formatArguments({ body: "a".repeat(2500) });
+    expect(out.length).toBeLessThan(2500);
+    expect(out).toContain("more characters");
+    expect(out).toContain("file_args");
   });
 });

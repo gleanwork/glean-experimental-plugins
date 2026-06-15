@@ -1,7 +1,7 @@
 {
   "name": "glean-experimental-cursor",
   "displayName": "Glean Cursor",
-  "version": "0.2.19",
+  "version": "0.2.21",
   "description": "Search and act across your company's apps — Jira, Slack, Salesforce, Google Workspace, and more — without leaving Cursor.",
   "author": {
     "name": "Glean"

@@ -1,6 +1,6 @@
 {
   "name": "glean-experimental-codex",
-  "version": "0.2.19",
+  "version": "0.2.21",
   "description": "Glean Codex plugin for discovering skills and running tools.",
   "author": {
     "name": "Glean"
